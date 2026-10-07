@@ -8,7 +8,10 @@ use crate::error::Result;
 pub struct Db(pub Mutex<Connection>);
 
 // Append-only: never edit a migration that has shipped; add a new one.
-const MIGRATIONS: &[&str] = &[include_str!("../migrations/001_init.sql")];
+const MIGRATIONS: &[&str] = &[
+    include_str!("../migrations/001_init.sql"),
+    include_str!("../migrations/002_timer_state.sql"),
+];
 
 pub fn open(app: &AppHandle) -> Result<Db> {
     let dir = app.path().data_dir()?.join("Lofi Focus");

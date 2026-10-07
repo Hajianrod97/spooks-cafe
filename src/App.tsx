@@ -20,7 +20,7 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [error, setError] = useState("");
-  const timer = useTimer();
+  const { timer, tickError } = useTimer();
 
   useEffect(() => {
     invoke<Task[]>("list_tasks").then(setTasks, (e) => setError(String(e)));
@@ -57,7 +57,7 @@ function App() {
         {!inFocus && selectedId === null && <p className="hint">Pick a task below to start.</p>}
       </section>
 
-      {error && <p className="error">{error}</p>}
+      {(error || tickError) && <p className="error">{error || tickError}</p>}
 
       <ul className="tasks">
         {tasks.map((task) => (

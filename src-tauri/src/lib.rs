@@ -3,7 +3,7 @@ mod error;
 mod tasks;
 mod timer;
 
-use tauri::Manager;
+use tauri::{Manager, RunEvent};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -11,8 +11,9 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
             let db = db::open(app.handle())?;
+            let timer = timer::restore(&db)?;
             app.manage(db);
-            app.manage(timer::TimerState::default());
+            app.manage(timer);
             timer::spawn_ticker(app.handle().clone());
             Ok(())
         })
@@ -25,6 +26,11 @@ pub fn run() {
             timer::discard,
             timer::skip_break,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|app, event| {
+            if let RunEvent::Exit = event {
+                timer::save_on_exit(app);
+            }
+        });
 }
