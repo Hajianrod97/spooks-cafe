@@ -21,7 +21,7 @@ pub fn open(app: &AppHandle) -> Result<Db> {
     Ok(Db(Mutex::new(conn)))
 }
 
-fn migrate(conn: &mut Connection) -> Result<()> {
+pub(crate) fn migrate(conn: &mut Connection) -> Result<()> {
     let applied: i64 = conn.pragma_query_value(None, "user_version", |row| row.get(0))?;
     for (i, sql) in MIGRATIONS.iter().enumerate().skip(applied as usize) {
         let tx = conn.transaction()?;

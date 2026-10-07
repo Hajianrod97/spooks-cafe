@@ -1,6 +1,7 @@
 mod db;
 mod error;
 mod tasks;
+mod timer;
 
 use tauri::Manager;
 
@@ -11,9 +12,19 @@ pub fn run() {
         .setup(|app| {
             let db = db::open(app.handle())?;
             app.manage(db);
+            app.manage(timer::TimerState::default());
+            timer::spawn_ticker(app.handle().clone());
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![tasks::list_tasks])
+        .invoke_handler(tauri::generate_handler![
+            tasks::list_tasks,
+            timer::get_timer,
+            timer::start_focus,
+            timer::pause,
+            timer::resume,
+            timer::discard,
+            timer::skip_break,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

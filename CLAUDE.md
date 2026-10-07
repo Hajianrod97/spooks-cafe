@@ -19,5 +19,5 @@ macOS Pomodoro tracker with a lofi theme. Full requirements and build order are 
 
 ## Current status
 - Step 1 done: YouTube spike in `spikes/youtube/` chose the dedicated hidden window (see SPEC.md Music / SPIKE.md).
-- Step 2 done: app scaffolded at repo root; SQLite via rusqlite in Rust (`src-tauri/src/db.rs`, migrations in `src-tauri/migrations/`, run via `PRAGMA user_version`). Schema: `tasks`, `sessions` (user-written; timestamp column is `start_at`), single-row `settings`. Seeds verified in the running app.
-- Next: step 3, timer engine, menu bar, notifications.
+- Step 2 done: app scaffolded at repo root; SQLite via rusqlite in Rust (`src-tauri/src/db.rs`, migrations in `src-tauri/migrations/`, run via `PRAGMA user_version`). Schema: `tasks`, `sessions` (user-written), single-row `settings`. Seeds verified in the running app.
+- Step 3 in progress, split 3a engine → 3b interruptions/persistence → 3c menu bar → 3d notifications. 3a: engine in `src-tauri/src/timer.rs` (Rust owns the timer, pushes `"timer"` events; React `useTimer` hook). Engine complete with unit tests for the streak reset (`cargo test --lib`); focus → auto-break confirmed working in the app. `LOFI_FAST=1` makes minutes run as seconds in dev.

@@ -8,6 +8,9 @@ pub enum Error {
     Io(#[from] std::io::Error),
     #[error(transparent)]
     Tauri(#[from] tauri::Error),
+    /// The requested action doesn't apply to the timer's current phase.
+    #[error("{0}")]
+    InvalidState(&'static str),
 }
 
 // Commands return errors to the frontend, so they must be serializable; send the message.

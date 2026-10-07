@@ -119,3 +119,18 @@ button {
 .tasks li { display: flex; align-items: center; gap: 0.6rem; padding: 0.35rem 0; }
 .swatch { width: 0.8rem; height: 0.8rem; border-radius: 50%; }
 .error { color: #e5484d; }
+
+.timer { margin: 1rem 0 2rem; }
+.phase { opacity: 0.7; }
+.clock { font-size: 4rem; font-variant-numeric: tabular-nums; margin: 0.25rem 0 1rem; }
+.timer .row { gap: 0.5rem; }
+.tasks label { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; }
+.tasks label.locked { cursor: not-allowed; opacity: 0.6; }
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+  border-color: transparent;
+}
+.hint { opacity: 0.6; font-size: 0.9em; }
