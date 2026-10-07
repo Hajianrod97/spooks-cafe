@@ -6,7 +6,7 @@ use std::time::{Duration, Instant, SystemTime};
 use chrono::{DateTime, Local, TimeDelta};
 use rusqlite::{params, Connection};
 use serde::Serialize;
-use tauri::{AppHandle, Emitter, Manager, State};
+use tauri::{AppHandle, Emitter, Manager};
 
 use crate::db::Db;
 use crate::error::{Error, Result};
@@ -37,12 +37,12 @@ struct Durations {
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Snapshot {
-    phase: Phase,
-    task_id: Option<i64>,
-    running: bool,
-    remaining_secs: u64,
-    length_secs: u64,
-    focus_streak: u32,
+    pub phase: Phase,
+    pub task_id: Option<i64>,
+    pub running: bool,
+    pub remaining_secs: u64,
+    pub length_secs: u64,
+    pub focus_streak: u32,
 }
 
 pub struct Timer {
@@ -187,17 +187,22 @@ fn log_session(conn: &Connection, timer: &Timer, minutes: i64, completed: bool) 
     Ok(())
 }
 
-fn emit(app: &AppHandle, timer: &Timer) {
+// Locking rules, to prevent deadlock:
+// 1. Lock order is always timer, then db.
+// 2. Never touch UI (events, tray) while holding the timer lock. Tray updates block on the
+//    main thread, and sync commands run on the main thread waiting for the timer lock.
+//    So: change state and save under the lock, take a snapshot, release, then `publish`.
+
+/// Sends a snapshot to every display: the React window and the menu bar.
+fn publish(app: &AppHandle, snapshot: &Snapshot) {
     // A failed emit only means no window is listening; the timer itself is unaffected.
-    let _ = app.emit("timer", timer.snapshot());
+    let _ = app.emit("timer", snapshot);
+    crate::tray::update(app, snapshot);
 }
 
-// Lock order is always timer, then db. Taking them in a consistent order prevents deadlock.
-
-/// Pushes the new state to the UI and saves it. Used for every change beyond the countdown itself.
-fn commit(app: &AppHandle, timer: &Timer) -> Result<()> {
-    emit(app, timer);
-    store::save(&app.state::<Db>().0.lock().unwrap(), timer)
+fn save(app: &AppHandle, timer: &Timer) -> Result<Snapshot> {
+    store::save(&app.state::<Db>().0.lock().unwrap(), timer)?;
+    Ok(timer.snapshot())
 }
 
 /// Builds the timer at launch, restoring whatever was running before quit or crash (paused).
@@ -214,6 +219,80 @@ pub fn save_on_exit(app: &AppHandle) {
     if let Err(e) = store::save(&app.state::<Db>().0.lock().unwrap(), &timer) {
         eprintln!("saving timer on exit failed: {e}");
     }
+}
+
+pub fn current(app: &AppHandle) -> Snapshot {
+    app.state::<TimerState>().0.lock().unwrap().snapshot()
+}
+
+/// Something the user asked the timer to do, from the window or the menu bar.
+pub enum Action {
+    StartFocus(i64),
+    Pause,
+    Resume,
+    /// Ends a focus block early: partial minutes are logged, but it doesn't count as a 🍅.
+    Discard,
+    SkipBreak,
+}
+
+/// The single entry point for user actions: validate, change state, save, then publish.
+pub fn apply(app: &AppHandle, action: Action) -> Result<Snapshot> {
+    let snapshot = {
+        let state = app.state::<TimerState>();
+        let mut timer = state.0.lock().unwrap();
+        transition(app, &mut timer, action)?;
+        save(app, &timer)?
+    };
+    publish(app, &snapshot);
+    Ok(snapshot)
+}
+
+fn transition(app: &AppHandle, timer: &mut Timer, action: Action) -> Result<()> {
+    let db = app.state::<Db>();
+    match action {
+        Action::StartFocus(task_id) => {
+            if timer.phase == Phase::Focus {
+                return Err(Error::InvalidState("a focus block is already running"));
+            }
+            let durations = load_durations(&db.0.lock().unwrap(), task_id)?;
+            if let Some(end) = timer.last_focus_end {
+                if !streak_survives(end, Local::now()) {
+                    timer.focus_streak = 0;
+                }
+            }
+            timer.task_id = Some(task_id);
+            timer.durations = durations;
+            timer.begin(Phase::Focus, durations.focus);
+        }
+        Action::Pause => {
+            if !timer.pause_now() {
+                return Err(Error::InvalidState("timer is not running"));
+            }
+        }
+        Action::Resume => {
+            if timer.phase == Phase::Idle || timer.running_since.is_some() {
+                return Err(Error::InvalidState("nothing is paused"));
+            }
+            timer.running_since = Some(Instant::now());
+        }
+        Action::Discard => {
+            if timer.phase != Phase::Focus {
+                return Err(Error::InvalidState("no focus block to discard"));
+            }
+            let minutes = (timer.elapsed().as_secs() / 60) as i64;
+            if minutes > 0 {
+                log_session(&db.0.lock().unwrap(), timer, minutes, false)?;
+            }
+            timer.go_idle();
+        }
+        Action::SkipBreak => {
+            if !matches!(timer.phase, Phase::ShortBreak | Phase::LongBreak) {
+                return Err(Error::InvalidState("no break to skip"));
+            }
+            timer.go_idle();
+        }
+    }
+    Ok(())
 }
 
 /// Bookkeeping for the background loop, kept between ticks.
@@ -238,7 +317,7 @@ impl Ticker {
     }
 }
 
-/// Background loop: completes phases, pauses on sleep, saves periodically, and pushes a snapshot each new second.
+/// Background loop: completes phases, pauses on sleep, saves periodically, and publishes each new second.
 pub fn spawn_ticker(app: AppHandle) {
     std::thread::spawn(move || {
         let mut ticker = Ticker {
@@ -251,7 +330,12 @@ pub fn spawn_ticker(app: AppHandle) {
         loop {
             std::thread::sleep(TICK);
             match tick(&app, &mut ticker) {
-                Ok(()) => ticker.last_error = None,
+                Ok(snapshot) => {
+                    ticker.last_error = None;
+                    if let Some(snapshot) = snapshot {
+                        publish(&app, &snapshot);
+                    }
+                }
                 // Report each distinct failure once, not every 250 ms while it keeps failing.
                 Err(e) => {
                     let message = e.to_string();
@@ -266,31 +350,32 @@ pub fn spawn_ticker(app: AppHandle) {
     });
 }
 
-fn tick(app: &AppHandle, ticker: &mut Ticker) -> Result<()> {
+/// Advances the timer under its lock. Returns a snapshot when there's something new to publish.
+fn tick(app: &AppHandle, ticker: &mut Ticker) -> Result<Option<Snapshot>> {
     let state = app.state::<TimerState>();
     let mut timer = state.0.lock().unwrap();
     // Checked every tick, even when idle, so the clock baselines stay current.
     let suspended_since = ticker.suspended_since();
     if timer.running_since.is_none() {
-        return Ok(());
+        return Ok(None);
     }
 
     if let Some(last_awake) = suspended_since {
         timer.pause_at(last_awake);
-        return commit(app, &timer);
+        return save(app, &timer).map(Some);
     }
 
     if timer.remaining() > Duration::ZERO {
-        let secs = timer.snapshot().remaining_secs;
-        if ticker.last_emitted != Some(secs) {
-            ticker.last_emitted = Some(secs);
-            emit(app, &timer);
-        }
         if ticker.last_saved.elapsed() >= SAVE_EVERY {
             ticker.last_saved = Instant::now();
             store::save(&app.state::<Db>().0.lock().unwrap(), &timer)?;
         }
-        return Ok(());
+        let snapshot = timer.snapshot();
+        if ticker.last_emitted == Some(snapshot.remaining_secs) {
+            return Ok(None);
+        }
+        ticker.last_emitted = Some(snapshot.remaining_secs);
+        return Ok(Some(snapshot));
     }
 
     match timer.phase {
@@ -305,85 +390,37 @@ fn tick(app: &AppHandle, ticker: &mut Ticker) -> Result<()> {
         Phase::Idle => {}
     }
     ticker.last_emitted = None;
-    commit(app, &timer)
+    save(app, &timer).map(Some)
 }
 
 #[tauri::command]
-pub fn get_timer(timer: State<TimerState>) -> Snapshot {
-    timer.0.lock().unwrap().snapshot()
+pub fn get_timer(app: AppHandle) -> Snapshot {
+    current(&app)
 }
 
 #[tauri::command]
-pub fn start_focus(
-    app: AppHandle,
-    timer: State<TimerState>,
-    db: State<Db>,
-    task_id: i64,
-) -> Result<Snapshot> {
-    let mut timer = timer.0.lock().unwrap();
-    if timer.phase == Phase::Focus {
-        return Err(Error::InvalidState("a focus block is already running"));
-    }
-    let durations = load_durations(&db.0.lock().unwrap(), task_id)?;
-
-    if let Some(end) = timer.last_focus_end {
-        if !streak_survives(end, Local::now()) {
-            timer.focus_streak = 0;
-        }
-    }
-    timer.task_id = Some(task_id);
-    timer.durations = durations;
-    timer.begin(Phase::Focus, durations.focus);
-    commit(&app, &timer)?;
-    Ok(timer.snapshot())
+pub fn start_focus(app: AppHandle, task_id: i64) -> Result<Snapshot> {
+    apply(&app, Action::StartFocus(task_id))
 }
 
 #[tauri::command]
-pub fn pause(app: AppHandle, timer: State<TimerState>) -> Result<Snapshot> {
-    let mut timer = timer.0.lock().unwrap();
-    if !timer.pause_now() {
-        return Err(Error::InvalidState("timer is not running"));
-    }
-    commit(&app, &timer)?;
-    Ok(timer.snapshot())
+pub fn pause(app: AppHandle) -> Result<Snapshot> {
+    apply(&app, Action::Pause)
 }
 
 #[tauri::command]
-pub fn resume(app: AppHandle, timer: State<TimerState>) -> Result<Snapshot> {
-    let mut timer = timer.0.lock().unwrap();
-    if timer.phase == Phase::Idle || timer.running_since.is_some() {
-        return Err(Error::InvalidState("nothing is paused"));
-    }
-    timer.running_since = Some(Instant::now());
-    commit(&app, &timer)?;
-    Ok(timer.snapshot())
-}
-
-/// Ends a focus block early: partial minutes are logged, but it doesn't count as a 🍅.
-#[tauri::command]
-pub fn discard(app: AppHandle, timer: State<TimerState>, db: State<Db>) -> Result<Snapshot> {
-    let mut timer = timer.0.lock().unwrap();
-    if timer.phase != Phase::Focus {
-        return Err(Error::InvalidState("no focus block to discard"));
-    }
-    let minutes = (timer.elapsed().as_secs() / 60) as i64;
-    if minutes > 0 {
-        log_session(&db.0.lock().unwrap(), &timer, minutes, false)?;
-    }
-    timer.go_idle();
-    commit(&app, &timer)?;
-    Ok(timer.snapshot())
+pub fn resume(app: AppHandle) -> Result<Snapshot> {
+    apply(&app, Action::Resume)
 }
 
 #[tauri::command]
-pub fn skip_break(app: AppHandle, timer: State<TimerState>) -> Result<Snapshot> {
-    let mut timer = timer.0.lock().unwrap();
-    if !matches!(timer.phase, Phase::ShortBreak | Phase::LongBreak) {
-        return Err(Error::InvalidState("no break to skip"));
-    }
-    timer.go_idle();
-    commit(&app, &timer)?;
-    Ok(timer.snapshot())
+pub fn discard(app: AppHandle) -> Result<Snapshot> {
+    apply(&app, Action::Discard)
+}
+
+#[tauri::command]
+pub fn skip_break(app: AppHandle) -> Result<Snapshot> {
+    apply(&app, Action::SkipBreak)
 }
 
 #[cfg(test)]

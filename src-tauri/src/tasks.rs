@@ -1,3 +1,4 @@
+use rusqlite::Connection;
 use serde::Serialize;
 use tauri::State;
 
@@ -6,8 +7,8 @@ use crate::{db::Db, error::Result};
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Task {
-    id: i64,
-    name: String,
+    pub id: i64,
+    pub name: String,
     color: String,
     weekly_target_minutes: i64,
     total_target_minutes: Option<i64>,
@@ -19,7 +20,11 @@ pub struct Task {
 
 #[tauri::command]
 pub fn list_tasks(db: State<Db>) -> Result<Vec<Task>> {
-    let conn = db.0.lock().unwrap();
+    active_tasks(&db.0.lock().unwrap())
+}
+
+/// Non-archived tasks in display order. Shared by the window and the menu bar.
+pub fn active_tasks(conn: &Connection) -> Result<Vec<Task>> {
     let mut stmt = conn.prepare(
         "SELECT id, name, color, weekly_target_minutes, total_target_minutes,
                 focus_minutes, short_break_minutes, long_break_minutes, archived
@@ -44,3 +49,4 @@ pub fn list_tasks(db: State<Db>) -> Result<Vec<Task>> {
         .collect::<rusqlite::Result<Vec<_>>>()?;
     Ok(tasks)
 }
+

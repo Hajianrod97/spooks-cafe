@@ -32,7 +32,8 @@ function App() {
   if (!timer) return null;
   const inFocus = timer.phase === "focus";
   const onBreak = timer.phase === "shortBreak" || timer.phase === "longBreak";
-  const activeTaskId = inFocus ? timer.taskId : selectedId;
+  // Defaults to the last task used, matching the menu bar's "Start focus".
+  const activeTaskId = inFocus ? timer.taskId : (selectedId ?? timer.taskId);
 
   return (
     <main className="container">
@@ -43,7 +44,7 @@ function App() {
         <div className="clock">{clock(timer.remainingSecs)}</div>
         <div className="row">
           {!inFocus && (
-            <button disabled={selectedId === null} onClick={() => call("start_focus", { taskId: selectedId })}>
+            <button disabled={activeTaskId === null} onClick={() => call("start_focus", { taskId: activeTaskId })}>
               Start focus
             </button>
           )}
@@ -54,7 +55,7 @@ function App() {
           {inFocus && <button onClick={() => call("discard")}>Discard</button>}
           {onBreak && <button onClick={() => call("skip_break")}>Skip break</button>}
         </div>
-        {!inFocus && selectedId === null && <p className="hint">Pick a task below to start.</p>}
+        {!inFocus && activeTaskId === null && <p className="hint">Pick a task below to start.</p>}
       </section>
 
       {(error || tickError) && <p className="error">{error || tickError}</p>}
