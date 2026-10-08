@@ -136,6 +136,7 @@ const espresso = `
     <path d="M70 210 v10 h20 v-10" fill="${C.metalDark}" ${line(3)}/>
     <path d="M62 220 h36" ${line(5)}/>
     <path d="M70 236 h20 v10 a5 5 0 0 1 -5 5 h-10 a5 5 0 0 1 -5 -5 Z" fill="#fff" ${line(3)}/>
+    <ellipse cx="80" cy="239" rx="7" ry="2" fill="#6B4A3A"/>
     <path d="M90 239 q6 0 6 5 q0 5 -6 5" fill="none" ${line(2.5)}/>
   </g>`;
 

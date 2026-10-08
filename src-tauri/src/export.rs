@@ -74,7 +74,7 @@ fn export_path(app: &AppHandle, format: Format) -> Result<PathBuf> {
         Format::Csv => "csv",
     };
     let stamp = Local::now().format("%Y-%m-%d-%H%M%S");
-    Ok(app.path().download_dir()?.join(format!("lofi-focus-{stamp}.{ext}")))
+    Ok(app.path().download_dir()?.join(format!("spooks-cafe-{stamp}.{ext}")))
 }
 
 fn sessions(conn: &Connection) -> Result<Vec<ExportedSession>> {

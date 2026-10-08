@@ -145,7 +145,7 @@ const svg = (name, parts, transform = "") => `<svg xmlns="http://www.w3.org/2000
 
 const poses = {
   idle: [waveArm, body, eyes.open, blush, mouth.smile, hand("hand-left", 52, 150, -30), waveLines],
-  focus: [body, headphones, eyes.focused, blush, mouth.small, hand("hand-left", 50, 172, -70), hand("hand-right", 150, 172, 70), laptop, notes],
+  focus: [body, headphones, eyes.focused, blush, mouth.small, hand("hand-left", 50, 172, -70), hand("hand-right", 150, 172, 70), laptop],
   break: [body, eyes.happy, blush, mouth.smile, steam(122, 140, 0.55), mug(83, 140), hand("hand-left", 82, 160, -20), hand("hand-right", 120, 160, 20)],
   sleep: [body, eyes.asleep, blush, mouth.o, zzz],
 };
@@ -167,5 +167,7 @@ const dir = new URL("../../src/assets/spook/", import.meta.url).pathname;
 for (const [name, parts] of Object.entries(poses)) {
   writeFileSync(`${dir}spook-${name}.svg`, svg(name, parts, tilt[name]));
 }
+// The notes are their own overlay, shown in any awake pose while music plays.
+writeFileSync(`${dir}spook-notes.svg`, svg("notes", [notes]));
 writeFileSync(new URL("tray-icon.svg", import.meta.url).pathname, trayIcon);
 console.log(`wrote ${Object.keys(poses).length} poses to ${dir}`);

@@ -21,6 +21,8 @@ const MIGRATIONS: &[&str] = &[
 ];
 
 pub fn open(app: &AppHandle) -> Result<Db> {
+    // The app was called Lofi Focus when this folder was created. It keeps that name so a
+    // rename never strands existing data.
     let dir = app.path().data_dir()?.join("Lofi Focus");
     std::fs::create_dir_all(&dir)?;
 

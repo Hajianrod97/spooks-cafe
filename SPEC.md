@@ -1,4 +1,4 @@
-# Lofi Focus — v1 Spec
+# Spook's Cafe — v1 Spec
 
 A macOS Pomodoro tracker for a full-time job search / engineering study routine, with a lofi aesthetic and built-in music.
 
@@ -57,6 +57,7 @@ Seed tasks (mid-level target roles, 30 h/week total):
 - Spook's pose follows the timer: idle → waving, focus → headphones + typing on a laptop, break → sipping coffee, paused → dozing.
 - Main window layout (480–960 wide, height free; the art is 960 wide and a wider window reveals more of the cafe): cafe scene on top (window, shelf TV, string lights, counter; Spook floats behind the counter), timer on a hanging chalk sign, controls on the counter, music bar, then the task list as a chalkboard "This week's menu".
 - Palette shifts with time of day: four phases whose start hours are adjustable in settings (defaults: morning 6, afternoon 12, evening 17, night 20; each lasts until the next, night wraps past midnight). Settings can also pin the scene to one time of day instead of following the clock. Scene animations pause while the window is hidden. The room is drawn once and tinted per phase (tint masked to the room, so the sky and Spook keep their colours; Spook glows at night).
+- Cafe details: a neon "Spook's Cafe" across the top of the hanging timer sign (glows and flickers in the evening and at night); coffee always dripping from the espresso machine into its cup; while YouTube is the service, the shelf TV shows the station's real artwork (the page's `og:image` thumbnail, dimmed when paused). Lofi Girl's character is trademarked, so the app never draws or bundles her art.
 - The cafe window shows a **pixel-art sky** (decided over flat): sunrise, daylight, pixel sunset, night with moon and rain; a pixel city skyline with lit windows in the evening and at night.
 - Menu bar countdown (`👻 18:42`, Spook as a template-image tray icon, not an emoji) with quick controls + full main window.
 - Clickable mockup: https://claude.ai/artifact/XJ1C9sQtjFkmYFaXPz4b2X (private).

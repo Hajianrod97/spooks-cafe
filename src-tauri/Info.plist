@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <!-- Shown in macOS's prompt the first time Lofi Focus controls Spotify. Merged into the bundle by Tauri. -->
+  <!-- Shown in macOS's prompt the first time Spook's Cafe controls Spotify. Merged into the bundle by Tauri. -->
   <key>NSAppleEventsUsageDescription</key>
-  <string>Lofi Focus controls Spotify so you can play, pause and skip music from the app.</string>
+  <string>Spook's Cafe controls Spotify so you can play, pause and skip music from the app.</string>
 </dict>
 </plist>

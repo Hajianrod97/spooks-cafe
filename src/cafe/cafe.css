@@ -29,7 +29,8 @@
 .scene .tint,
 .scene .ghost-glow,
 .scene .rain,
-.scene .spook {
+.scene .spook,
+.scene .spook-notes {
   position: absolute;
   pointer-events: none;
 }
@@ -82,8 +83,71 @@
   animation: bob 3.4s ease-in-out infinite;
 }
 .spook.sleep { animation-duration: 6s; }
+
+/* Same box as Spook, so the notes sit where they were drawn; they drift and fade on their own beat. */
+.spook-notes {
+  left: 405px;
+  top: 98px;
+  width: 150px;
+  height: 157px;
+  animation: notes-drift 2.6s ease-in-out infinite;
+}
+@keyframes notes-drift {
+  0%, 100% { transform: translateY(2px); opacity: 0.6; }
+  50% { transform: translateY(-8px); opacity: 1; }
+}
 @keyframes bob {
   50% { transform: translateY(-6px); }
+}
+
+/* Over the TV's screen in room-back.svg. */
+.tv-screen {
+  position: absolute;
+  left: 593px;
+  top: 96px;
+  width: 62px;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  pointer-events: none;
+  background: #4a4590;
+}
+.tv-screen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Scanlines and a soft glass sheen, so it reads as an old set rather than a photo. */
+.tv-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 45%),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px);
+}
+.tv-screen.off img { filter: brightness(0.45) saturate(0.6); }
+
+/* Under the espresso machine's spout, falling into the cup. */
+.drip {
+  position: absolute;
+  left: 318px;
+  top: 223px;
+  width: 4px;
+  height: 15px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.drip i {
+  position: absolute;
+  left: 0.5px;
+  top: 0;
+  width: 3px;
+  height: 5px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  background: #6b4a3a;
+  animation: drip 1.4s ease-in infinite;
+}
+.drip i:nth-child(2) { animation-delay: 0.7s; }
+@keyframes drip {
+  0% { transform: translateY(-5px); }
+  70%, 100% { transform: translateY(16px); }
 }
 
 /* The window opening. */
@@ -107,12 +171,13 @@
   to { transform: translateY(140px); }
 }
 
+/* Ends at y 114, just above Spook's headphones. */
 .sign {
   position: absolute;
-  left: 412px;
-  top: 26px;
-  width: 136px;
-  height: 70px;
+  left: 402px;
+  top: 16px;
+  width: 156px;
+  height: 98px;
   box-sizing: border-box;
   border: 4px solid var(--ink);
   border-radius: 12px;
@@ -125,6 +190,24 @@
   gap: 2px;
   pointer-events: none;
 }
+/* Neon tube lettering: a pale core with a pink halo, stronger after dark with the odd flicker. */
+.sign-neon {
+  font: 400 19px/1 "Patrick Hand", cursive;
+  color: #ffe6f1;
+  text-shadow: 0 0 2px #fff, 0 0 6px #f28da8, 0 0 12px #f28da8;
+  margin-bottom: 2px;
+}
+.t-night .sign-neon,
+.t-evening .sign-neon {
+  text-shadow: 0 0 2px #fff, 0 0 8px #f28da8, 0 0 16px #f28da8, 0 0 28px #e2668f;
+  animation: neon-flicker 7s linear infinite;
+}
+@keyframes neon-flicker {
+  0%, 91%, 93.5%, 96%, 100% { opacity: 1; }
+  92% { opacity: 0.55; }
+  95% { opacity: 0.75; }
+}
+
 .sign-label {
   font: 500 12px/1 Fredoka, system-ui, sans-serif;
   letter-spacing: 0.08em;

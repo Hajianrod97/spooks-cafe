@@ -30,6 +30,7 @@
     <path d="M70 210 v10 h20 v-10" fill="#A9ADC4" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
     <path d="M62 220 h36" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
     <path d="M70 236 h20 v10 a5 5 0 0 1 -5 5 h-10 a5 5 0 0 1 -5 -5 Z" fill="#fff" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="80" cy="239" rx="7" ry="2" fill="#6B4A3A"/>
     <path d="M90 239 q6 0 6 5 q0 5 -6 5" fill="none" stroke="#3E3A6E" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
   </g>
   <g id="pastry">

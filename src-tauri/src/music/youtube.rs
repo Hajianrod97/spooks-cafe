@@ -2,6 +2,7 @@
 //! scripts into it with `eval`, never read back, so control is desired-state: we store what
 //! we want in the page's sessionStorage, and an injected loop keeps the `<video>` matching it.
 
+use std::process::Command;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 
@@ -85,7 +86,7 @@ pub(super) fn sync(app: &AppHandle, prev: &MusicSnapshot, next: &MusicSnapshot) 
         if next.playing {
             let script = PLAYER_SCRIPT.replace("__INITIAL__", &desired_literal(next));
             WebviewWindowBuilder::new(app, PLAYER, WebviewUrl::External(url))
-                .title("Lofi Focus Player")
+                .title("Spook's Cafe Player")
                 .user_agent(SAFARI_UA)
                 .visible(false)
                 .initialization_script(&script)
@@ -160,6 +161,32 @@ pub(super) fn normalize_url(input: &str) -> Result<String> {
     Ok(normalized)
 }
 
+/// The artwork for a station, for the TV in the scene: a watch link's own video thumbnail, or
+/// else the page's `og:image` (what link previews show), fetched with macOS's curl. Channel
+/// live pages need the fetch, since the video id is only in the page, not the URL. Only ytimg.com
+/// images come back, as the UI puts this straight into an `<img>`.
+pub fn thumbnail(url: &Url) -> Result<Option<String>> {
+    let video = url.query_pairs().find(|(k, _)| k == "v").map(|(_, v)| v.into_owned());
+    if let Some(id) = video.filter(|id| id.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')) {
+        return Ok(Some(format!("https://i.ytimg.com/vi/{id}/hqdefault.jpg")));
+    }
+    let output = Command::new("curl")
+        .args(["--silent", "--location", "--max-time", "10", "--user-agent", SAFARI_UA, url.as_str()])
+        .output()?;
+    if !output.status.success() {
+        return Ok(None);
+    }
+    Ok(og_image(&String::from_utf8_lossy(&output.stdout)))
+}
+
+fn og_image(html: &str) -> Option<String> {
+    const TAG: &str = r#"<meta property="og:image" content=""#;
+    let start = html.find(TAG)? + TAG.len();
+    let end = start + html[start..].find('"')?;
+    let image = html[start..end].replace("&amp;", "&");
+    image.starts_with("https://i.ytimg.com/").then_some(image)
+}
+
 /// Whether the app's WebKit store holds a YouTube login. All the app's webviews share one store,
 /// so asking through the main window (which always exists) answers for the player too.
 /// Read from Rust, so nothing runs inside YouTube's page.
@@ -230,5 +257,19 @@ mod tests {
             now_playing: None,
         };
         assert_eq!(desired_literal(&m), r#""{\"playing\":true,\"volume\":40}""#);
+    }
+
+    #[test]
+    fn thumbnail_from_watch_link_needs_no_fetch() {
+        let url = "https://www.youtube.com/watch?v=jfKfPfyJRdk".parse().unwrap();
+        assert_eq!(thumbnail(&url).unwrap().as_deref(), Some("https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg"));
+    }
+
+    #[test]
+    fn og_image_only_trusts_ytimg() {
+        let page = r#"<head><meta property="og:image" content="https://i.ytimg.com/vi/abc/maxresdefault.jpg?v=1&amp;x=2"></head>"#;
+        assert_eq!(og_image(page).as_deref(), Some("https://i.ytimg.com/vi/abc/maxresdefault.jpg?v=1&x=2"));
+        assert_eq!(og_image(r#"<meta property="og:image" content="https://evil.example/x.jpg">"#), None);
+        assert_eq!(og_image("<html></html>"), None);
     }
 }

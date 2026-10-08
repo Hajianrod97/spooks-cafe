@@ -172,15 +172,114 @@ button.danger { color: #e5484d; }
 .session-form input.minutes { width: 4.5rem; }
 .session .tag { font-size: 0.75em; opacity: 0.6; margin-left: 0.4rem; padding: 0 0.35rem; border: 1px solid currentColor; border-radius: 4px; }
 
-.music { max-width: 360px; margin: 0 auto 1.5rem; display: flex; flex-direction: column; gap: 0.4rem; }
-.music .row { gap: 0.5rem; align-items: center; }
-.music button.play { width: 2.6rem; padding: 0.4em 0; }
-.music select { padding: 0.45em; border-radius: 8px; }
-.music input[type="range"] { flex: 1; min-width: 0; box-shadow: none; padding: 0; }
-.music form input { flex: 1; min-width: 0; padding: 0.45em 0.7em; }
 .editor .signin { justify-content: space-between; align-items: center; gap: 0.5rem; }
-.segmented { display: flex; align-self: center; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); }
-.segmented button { border-radius: 0; box-shadow: none; padding: 0.3em 0.9em; font-size: 0.85em; opacity: 0.6; }
-.segmented button[aria-checked="true"] { opacity: 1; font-weight: 600; }
-.music .now-playing { justify-content: space-between; min-height: 1.8rem; }
-.music .now-playing .hint { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The music strip: a dark radio under the scene, same width as the chalkboard. Overrides the
+   app-wide button and input look, which is meant for the old dark controls. */
+.music {
+  --ink: #3e3a6e;
+  --cream: #fff8ec;
+  --lavender: #b8b1dc;
+  max-width: 560px;
+  margin: 0 auto 1rem;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px 12px;
+  align-items: center;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #211d42;
+  text-align: left;
+}
+.music button { box-shadow: none; }
+.music .transport { grid-column: 1; grid-row: 1; display: flex; align-items: center; gap: 4px; }
+.music .track { grid-column: 2; grid-row: 1; min-width: 0; display: flex; align-items: center; gap: 6px; }
+.music .music-settings,
+.music .link-form,
+.music .error { grid-column: 1 / -1; }
+
+.music .play {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  color: var(--ink);
+  background: var(--cream);
+}
+.music .play:hover { background: #fff; border-color: var(--ink); }
+.music .icon-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 8px;
+  color: var(--lavender);
+  background: transparent;
+}
+.music .icon-button:hover { color: var(--cream); background: rgba(255, 255, 255, 0.08); }
+
+.music .track-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.music .track-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.2;
+  color: var(--cream);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.music .track-title select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.music .track-sub { font-size: 12px; line-height: 1.2; color: var(--lavender); }
+
+.music .music-settings { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.segmented { display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: #2b2850; }
+.segmented button {
+  min-height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--lavender);
+  background: transparent;
+}
+.segmented button[aria-checked="true"] { color: var(--cream); background: #4a4590; }
+.music .volume { flex: 1; max-width: 220px; display: flex; align-items: center; gap: 6px; color: var(--lavender); }
+.music .volume input { flex: 1; min-width: 0; padding: 0; box-shadow: none; background: transparent; accent-color: var(--lavender); }
+
+.music .link-form { display: flex; gap: 6px; }
+.music .link-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.45em 0.7em;
+  border: 2px solid #cfc9e6;
+  color: var(--ink);
+  background: #fff;
+  box-shadow: none;
+}
+.music .link-form button { padding: 0 14px; border: 2px solid var(--ink); border-radius: 999px; color: var(--ink); background: var(--cream); }
+.music .link-form button[type="submit"] { background: #f2c46d; }
+.music .error { margin: 0; }

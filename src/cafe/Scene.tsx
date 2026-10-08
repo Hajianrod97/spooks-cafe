@@ -1,4 +1,5 @@
-import type { Phase, Task, TimeOfDay, TimerSnapshot } from "../types";
+import { useState } from "react";
+import type { MusicSnapshot, Phase, Task, TimeOfDay, TimerSnapshot } from "../types";
 import { useSettings } from "../useSettings";
 import { useWindowVisible } from "../useWindowVisible";
 import roomBack from "../assets/cafe/room-back.svg";
@@ -9,6 +10,7 @@ import skyMorning from "../assets/cafe/sky-morning.svg";
 import skyNight from "../assets/cafe/sky-night.svg";
 import { Spook, poseFor } from "./Spook";
 import { useTimeOfDay } from "./timeOfDay";
+import { useTvThumbnail } from "./useTvThumbnail";
 import "./cafe.css";
 
 const SKY: Record<TimeOfDay, string> = {
@@ -42,12 +44,17 @@ interface Props {
   task: Task | undefined;
   onAction: (cmd: string, args?: Record<string, unknown>) => void;
   onSettings: () => void;
+  music: MusicSnapshot | null;
 }
 
-export function Scene({ timer, task, onAction, onSettings }: Props) {
+export function Scene({ timer, task, onAction, onSettings, music }: Props) {
   const time = useTimeOfDay(useSettings());
   // Rain and Spook's bobbing would keep the GPU busy in a window nobody can see.
   const visible = useWindowVisible();
+  const thumbnail = useTvThumbnail(music);
+  // An image that failed to load (e.g. offline) leaves the TV showing its drawn play button.
+  const [brokenThumbnail, setBrokenThumbnail] = useState<string | null>(null);
+  const playing = music?.playing ?? false;
   const inFocus = timer.phase === "focus";
   const onBreak = timer.phase === "shortBreak" || timer.phase === "longBreak";
   const paused = timer.phase !== "idle" && !timer.running;
@@ -68,12 +75,23 @@ export function Scene({ timer, task, onAction, onSettings }: Props) {
         )}
         <img className="layer" src={roomBack} alt="" />
         <div className="tint tint-back" />
+        {/* After the tint: a TV glows, it isn't lit by the room. */}
+        {thumbnail && thumbnail !== brokenThumbnail && (
+          <div className={playing ? "tv-screen" : "tv-screen off"}>
+            <img src={thumbnail} alt="" onError={() => setBrokenThumbnail(thumbnail)} />
+          </div>
+        )}
         <div className="ghost-glow" />
-        <Spook pose={poseFor(timer)} />
+        <Spook pose={poseFor(timer)} music={playing} />
         <img className="layer" src={roomFront} alt="" />
+        <div className="drip" aria-hidden="true">
+          <i />
+          <i />
+        </div>
         <div className="tint tint-front" />
 
         <div className="sign">
+          <div className="sign-neon">Spook's Cafe</div>
           <div className="sign-label">{paused ? "Paused" : SIGN_LABEL[timer.phase]}</div>
           <div className="sign-clock">{clock(timer.remainingSecs)}</div>
         </div>

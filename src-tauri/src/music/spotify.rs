@@ -136,7 +136,7 @@ fn osascript(script: &str) -> Result<String> {
     let stderr = String::from_utf8_lossy(&out.stderr);
     // -1743: the user (or nobody yet) hasn't allowed us to control Spotify.
     Err(Error::External(if stderr.contains("-1743") {
-        "Allow Lofi Focus to control Spotify in System Settings → Privacy & Security → Automation".into()
+        "Allow Spook's Cafe to control Spotify in System Settings → Privacy & Security → Automation".into()
     } else {
         format!("Spotify: {}", stderr.trim())
     }))

@@ -8,6 +8,7 @@ import { NotePrompt } from "./NotePrompt";
 import { SessionsDialog } from "./SessionsDialog";
 import { SettingsDialog } from "./SettingsDialog";
 import { TaskEditor } from "./TaskEditor";
+import { useMusic } from "./useMusic";
 import { useTimer } from "./useTimer";
 import { useWeeklyProgress } from "./useWeeklyProgress";
 import "./App.css";
@@ -20,6 +21,8 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
   const { timer, tickError } = useTimer();
+  // One subscription shared by the music bar and Spook's notes.
+  const music = useMusic();
   const { progress, reload: reloadProgress } = useWeeklyProgress(timer?.phase);
 
   const loadTasks = useCallback(() => {
@@ -41,11 +44,17 @@ function App() {
 
   return (
     <main>
-      <Scene timer={timer} task={activeTask} onAction={call} onSettings={() => setShowSettings(true)} />
+      <Scene
+        timer={timer}
+        task={activeTask}
+        onAction={call}
+        onSettings={() => setShowSettings(true)}
+        music={music.music}
+      />
 
       <div className="below">
         {onBreak && <NotePrompt />}
-        <MusicBar />
+        <MusicBar {...music} />
 
         {(error || tickError) && <p className="error">{error || tickError}</p>}
 

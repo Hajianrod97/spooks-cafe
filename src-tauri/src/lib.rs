@@ -100,6 +100,7 @@ pub fn run() {
             music::music_skip,
             music::youtube_sign_in,
             music::youtube_signed_in,
+            music::youtube_thumbnail,
             sessions::week_sessions,
             sessions::latest_session,
             sessions::update_session,

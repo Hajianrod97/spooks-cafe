@@ -271,6 +271,16 @@ pub async fn youtube_sign_in(app: AppHandle) -> Result<()> {
     youtube::open_sign_in(&app)
 }
 
+/// The current YouTube station's artwork for the TV in the scene; None when there's no station
+/// or YouTube can't be reached. curl can take seconds, so it runs on a blocking thread.
+#[tauri::command]
+pub async fn youtube_thumbnail(app: AppHandle) -> Result<Option<String>> {
+    let Some(url) = current(&app).youtube_url() else { return Ok(None) };
+    tauri::async_runtime::spawn_blocking(move || youtube::thumbnail(&url))
+        .await
+        .map_err(|e| Error::External(e.to_string()))?
+}
+
 /// Async on purpose: reading cookies waits on WebKit, which must not block the main thread.
 #[tauri::command]
 pub async fn youtube_signed_in(app: AppHandle) -> Result<bool> {

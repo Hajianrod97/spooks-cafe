@@ -127,8 +127,8 @@ fn build_menu(app: &AppHandle, s: &Snapshot) -> tauri::Result<Menu<Wry>> {
         menu.append(&item(app, "next-track", "⏭ Next track", true)?)?;
     }
     menu.append(&PredefinedMenuItem::separator(app)?)?;
-    menu.append(&item(app, "open", "Open Lofi Focus", true)?)?;
-    menu.append(&PredefinedMenuItem::quit(app, Some("Quit Lofi Focus"))?)?;
+    menu.append(&item(app, "open", "Open Spook's Cafe", true)?)?;
+    menu.append(&PredefinedMenuItem::quit(app, Some("Quit Spook's Cafe"))?)?;
     Ok(menu)
 }
 
