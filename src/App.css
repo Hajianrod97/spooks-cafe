@@ -194,3 +194,16 @@ button.settings { position: fixed; top: 0.75rem; right: 0.75rem; font-size: 1.2r
 .session-form select { flex: 1; padding: 0.35em; border-radius: 8px; }
 .session-form input.minutes { width: 4.5rem; }
 .session .tag { font-size: 0.75em; opacity: 0.6; margin-left: 0.4rem; padding: 0 0.35rem; border: 1px solid currentColor; border-radius: 4px; }
+
+.music { max-width: 360px; margin: 0 auto 1.5rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.music .row { gap: 0.5rem; align-items: center; }
+.music button.play { width: 2.6rem; padding: 0.4em 0; }
+.music select { padding: 0.45em; border-radius: 8px; }
+.music input[type="range"] { flex: 1; min-width: 0; box-shadow: none; padding: 0; }
+.music form input { flex: 1; min-width: 0; padding: 0.45em 0.7em; }
+.editor .signin { justify-content: space-between; align-items: center; gap: 0.5rem; }
+.segmented { display: flex; align-self: center; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); }
+.segmented button { border-radius: 0; box-shadow: none; padding: 0.3em 0.9em; font-size: 0.85em; opacity: 0.6; }
+.segmented button[aria-checked="true"] { opacity: 1; font-weight: 600; }
+.music .now-playing { justify-content: space-between; min-height: 1.8rem; }
+.music .now-playing .hint { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -58,3 +58,20 @@ export interface Session {
 }
 
 export type SessionEdit = Pick<Session, "taskId" | "durationMinutes" | "note">;
+
+export type MusicService = "youTube" | "spotify";
+/** The YouTube preset. */
+export type MusicSource = "lofiGirl" | "chillhop" | "custom";
+
+export interface MusicSnapshot {
+  service: MusicService;
+  source: MusicSource;
+  customUrl: string | null;
+  /** A `spotify:playlist:…` / `spotify:album:…` URI; null resumes what Spotify last played. */
+  spotifyLink: string | null;
+  /** 0–100. */
+  volume: number;
+  playing: boolean;
+  /** "Track — Artist", Spotify only. */
+  nowPlaying: string | null;
+}

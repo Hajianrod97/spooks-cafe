@@ -47,9 +47,10 @@ pub fn update(app: &AppHandle, snapshot: &Snapshot) {
     schedule(app, snapshot.clone(), false);
 }
 
-/// Rebuilds the menu even though the timer hasn't changed, after tasks are added, renamed or
-/// archived. Don't hold the db lock when calling this: building the menu reads the task list.
-pub fn refresh_tasks(app: &AppHandle) {
+/// Rebuilds the menu even though the timer hasn't changed: after tasks are added, renamed or
+/// archived, or music starts or stops. Don't hold the db or music lock when calling this:
+/// building the menu reads both.
+pub fn refresh(app: &AppHandle) {
     schedule(app, timer::current(app), true);
 }
 
@@ -112,6 +113,12 @@ fn build_menu(app: &AppHandle, s: &Snapshot) -> tauri::Result<Menu<Wry>> {
         }
     }
     menu.append(&PredefinedMenuItem::separator(app)?)?;
+    let music = crate::music::current(app);
+    menu.append(&item(app, "music", if music.playing { "⏸ Pause music" } else { "▶ Play music" }, true)?)?;
+    if music.service == crate::music::Service::Spotify {
+        menu.append(&item(app, "next-track", "⏭ Next track", true)?)?;
+    }
+    menu.append(&PredefinedMenuItem::separator(app)?)?;
     menu.append(&item(app, "open", "Open Lofi Focus", true)?)?;
     menu.append(&PredefinedMenuItem::quit(app, Some("Quit Lofi Focus"))?)?;
     Ok(menu)
@@ -147,6 +154,13 @@ fn on_menu(app: &AppHandle, id: &str) {
         "discard" => Action::Discard,
         "skip" => Action::SkipBreak,
         "open" => return crate::show_main_window(app),
+        "music" | "next-track" => {
+            let result = if id == "music" { crate::music::toggle(app).map(|_| ()) } else { crate::music::skip(app, true) };
+            if let Err(e) = result {
+                let _ = app.emit("music-error", e.to_string());
+            }
+            return;
+        }
         _ => return,
     };
     if let Err(e) = timer::apply(app, action) {

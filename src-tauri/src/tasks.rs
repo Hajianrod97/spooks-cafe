@@ -51,13 +51,13 @@ impl TaskInput {
 }
 
 // Each command's db guard is a temporary, dropped at the end of its statement, so the lock is
-// already released when `refresh_tasks` rebuilds the menu (which locks the db itself).
+// already released when `tray::refresh` rebuilds the menu (which locks the db itself).
 
 #[tauri::command]
 pub fn create_task(app: AppHandle, task: TaskInput) -> Result<i64> {
     let task = task.validated()?;
     let id = insert_task(&app.state::<Db>().0.lock().unwrap(), &task)?;
-    crate::tray::refresh_tasks(&app);
+    crate::tray::refresh(&app);
     Ok(id)
 }
 
@@ -65,7 +65,7 @@ pub fn create_task(app: AppHandle, task: TaskInput) -> Result<i64> {
 pub fn update_task(app: AppHandle, id: i64, task: TaskInput) -> Result<()> {
     let task = task.validated()?;
     write_task(&app.state::<Db>().0.lock().unwrap(), id, &task)?;
-    crate::tray::refresh_tasks(&app);
+    crate::tray::refresh(&app);
     Ok(())
 }
 
@@ -73,7 +73,7 @@ pub fn update_task(app: AppHandle, id: i64, task: TaskInput) -> Result<()> {
 #[tauri::command]
 pub fn archive_task(app: AppHandle, id: i64) -> Result<()> {
     set_archived(&app.state::<Db>().0.lock().unwrap(), id)?;
-    crate::tray::refresh_tasks(&app);
+    crate::tray::refresh(&app);
     Ok(())
 }
 

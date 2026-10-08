@@ -15,6 +15,8 @@ const MIGRATIONS: &[&str] = &[
     include_str!("../migrations/001_init.sql"),
     include_str!("../migrations/002_timer_state.sql"),
     include_str!("../migrations/003_preferences.sql"),
+    include_str!("../migrations/004_music.sql"),
+    include_str!("../migrations/005_spotify.sql"),
 ];
 
 pub fn open(app: &AppHandle) -> Result<Db> {

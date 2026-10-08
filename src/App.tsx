@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Phase, Task } from "./types";
+import { MusicBar } from "./MusicBar";
 import { NotePrompt } from "./NotePrompt";
 import { SessionsDialog } from "./SessionsDialog";
 import { SettingsDialog } from "./SettingsDialog";
@@ -71,6 +72,8 @@ function App() {
         {!inFocus && activeTaskId === null && <p className="hint">Pick a task below to start.</p>}
         {onBreak && <NotePrompt />}
       </section>
+
+      <MusicBar />
 
       {(error || tickError) && <p className="error">{error || tickError}</p>}
 

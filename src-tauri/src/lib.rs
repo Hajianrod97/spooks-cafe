@@ -3,6 +3,7 @@ mod app_nap;
 mod db;
 mod error;
 mod export;
+mod music;
 mod progress;
 mod sessions;
 mod settings;
@@ -51,9 +52,11 @@ pub fn run() {
             let timer = timer::restore(&db)?;
             app.manage(db);
             app.manage(timer);
+            app.manage(music::restore(app.state::<db::Db>().inner())?);
             app.manage(tray::TrayState::default());
             tray::create(app.handle())?;
             timer::spawn_ticker(app.handle().clone());
+            music::spawn_spotify_watcher(app.handle().clone());
             settings::apply_saved(app.handle())?;
             // The window starts hidden (tauri.conf.json), so a login launch never flashes it.
             if std::env::args().any(|a| a == settings::HIDDEN_ARG) {
@@ -80,6 +83,15 @@ pub fn run() {
             tasks::archive_task,
             progress::weekly_progress,
             export::export_data,
+            music::get_music,
+            music::set_music_playing,
+            music::set_music_volume,
+            music::set_music_source,
+            music::set_music_service,
+            music::set_spotify_link,
+            music::music_skip,
+            music::youtube_sign_in,
+            music::youtube_signed_in,
             sessions::week_sessions,
             sessions::latest_session,
             sessions::update_session,

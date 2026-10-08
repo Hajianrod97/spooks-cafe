@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import type { Settings } from "./types";
 import { useModal } from "./useModal";
 
@@ -25,6 +26,17 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
   // Durations are edited as text so a field can be empty mid-edit.
   const [durations, setDurations] = useState<Record<DurationKey, string> | null>(null);
   const [error, setError] = useState("");
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+
+  // Re-checked when the sign-in window closes, since that's when the login may have changed.
+  useEffect(() => {
+    const check = () => invoke<boolean>("youtube_signed_in").then(setSignedIn, () => setSignedIn(false));
+    check();
+    const unlisten = listen("youtube-auth", check);
+    return () => {
+      unlisten.then((stop) => stop());
+    };
+  }, []);
 
   useEffect(() => {
     invoke<Settings>("get_settings").then((s) => {
@@ -83,6 +95,22 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
                 </span>
               </label>
             ))}
+            <fieldset>
+              <legend>Music</legend>
+              <div className="row signin">
+                {signedIn && <span>✓ Signed in to YouTube</span>}
+                <button
+                  type="button"
+                  disabled={signedIn === null}
+                  onClick={() => invoke("youtube_sign_in").catch((e) => setError(String(e)))}
+                >
+                  {signedIn ? "Switch account" : "Sign in to YouTube"}
+                </button>
+              </div>
+              {!signedIn && (
+                <p className="hint">Once, so YouTube Premium plays ad-free. Close the window when you're done.</p>
+              )}
+            </fieldset>
           </>
         )}
 

@@ -16,6 +16,9 @@ pub enum Error {
     /// A value sent from the UI failed validation.
     #[error("{0}")]
     InvalidInput(&'static str),
+    /// Talking to another app (e.g. Spotify) failed; the message is shown as-is.
+    #[error("{0}")]
+    External(String),
 }
 
 // Commands return errors to the frontend, so they must be serializable; send the message.
