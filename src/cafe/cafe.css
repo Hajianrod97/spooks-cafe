@@ -40,6 +40,7 @@
 .scene .ghost-glow,
 .scene .rain,
 .scene .spook,
+.scene .spook-props,
 .scene .spook-notes {
   position: absolute;
   pointer-events: none;
@@ -85,6 +86,14 @@
   animation: bob 3.4s ease-in-out infinite;
 }
 .spook.sleep { animation-duration: 6s; }
+
+/* Same box as Spook, but still: a laptop on the table shouldn't float with him. */
+.spook-props {
+  left: 405px;
+  top: 98px;
+  width: 150px;
+  height: 157px;
+}
 
 /* Same box as Spook, so the notes sit where they were drawn; they drift and fade on their own beat. */
 .spook-notes {

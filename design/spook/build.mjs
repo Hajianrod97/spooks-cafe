@@ -47,6 +47,12 @@ const eyes = {
   <g id="eyes" fill="none" ${line()}>
     <path d="M74 96 Q82 104 90 96"/><path d="M110 96 Q118 104 126 96"/>
   </g>`,
+  // Looking down at something held in front of him: shorter eyes, highlights low.
+  down: `
+  <g id="eyes" fill="${C.ink}">
+    <ellipse cx="82" cy="99" rx="9" ry="11"/><ellipse cx="118" cy="99" rx="9" ry="11"/>
+    <circle cx="84" cy="104" r="2.5" fill="#fff"/><circle cx="120" cy="104" r="2.5" fill="#fff"/>
+  </g>`,
 };
 
 const blush = `
@@ -108,16 +114,28 @@ const waveLines = `
     <path d="M164 68 q4 -8 12 -10"/><path d="M196 74 q2 -8 -2 -14"/>
   </g>`;
 
-// Seen from behind the lid; the hands reach over its sides to the keyboard.
-const laptop = `
-  <g id="laptop">
-    <rect x="56" y="136" width="88" height="60" rx="7" fill="${C.laptop}" ${line()}/>
-    <rect x="46" y="194" width="108" height="9" rx="4.5" fill="${C.laptopDark}" ${line(4)}/>
-    <g id="sticker" transform="translate(100 166)">
+// Spook's silhouette as a logo: a sticker on the laptop, the brand mark on the phone's back.
+const spookLogo = (id, x, y, { scale = 1, outline = true } = {}) => `
+    <g id="${id}" transform="translate(${x} ${y})${scale === 1 ? "" : ` scale(${scale})`}">
       <path d="M0 -12 C9 -12 12 -5 12 2 L12 11 Q8 8 4 11 Q0 14 -4 11 Q-8 8 -12 11 L-12 2 C-12 -5 -9 -12 0 -12 Z"
-            fill="${C.body}" ${line(2.5)}/>
+            fill="${C.body}"${outline ? ` ${line(2.5)}` : ""}/>
       <ellipse cx="-4" cy="-1" rx="2" ry="3" fill="${C.ink}"/><ellipse cx="4" cy="-1" rx="2" ry="3" fill="${C.ink}"/>
-    </g>
+    </g>`;
+
+// Seen from behind the lid; the hands reach over its sides to the keyboard.
+const laptop = (top = 136, height = 60) => `
+  <g id="laptop">
+    <rect x="56" y="${top}" width="88" height="${height}" rx="7" fill="${C.laptop}" ${line()}/>
+    <rect x="46" y="${top + height - 2}" width="108" height="9" rx="4.5" fill="${C.laptopDark}" ${line(4)}/>${spookLogo("sticker", 100, top + height / 2)}
+  </g>`;
+
+// Held upright in both mitts; we see its back: camera bump top left, Spook where the brand mark goes.
+const phone = `
+  <g id="phone" transform="rotate(-6 100 140)">
+    <rect x="80" y="116" width="40" height="50" rx="7" fill="${C.phonesDark}" ${line(4)}/>
+    <rect x="84" y="120" width="14" height="14" rx="4" fill="${C.phones}" ${line(2.5)}/>
+    <circle cx="88.5" cy="124.5" r="2.2" fill="${C.ink}"/><circle cx="93.5" cy="129.5" r="2.2" fill="${C.ink}"/>
+    ${spookLogo("phone-logo", 100, 144, { scale: 0.75, outline: false })}
   </g>`;
 
 const zzz = `
@@ -143,11 +161,29 @@ const svg = (name, parts, transform = "") => `<svg xmlns="http://www.w3.org/2000
 </svg>
 `;
 
+// Per scene. A pose is its parts, an optional transform for the whole of Spook, and optional
+// `props`: things standing on a table, written to their own overlay so they sit in front of the
+// table top and don't bob with Spook.
 const poses = {
-  idle: [waveArm, body, eyes.open, blush, mouth.smile, hand("hand-left", 52, 150, -30), waveLines],
-  focus: [body, headphones, eyes.focused, blush, mouth.small, hand("hand-left", 50, 172, -70), hand("hand-right", 150, 172, 70), laptop],
-  break: [body, eyes.happy, blush, mouth.smile, steam(122, 140, 0.55), mug(83, 140), hand("hand-left", 82, 160, -20), hand("hand-right", 120, 160, 20)],
-  sleep: [body, eyes.asleep, blush, mouth.o, zzz],
+  counter: {
+    idle: { parts: [waveArm, body, eyes.open, blush, mouth.smile, hand("hand-left", 52, 150, -30), waveLines] },
+    focus: { parts: [body, headphones, eyes.focused, blush, mouth.small, hand("hand-left", 50, 172, -70), hand("hand-right", 150, 172, 70), laptop()] },
+    break: { parts: [body, eyes.happy, blush, mouth.smile, steam(122, 140, 0.55), mug(83, 140), hand("hand-left", 82, 160, -20), hand("hand-right", 120, 160, 20)] },
+    sleep: { parts: [body, eyes.asleep, blush, mouth.o, zzz], transform: "rotate(-6 100 110)" },
+  },
+  // The table top hides Spook below y ≈ 165 (stage y 222), so everything sits higher than at the counter.
+  table: {
+    idle: { parts: [body, eyes.open, blush, mouth.smile, hand("hand-left", 62, 126, 65), hand("hand-right", 138, 126, -65)], transform: "rotate(4 100 110)" },
+    focus: {
+      parts: [body, headphones, eyes.focused, blush, mouth.small],
+      props: [hand("hand-left", 50, 166, -70), hand("hand-right", 150, 166, 70), laptop(132, 52)],
+    },
+    break: { parts: [body, eyes.down, blush, phone, hand("hand-left", 78, 158, -40), hand("hand-right", 120, 156, 40)] },
+    sleep: {
+      parts: [body, eyes.asleep, blush, mouth.o, hand("hand-left", 68, 140, 14), hand("hand-right", 132, 154, 14), zzz],
+      transform: "translate(0 16) rotate(-14 100 110)",
+    },
+  },
 };
 
 // Menu bar icon: a solid silhouette with the eyes cut out. macOS treats it as a template
@@ -161,13 +197,19 @@ const trayIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="32 24 136 170
 </svg>
 `;
 
-const tilt = { sleep: "rotate(-6 100 110)" };
 // Written straight into the app's assets; design/ keeps only the scripts and previews.
+// The counter's poses keep their original names: spook-<pose>.svg, others are spook-<pose>-<scene>.svg.
 const dir = new URL("../../src/assets/spook/", import.meta.url).pathname;
-for (const [name, parts] of Object.entries(poses)) {
-  writeFileSync(`${dir}spook-${name}.svg`, svg(name, parts, tilt[name]));
+let count = 0;
+for (const [scene, set] of Object.entries(poses)) {
+  for (const [pose, { parts, transform, props }] of Object.entries(set)) {
+    const name = scene === "counter" ? pose : `${pose}-${scene}`;
+    writeFileSync(`${dir}spook-${name}.svg`, svg(name, parts, transform));
+    if (props) writeFileSync(`${dir}spook-${name}-props.svg`, svg(`${name} props`, props));
+    count++;
+  }
 }
 // The notes are their own overlay, shown in any awake pose while music plays.
 writeFileSync(`${dir}spook-notes.svg`, svg("notes", [notes]));
 writeFileSync(new URL("tray-icon.svg", import.meta.url).pathname, trayIcon);
-console.log(`wrote ${Object.keys(poses).length} poses to ${dir}`);
+console.log(`wrote ${count} poses to ${dir}`);

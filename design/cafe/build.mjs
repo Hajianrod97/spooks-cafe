@@ -23,7 +23,7 @@ const svg = (title, body) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0
 const W = { x: 34, y: 44, w: 132, h: 122 };
 // On the far-left wall (centre coordinates, so negative), above the two-seat table. Left to right
 // the wall reads: hanging plant, window, lamp, Spook's snapshot, then the timer sign.
-const TABLES_W = { x: -162, y: 34, w: 136, h: 150 };
+const TABLES_W = { x: -156, y: 24, w: 124, h: 128 };
 
 // ---------- room ----------
 const C = {

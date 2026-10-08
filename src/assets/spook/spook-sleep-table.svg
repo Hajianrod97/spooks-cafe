@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" width="200" height="210">
+  <title>Spook — sleep-table</title>
+  <g id="spook" transform="translate(0 16) rotate(-14 100 110)">
+  <g id="body">
+    <path d="M100 30 C142 30 158 62 158 104 L159 160 Q165 184 148 182 Q138 174 127 186
+             Q114 197 101 185 Q89 174 76 186 Q62 197 52 182 Q35 184 41 160 L42 104
+             C42 62 58 30 100 30 Z" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M48 166 Q60 176 72 168 Q86 158 100 170 Q114 158 128 168 Q140 176 152 166 L153 174
+             Q140 168 127 180 Q114 190 101 179 Q89 168 76 180 Q62 190 49 174 Z"
+          fill="#E4DEF4" opacity="0.9"/>
+    <path d="M128 60 Q140 72 142 92" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+  </g>
+  <g id="eyes" fill="none" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M74 96 Q82 104 90 96"/><path d="M110 96 Q118 104 126 96"/>
+  </g>
+  <g id="blush" fill="#F5B3C6" opacity="0.75">
+    <ellipse cx="68" cy="114" rx="8" ry="4.5"/><ellipse cx="132" cy="114" rx="8" ry="4.5"/>
+  </g><ellipse id="mouth" cx="100" cy="120" rx="3.5" ry="4.5" fill="#3E3A6E"/><g id="hand-left" transform="rotate(14 68 140)">
+    <ellipse cx="68" cy="140" rx="11" ry="8" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M61 143 q7 4 14 0" fill="none" stroke="#E4DEF4" stroke-width="3" stroke-linecap="round"/>
+  </g><g id="hand-right" transform="rotate(14 132 154)">
+    <ellipse cx="132" cy="154" rx="11" ry="8" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M125 157 q7 4 14 0" fill="none" stroke="#E4DEF4" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g id="zzz" fill="#B8B1DC" font-family="ui-rounded, 'SF Pro Rounded', system-ui" font-weight="800">
+    <text x="148" y="52" font-size="22">z</text>
+    <text x="164" y="36" font-size="16">z</text>
+    <text x="176" y="24" font-size="12">z</text>
+  </g>
+  </g>
+</svg>

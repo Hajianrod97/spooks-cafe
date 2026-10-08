@@ -1,4 +1,5 @@
 import type { TimeOfDay } from "../types";
+import { COUNTER_POSES, TABLE_POSES, type PoseSet } from "./Spook";
 import roomBack from "../assets/cafe/room-back.svg";
 import roomFront from "../assets/cafe/room-front.svg";
 import skyAfternoon from "../assets/cafe/sky-afternoon.svg";
@@ -23,6 +24,8 @@ export interface SceneArt {
   back: string;
   front: string;
   sky: Record<TimeOfDay, string>;
+  /** Spook's art for each pose here: what he does depends on where he is. */
+  poses: PoseSet;
   /** The window opening in stage coordinates (960×340), where the rain falls. */
   window: { x: number; y: number; w: number; h: number };
 }
@@ -38,6 +41,7 @@ export const SCENES: SceneArt[] = [
     back: roomBack,
     front: roomFront,
     sky: { morning: skyMorning, afternoon: skyAfternoon, evening: skyEvening, night: skyNight },
+    poses: COUNTER_POSES,
     window: { x: 274, y: 44, w: 132, h: 122 },
   },
   {
@@ -46,6 +50,7 @@ export const SCENES: SceneArt[] = [
     back: tablesBack,
     front: tablesFront,
     sky: { morning: tablesSkyMorning, afternoon: tablesSkyAfternoon, evening: tablesSkyEvening, night: tablesSkyNight },
-    window: { x: 78, y: 34, w: 136, h: 150 },
+    poses: TABLE_POSES,
+    window: { x: 84, y: 24, w: 124, h: 128 },
   },
 ];

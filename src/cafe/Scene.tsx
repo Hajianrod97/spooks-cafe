@@ -51,6 +51,7 @@ export function Scene({ timer, task, onAction, onSettings, music }: Props) {
   const inFocus = timer.phase === "focus";
   const onBreak = timer.phase === "shortBreak" || timer.phase === "longBreak";
   const paused = timer.phase !== "idle" && !timer.running;
+  const pose = poseFor(timer);
 
   // A saved scene that doesn't exist (yet) falls back to the counter.
   const index = Math.max(0, SCENES.findIndex((s) => s.name === scene));
@@ -60,6 +61,7 @@ export function Scene({ timer, task, onAction, onSettings, music }: Props) {
   function panel(art: SceneArt, i: number) {
     const active = i === index;
     const { window: win } = art;
+    const spook = art.poses[pose];
     return (
       <div key={art.name} className={active ? "panel active" : "panel"} aria-hidden={!active}>
         <div className="stage">
@@ -83,7 +85,7 @@ export function Scene({ timer, task, onAction, onSettings, music }: Props) {
           {active && (
             <>
               <div className="ghost-glow" />
-              <Spook pose={poseFor(timer)} music={playing} />
+              <Spook pose={pose} art={spook} music={playing} />
             </>
           )}
           <img className="layer" src={art.front} alt="" />
@@ -94,6 +96,8 @@ export function Scene({ timer, task, onAction, onSettings, music }: Props) {
             </div>
           )}
           <div className="tint" style={maskTo(art.front)} />
+          {/* After the front tint, so props stay unlit like the rest of Spook's art. */}
+          {active && spook.props && <img className="spook-props" src={spook.props} alt="" />}
         </div>
       </div>
     );

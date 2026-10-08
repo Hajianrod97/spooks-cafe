@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" width="960" height="340">
   <title>Cafe — window seat, back</title>
-  <path fill-rule="evenodd" d="M0 0 H960 V230 H0 Z M78 34 V184 H214 V34 Z" fill="#F1E2CF"/>
+  <path fill-rule="evenodd" d="M0 0 H960 V230 H0 Z M84 24 V152 H208 V24 Z" fill="#F1E2CF"/>
   <g id="wallpaper"><rect x="12" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="44" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="236" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="268" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="300" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="332" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="364" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="396" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="428" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="460" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="492" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="524" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="556" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="588" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="620" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="652" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="684" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="716" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="748" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="780" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="812" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="844" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="876" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="908" y="0" width="10" height="196" fill="#EAD7C0"/><rect x="940" y="0" width="10" height="196" fill="#EAD7C0"/></g>
   <rect x="0" y="196" width="960" height="34" fill="#D8B794"/>
   <rect x="0" y="192" width="960" height="8" fill="#C98F62" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
@@ -11,12 +11,12 @@
   <rect x="0" y="226" width="960" height="6" fill="#7E5136" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
   <g transform="translate(240 0)">
   <g id="big-window">
-    <path fill-rule="evenodd" d="M-172 24 H-16 V194 H-172 Z
-          M-162 34 V184 H-26 V34 Z" fill="#A8714A" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-    <rect x="-119.66666666666666" y="70" width="6" height="114" fill="#A8714A" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-    <rect x="-74.33333333333333" y="70" width="6" height="114" fill="#A8714A" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-    <rect x="-162" y="67" width="136" height="6" fill="#A8714A" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-    <rect x="-176" y="190" width="164" height="12" rx="3" fill="#C98F62" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path fill-rule="evenodd" d="M-166 14 H-22 V162 H-166 Z
+          M-156 24 V152 H-32 V24 Z" fill="#A8714A" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <rect x="-117.66666666666666" y="60" width="6" height="92" fill="#A8714A" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <rect x="-76.33333333333333" y="60" width="6" height="92" fill="#A8714A" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <rect x="-156" y="57" width="124" height="6" fill="#A8714A" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <rect x="-170" y="158" width="152" height="12" rx="3" fill="#C98F62" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
   </g>
   <g id="snapshot" transform="translate(-318 0)">
     <rect x="378" y="74" width="74" height="84" rx="3" fill="#FBF3E6" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" transform="rotate(4 415 116)"/>
