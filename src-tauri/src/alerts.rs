@@ -12,7 +12,7 @@ pub enum Alert {
     BreakOver,
 }
 
-/// Posts a notification and plays the chime. Call without holding the timer lock.
+/// Posts a notification and plays the chime (if enabled). Call without holding the timer lock.
 pub fn fire(app: &AppHandle, alert: Alert) {
     let (title, body) = match alert {
         Alert::FocusDone { break_minutes, long } => {
@@ -25,7 +25,9 @@ pub fn fire(app: &AppHandle, alert: Alert) {
     if let Err(e) = app.notification().builder().title(title).body(body).show() {
         eprintln!("notification failed: {e}");
     }
-    chime();
+    if crate::settings::chime_enabled(app) {
+        chime();
+    }
 }
 
 /// Plays through `afplay` (ships with macOS) on its own thread, which also reaps the process.

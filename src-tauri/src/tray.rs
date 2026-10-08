@@ -98,7 +98,7 @@ fn build_menu(app: &AppHandle, s: &Snapshot) -> tauri::Result<Menu<Wry>> {
     };
 
     match s.phase {
-        Phase::Idle => append_start_items(app, &menu, s.task_id)?,
+        Phase::Idle => append_start_items(app, &menu, "Start focus", s.task_id)?,
         Phase::Focus => {
             menu.append(&pause_or_resume()?)?;
             menu.append(&item(app, "discard", "Discard", true)?)?;
@@ -106,9 +106,9 @@ fn build_menu(app: &AppHandle, s: &Snapshot) -> tauri::Result<Menu<Wry>> {
         // Like the window, a break can be cut short by starting the next focus block.
         Phase::ShortBreak | Phase::LongBreak => {
             menu.append(&pause_or_resume()?)?;
-            menu.append(&item(app, "skip", "Skip break", true)?)?;
+            menu.append(&item(app, "skip", "End break", true)?)?;
             menu.append(&PredefinedMenuItem::separator(app)?)?;
-            append_start_items(app, &menu, s.task_id)?;
+            append_start_items(app, &menu, "Continue focus", s.task_id)?;
         }
     }
     menu.append(&PredefinedMenuItem::separator(app)?)?;
@@ -119,13 +119,13 @@ fn build_menu(app: &AppHandle, s: &Snapshot) -> tauri::Result<Menu<Wry>> {
 
 const START_PREFIX: &str = "start:";
 
-/// A "Start focus" submenu with every task; the last one used comes first, checkmarked.
-fn append_start_items(app: &AppHandle, menu: &Menu<Wry>, last_task: Option<i64>) -> tauri::Result<()> {
+/// A submenu with every task to start a focus block on; the last one used comes first, checkmarked.
+fn append_start_items(app: &AppHandle, menu: &Menu<Wry>, label: &str, last_task: Option<i64>) -> tauri::Result<()> {
     let mut tasks = active_tasks(&app.state::<Db>().0.lock().unwrap()).unwrap_or_default();
     // Stable sort: the last task moves to the top, the rest keep their order.
     tasks.sort_by_key(|t| Some(t.id) != last_task);
 
-    let submenu = Submenu::new(app, "Start focus", !tasks.is_empty())?;
+    let submenu = Submenu::new(app, label, !tasks.is_empty())?;
     for task in &tasks {
         let id = format!("{START_PREFIX}{}", task.id);
         let is_last = Some(task.id) == last_task;

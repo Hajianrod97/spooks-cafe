@@ -3,13 +3,14 @@ mod app_nap;
 mod db;
 mod error;
 mod progress;
+mod settings;
 mod tasks;
 mod timer;
 mod tray;
 
 use tauri::{AppHandle, Manager, RunEvent, WindowEvent};
 
-const MAIN_WINDOW: &str = "main";
+pub const MAIN_WINDOW: &str = "main";
 
 /// Menu-bar-only while the window is hidden; a regular app (Dock icon, ⌘-Tab) while it's open.
 fn set_dock_visible(app: &AppHandle, visible: bool) {
@@ -39,6 +40,10 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            Some(vec![settings::HIDDEN_ARG]),
+        ))
         .setup(|app| {
             let db = db::open(app.handle())?;
             let timer = timer::restore(&db)?;
@@ -47,6 +52,13 @@ pub fn run() {
             app.manage(tray::TrayState::default());
             tray::create(app.handle())?;
             timer::spawn_ticker(app.handle().clone());
+            settings::apply_saved(app.handle())?;
+            // The window starts hidden (tauri.conf.json), so a login launch never flashes it.
+            if std::env::args().any(|a| a == settings::HIDDEN_ARG) {
+                set_dock_visible(app.handle(), false);
+            } else {
+                show_main_window(app.handle());
+            }
             Ok(())
         })
         // Closing the window only hides it; the timer keeps running in the menu bar.
@@ -65,6 +77,8 @@ pub fn run() {
             tasks::update_task,
             tasks::archive_task,
             progress::weekly_progress,
+            settings::get_settings,
+            settings::update_settings,
             timer::get_timer,
             timer::start_focus,
             timer::pause,

@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Task, TaskInput } from "./types";
+import { useModal } from "./useModal";
 
 const PALETTE = [
   "#E8A87C", "#C38D9E", "#41B3A3", "#8E9AAF", "#F2C14E",
@@ -60,16 +61,10 @@ interface Props {
 }
 
 export function TaskEditor({ task, canArchive, onClose, onSaved }: Props) {
-  const dialog = useRef<HTMLDialogElement>(null);
+  const dialog = useModal();
   const [form, setForm] = useState(() => toForm(task));
   const [confirmArchive, setConfirmArchive] = useState(false);
   const [error, setError] = useState("");
-
-  // showModal() gives focus trapping, Esc to close and a backdrop for free.
-  // The guard is for StrictMode, which runs effects twice in dev.
-  useEffect(() => {
-    if (dialog.current && !dialog.current.open) dialog.current.showModal();
-  }, []);
 
   const field = (key: keyof Form) => ({
     value: form[key],

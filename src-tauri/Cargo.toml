@@ -26,6 +26,7 @@ rusqlite = { version = "0.40.2", features = ["bundled"] }
 thiserror = "2.0.21"
 chrono = "0.4.45"
 tauri-plugin-notification = "2.5.1"
+tauri-plugin-autostart = "2.7.0"
 
 
 [target.'cfg(target_os = "macos")'.dependencies]

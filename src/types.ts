@@ -14,6 +14,16 @@ export interface Task {
 /** The editable fields of a task, as sent to `create_task` / `update_task`. */
 export type TaskInput = Omit<Task, "id" | "archived">;
 
+export interface Settings {
+  focusMinutes: number;
+  shortBreakMinutes: number;
+  longBreakMinutes: number;
+  longBreakEvery: number;
+  chime: boolean;
+  alwaysOnTop: boolean;
+  launchAtLogin: boolean;
+}
+
 export type Phase = "idle" | "focus" | "shortBreak" | "longBreak";
 
 export interface TimerSnapshot {

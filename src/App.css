@@ -151,7 +151,8 @@ button.add { margin: 0.75rem auto 0; box-shadow: none; background: transparent; 
 .editor h2 { margin: 0 0 0.75rem; font-size: 1.1rem; }
 .editor form { display: flex; flex-direction: column; gap: 0.75rem; }
 .editor label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.85em; flex: 1; min-width: 0; }
-.editor input { padding: 0.4em 0.6em; }
+/* Inputs have an intrinsic width; without this they overflow narrow columns instead of shrinking. */
+.editor input { padding: 0.4em 0.6em; width: 100%; box-sizing: border-box; }
 .editor .pair { display: flex; gap: 0.5rem; }
 .editor summary { cursor: pointer; font-size: 0.9em; }
 .editor details .hint { margin: 0.25rem 0 0.5rem; }
@@ -166,3 +167,11 @@ button.danger { color: #e5484d; }
 @media (prefers-color-scheme: dark) {
   .editor { background: #2f2f2f; }
 }
+
+button.settings { position: fixed; top: 0.75rem; right: 0.75rem; font-size: 1.2rem; }
+.editor fieldset { border: none; padding: 0; margin: 0; }
+.editor legend { font-size: 0.9em; padding: 0; margin-bottom: 0.4rem; }
+.editor .pair label { font-size: 0.8em; }
+.editor label.toggle { flex-direction: row; align-items: center; gap: 0.5rem; font-size: 0.9em; }
+.editor label.toggle input { box-shadow: none; padding: 0; width: auto; }
+.editor .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Phase, Task } from "./types";
+import { SettingsDialog } from "./SettingsDialog";
 import { TaskEditor } from "./TaskEditor";
 import { useTimer } from "./useTimer";
 import { useWeeklyProgress } from "./useWeeklyProgress";
@@ -23,6 +24,7 @@ function App() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [editing, setEditing] = useState<Task | "new" | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
   const { timer, tickError } = useTimer();
   const progress = useWeeklyProgress(timer?.phase);
 
@@ -44,6 +46,7 @@ function App() {
 
   return (
     <main className="container">
+      <button className="icon settings" aria-label="Settings" onClick={() => setShowSettings(true)}>⚙</button>
       <h1>Lofi Focus</h1>
 
       <section className="timer">
@@ -52,7 +55,7 @@ function App() {
         <div className="row">
           {!inFocus && (
             <button disabled={activeTaskId === null} onClick={() => call("start_focus", { taskId: activeTaskId })}>
-              Start focus
+              {onBreak ? "Continue focus" : "Start focus"}
             </button>
           )}
           {timer.phase !== "idle" &&
@@ -60,7 +63,7 @@ function App() {
               ? <button onClick={() => call("pause")}>Pause</button>
               : <button onClick={() => call("resume")}>Resume</button>)}
           {inFocus && <button onClick={() => call("discard")}>Discard</button>}
-          {onBreak && <button onClick={() => call("skip_break")}>Skip break</button>}
+          {onBreak && <button onClick={() => call("skip_break")}>End break</button>}
         </div>
         {!inFocus && activeTaskId === null && <p className="hint">Pick a task below to start.</p>}
       </section>
@@ -113,6 +116,7 @@ function App() {
           }}
         />
       )}
+      {showSettings && <SettingsDialog onClose={() => setShowSettings(false)} />}
     </main>
   );
 }

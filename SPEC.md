@@ -15,7 +15,8 @@ A macOS Pomodoro tracker for a full-time job search / engineering study routine,
 - Alerts: macOS notification + soft chime when a phase ends on its own (not on pause/discard/skip, and not for a phase that would have ended during sleep). The notification is silent; the chime is played by the app so it still sounds under Focus modes. Chime can be turned off in settings.
 - **Pause**: nothing logged. **Discard**: partial minutes logged, not counted as a completed 🍅.
 - Optional one-line note on each completed session.
-- **Skip break** button: ends the break immediately; next focus still waits for a click. Nothing logged.
+- **End break** button: ends the break immediately; next focus still waits for a click. Nothing logged.
+- **Continue focus** (during a break): ends the break and starts the next focus block right away. Called **Start focus** when idle.
 - Long-break counter (every 4th) resets at midnight or after 30+ min with no focus block.
 - **Interruptions** (sleep, quit, crash): timer auto-pauses at elapsed time and restores paused on wake/relaunch. Timer state persisted to SQLite every few seconds.
 - A session counts toward the week it **started** in (no splitting across Monday midnight).

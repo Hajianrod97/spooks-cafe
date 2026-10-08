@@ -14,6 +14,7 @@ const FILE_NAME: &str = if cfg!(debug_assertions) { "lofi-focus-dev.db" } else {
 const MIGRATIONS: &[&str] = &[
     include_str!("../migrations/001_init.sql"),
     include_str!("../migrations/002_timer_state.sql"),
+    include_str!("../migrations/003_preferences.sql"),
 ];
 
 pub fn open(app: &AppHandle) -> Result<Db> {

@@ -8,6 +8,8 @@ pub enum Error {
     Io(#[from] std::io::Error),
     #[error(transparent)]
     Tauri(#[from] tauri::Error),
+    #[error(transparent)]
+    Autostart(#[from] tauri_plugin_autostart::Error),
     /// The requested action doesn't apply to the timer's current phase.
     #[error("{0}")]
     InvalidState(&'static str),
