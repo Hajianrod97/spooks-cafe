@@ -11,6 +11,11 @@
   -webkit-user-select: none;
 }
 
+.scene.paused,
+.scene.paused * {
+  animation-play-state: paused;
+}
+
 .stage {
   position: absolute;
   left: 50%;

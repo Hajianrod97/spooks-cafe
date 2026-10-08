@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import type { Settings } from "./types";
+import type { SceneTime, Settings } from "./types";
 import { useModal } from "./useModal";
 
 type DurationKey = "focusMinutes" | "shortBreakMinutes" | "longBreakMinutes" | "longBreakEvery";
@@ -13,6 +13,26 @@ const DURATIONS: [DurationKey, string][] = [
   ["longBreakMinutes", "Long break (min)"],
   ["longBreakEvery", "Long break every (blocks)"],
 ];
+
+type StartKey = "morningStart" | "afternoonStart" | "eveningStart" | "nightStart";
+
+const DAY_STARTS: [StartKey, string][] = [
+  ["morningStart", "Morning starts"],
+  ["afternoonStart", "Afternoon starts"],
+  ["eveningStart", "Evening starts"],
+  ["nightStart", "Night starts"],
+];
+
+const SCENE_TIMES: [SceneTime, string][] = [
+  ["auto", "Follow the clock"],
+  ["morning", "Always morning"],
+  ["afternoon", "Always afternoon"],
+  ["evening", "Always evening"],
+  ["night", "Always night"],
+];
+
+const HOURS = Array.from({ length: 24 }, (_, h) => h);
+const hourLabel = (h: number) => `${String(h).padStart(2, "0")}:00`;
 
 const TOGGLES: [ToggleKey, string, string?][] = [
   ["chime", "Chime when a phase ends"],
@@ -51,6 +71,10 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
     const parsed = Object.fromEntries(DURATIONS.map(([k]) => [k, Number(durations[k])]));
     if (Object.values(parsed).some((n) => !Number.isInteger(n) || n < 1)) {
       return setError("Durations must be whole numbers of at least 1.");
+    }
+    const starts = DAY_STARTS.map(([k]) => settings[k]);
+    if (starts.some((h, i) => i > 0 && h <= starts[i - 1])) {
+      return setError("Times of day must start in order: morning, afternoon, evening, night.");
     }
     invoke("update_settings", { settings: { ...settings, ...parsed } }).then(
       () => dialog.current?.close(),
@@ -95,6 +119,37 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
                 </span>
               </label>
             ))}
+            <fieldset className="scene">
+              <legend>Scene</legend>
+              <label>
+                Time of day
+                <select
+                  value={settings.sceneTime}
+                  onChange={(e) => setSettings({ ...settings, sceneTime: e.target.value as SceneTime })}
+                >
+                  {SCENE_TIMES.map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </label>
+              <div className="grid">
+                {DAY_STARTS.map(([key, label]) => (
+                  <label key={key}>
+                    {label}
+                    <select
+                      value={settings[key]}
+                      onChange={(e) => setSettings({ ...settings, [key]: Number(e.target.value) })}
+                    >
+                      {HOURS.map((h) => (
+                        <option key={h} value={h}>{hourLabel(h)}</option>
+                      ))}
+                    </select>
+                  </label>
+                ))}
+              </div>
+              <p className="hint">Each lasts until the next starts; night runs past midnight to morning.</p>
+            </fieldset>
+
             <fieldset>
               <legend>Music</legend>
               <div className="row signin">

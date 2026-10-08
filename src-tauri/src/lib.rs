@@ -11,9 +11,15 @@ mod tasks;
 mod timer;
 mod tray;
 
-use tauri::{AppHandle, Manager, RunEvent, WindowEvent};
+use tauri::{AppHandle, Emitter, Manager, RunEvent, WindowEvent};
 
 pub const MAIN_WINDOW: &str = "main";
+
+/// Tells the page whether its window is on screen, so the scene can stop animating while
+/// hidden. `show_main_window` and the close handler are the only places it's shown or hidden.
+fn announce_visible(app: &AppHandle, visible: bool) {
+    let _ = app.emit_to(MAIN_WINDOW, "window-visible", visible);
+}
 
 /// Menu-bar-only while the window is hidden; a regular app (Dock icon, ⌘-Tab) while it's open.
 fn set_dock_visible(app: &AppHandle, visible: bool) {
@@ -36,6 +42,7 @@ pub fn show_main_window(app: &AppHandle) {
     let _ = window.unminimize();
     let _ = window.show();
     let _ = window.set_focus();
+    announce_visible(app, true);
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -73,6 +80,7 @@ pub fn run() {
                     api.prevent_close();
                     let _ = window.hide();
                     set_dock_visible(window.app_handle(), false);
+                    announce_visible(window.app_handle(), false);
                 }
             }
         })

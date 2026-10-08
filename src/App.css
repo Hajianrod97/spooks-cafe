@@ -103,6 +103,9 @@ button.add { margin: 0.75rem auto 0; box-shadow: none; background: transparent; 
 .editor label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.85em; flex: 1; min-width: 0; }
 /* Inputs have an intrinsic width; without this they overflow narrow columns instead of shrinking. */
 .editor input { padding: 0.4em 0.6em; width: 100%; box-sizing: border-box; }
+.editor select { padding: 0.35em; border-radius: 8px; width: 100%; box-sizing: border-box; }
+.editor fieldset.scene { display: flex; flex-direction: column; gap: 0.5rem; }
+.editor fieldset.scene .hint { margin: 0; }
 .editor .pair { display: flex; gap: 0.5rem; }
 .editor summary { cursor: pointer; font-size: 0.9em; }
 .editor details .hint { margin: 0.25rem 0 0.5rem; }

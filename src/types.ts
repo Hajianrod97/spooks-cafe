@@ -22,7 +22,17 @@ export interface Settings {
   chime: boolean;
   alwaysOnTop: boolean;
   launchAtLogin: boolean;
+  /** Hours (0–23) when each time of day starts; each runs until the next, night wraps. */
+  morningStart: number;
+  afternoonStart: number;
+  eveningStart: number;
+  nightStart: number;
+  sceneTime: SceneTime;
 }
+
+export type TimeOfDay = "morning" | "afternoon" | "evening" | "night";
+/** "auto" follows the clock; a time of day pins the scene to it. */
+export type SceneTime = "auto" | TimeOfDay;
 
 export type Phase = "idle" | "focus" | "shortBreak" | "longBreak";
 

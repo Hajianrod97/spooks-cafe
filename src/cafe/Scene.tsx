@@ -1,4 +1,6 @@
-import type { Phase, Task, TimerSnapshot } from "../types";
+import type { Phase, Task, TimeOfDay, TimerSnapshot } from "../types";
+import { useSettings } from "../useSettings";
+import { useWindowVisible } from "../useWindowVisible";
 import roomBack from "../assets/cafe/room-back.svg";
 import roomFront from "../assets/cafe/room-front.svg";
 import skyAfternoon from "../assets/cafe/sky-afternoon.svg";
@@ -6,7 +8,7 @@ import skyEvening from "../assets/cafe/sky-evening.svg";
 import skyMorning from "../assets/cafe/sky-morning.svg";
 import skyNight from "../assets/cafe/sky-night.svg";
 import { Spook, poseFor } from "./Spook";
-import { useTimeOfDay, type TimeOfDay } from "./timeOfDay";
+import { useTimeOfDay } from "./timeOfDay";
 import "./cafe.css";
 
 const SKY: Record<TimeOfDay, string> = {
@@ -43,7 +45,9 @@ interface Props {
 }
 
 export function Scene({ timer, task, onAction, onSettings }: Props) {
-  const time = useTimeOfDay();
+  const time = useTimeOfDay(useSettings());
+  // Rain and Spook's bobbing would keep the GPU busy in a window nobody can see.
+  const visible = useWindowVisible();
   const inFocus = timer.phase === "focus";
   const onBreak = timer.phase === "shortBreak" || timer.phase === "longBreak";
   const paused = timer.phase !== "idle" && !timer.running;
@@ -52,7 +56,7 @@ export function Scene({ timer, task, onAction, onSettings }: Props) {
     // With the overlay title bar the scene stands in for it, so its empty areas drag the window.
     // Tauri only drags when the pressed element itself has the attribute, so each container
     // has it, and the art layers ignore the pointer so a press on them lands on a container.
-    <section className={`scene t-${time}`} data-tauri-drag-region>
+    <section className={`scene t-${time}${visible ? "" : " paused"}`} data-tauri-drag-region>
       <div className="stage" data-tauri-drag-region>
         <img className="layer" src={SKY[time]} alt="" />
         {time === "night" && (
