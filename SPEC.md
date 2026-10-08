@@ -12,7 +12,7 @@ A macOS Pomodoro tracker for a full-time job search / engineering study routine,
 - Task is **locked** while a focus block runs; switching is allowed during breaks.
 - Durations: global default 25 focus / 5 short break / 15 long break every 4. Per-task override.
 - Focus ends → break **auto-starts**. Break ends → next focus **waits for a click**.
-- Alerts: macOS notification + soft chime.
+- Alerts: macOS notification + soft chime when a phase ends on its own (not on pause/discard/skip, and not for a phase that would have ended during sleep). The notification is silent; the chime is played by the app so it still sounds under Focus modes. Chime can be turned off in settings.
 - **Pause**: nothing logged. **Discard**: partial minutes logged, not counted as a completed 🍅.
 - Optional one-line note on each completed session.
 - **Skip break** button: ends the break immediately; next focus still waits for a click. Nothing logged.
@@ -60,7 +60,7 @@ Seed tasks (mid-level target roles, 30 h/week total):
 1. ~~YouTube spike (riskiest)~~ — done, see Music
 2. Scaffold, SQLite schema, seed tasks
 3. Timer engine, menu bar, notifications
-4. Task list, progress bars, settings
+4. Task list, progress bars, settings (incl. chime on/off)
 5. Music player
 6. Lofi visuals
 

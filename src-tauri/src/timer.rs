@@ -8,6 +8,7 @@ use rusqlite::{params, Connection};
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager};
 
+use crate::alerts::{self, Alert};
 use crate::db::Db;
 use crate::error::{Error, Result};
 
@@ -198,6 +199,7 @@ fn publish(app: &AppHandle, snapshot: &Snapshot) {
     // A failed emit only means no window is listening; the timer itself is unaffected.
     let _ = app.emit("timer", snapshot);
     crate::tray::update(app, snapshot);
+    crate::app_nap::set_busy(app, snapshot.running);
 }
 
 fn save(app: &AppHandle, timer: &Timer) -> Result<Snapshot> {
@@ -329,7 +331,8 @@ pub fn spawn_ticker(app: AppHandle) {
         };
         loop {
             std::thread::sleep(TICK);
-            match tick(&app, &mut ticker) {
+            let TickOutcome { result, alert } = tick(&app, &mut ticker);
+            match result {
                 Ok(snapshot) => {
                     ticker.last_error = None;
                     if let Some(snapshot) = snapshot {
@@ -346,12 +349,30 @@ pub fn spawn_ticker(app: AppHandle) {
                     }
                 }
             }
+            if let Some(alert) = alert {
+                alerts::fire(&app, alert);
+            }
         }
     });
 }
 
+/// What a tick decided under the lock, for the loop to act on after releasing it.
+struct TickOutcome {
+    /// A snapshot when there's something new to publish.
+    result: Result<Option<Snapshot>>,
+    /// Set when a phase ended on its own. Kept separate from `result` so a failure after the
+    /// phase changed in memory (e.g. the save) can't swallow the alert.
+    alert: Option<Alert>,
+}
+
+fn tick(app: &AppHandle, ticker: &mut Ticker) -> TickOutcome {
+    let mut alert = None;
+    let result = advance(app, ticker, &mut alert);
+    TickOutcome { result, alert }
+}
+
 /// Advances the timer under its lock. Returns a snapshot when there's something new to publish.
-fn tick(app: &AppHandle, ticker: &mut Ticker) -> Result<Option<Snapshot>> {
+fn advance(app: &AppHandle, ticker: &mut Ticker, alert: &mut Option<Alert>) -> Result<Option<Snapshot>> {
     let state = app.state::<TimerState>();
     let mut timer = state.0.lock().unwrap();
     // Checked every tick, even when idle, so the clock baselines stay current.
@@ -360,6 +381,7 @@ fn tick(app: &AppHandle, ticker: &mut Ticker) -> Result<Option<Snapshot>> {
         return Ok(None);
     }
 
+    // A phase that would have ended during sleep is paused instead, so there's no alert on wake.
     if let Some(last_awake) = suspended_since {
         timer.pause_at(last_awake);
         return save(app, &timer).map(Some);
@@ -378,17 +400,21 @@ fn tick(app: &AppHandle, ticker: &mut Ticker) -> Result<Option<Snapshot>> {
         return Ok(Some(snapshot));
     }
 
-    match timer.phase {
+    *alert = match timer.phase {
         Phase::Focus => {
             let db = app.state::<Db>();
             log_session(&db.0.lock().unwrap(), &timer, timer.durations.focus, true)?;
             timer.last_focus_end = Some(Local::now());
             let (brk, minutes) = timer.next_break();
             timer.begin(brk, minutes);
+            Some(Alert::FocusDone { break_minutes: minutes, long: brk == Phase::LongBreak })
         }
-        Phase::ShortBreak | Phase::LongBreak => timer.go_idle(),
-        Phase::Idle => {}
-    }
+        Phase::ShortBreak | Phase::LongBreak => {
+            timer.go_idle();
+            Some(Alert::BreakOver)
+        }
+        Phase::Idle => None,
+    };
     ticker.last_emitted = None;
     save(app, &timer).map(Some)
 }

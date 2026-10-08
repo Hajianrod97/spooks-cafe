@@ -1,3 +1,5 @@
+mod alerts;
+mod app_nap;
 mod db;
 mod error;
 mod tasks;
@@ -35,6 +37,7 @@ pub fn show_main_window(app: &AppHandle) {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_notification::init())
         .setup(|app| {
             let db = db::open(app.handle())?;
             let timer = timer::restore(&db)?;
