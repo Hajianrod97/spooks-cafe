@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Task } from "./types";
+import { ChalkboardMenu } from "./cafe/ChalkboardMenu";
 import { Scene } from "./cafe/Scene";
 import { MusicBar } from "./MusicBar";
 import { NotePrompt } from "./NotePrompt";
@@ -10,8 +11,6 @@ import { TaskEditor } from "./TaskEditor";
 import { useTimer } from "./useTimer";
 import { useWeeklyProgress } from "./useWeeklyProgress";
 import "./App.css";
-
-const hours = (minutes: number) => +(minutes / 60).toFixed(1);
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -50,43 +49,16 @@ function App() {
 
         {(error || tickError) && <p className="error">{error || tickError}</p>}
 
-        <ul className="tasks">
-          {tasks.map((task) => {
-            const done = progress.get(task.id);
-            const minutes = done?.minutes ?? 0;
-            const target = task.weeklyTargetMinutes;
-            return (
-              <li key={task.id}>
-                <div className="task-row">
-                  <label className={inFocus ? "locked" : undefined}>
-                    <input
-                      type="radio"
-                      name="task"
-                      checked={activeTaskId === task.id}
-                      disabled={inFocus}
-                      onChange={() => setSelectedId(task.id)}
-                    />
-                    <span className="swatch" style={{ background: task.color }} />
-                    <span className="name">{task.name}</span>
-                    <span className="stats">
-                      {hours(minutes)}{target > 0 && ` / ${hours(target)}`} h · {done?.pomodoros ?? 0} 🍅
-                    </span>
-                  </label>
-                  <button className="icon" aria-label={`Edit ${task.name}`} onClick={() => setEditing(task)}>✎</button>
-                </div>
-                {target > 0 && (
-                  <div className="bar">
-                    <div style={{ width: `${Math.min(minutes / target, 1) * 100}%`, background: task.color }} />
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-        <div className="row list-actions">
-          <button className="add" onClick={() => setEditing("new")}>+ Add task</button>
-          <button className="add" onClick={() => setShowSessions(true)}>This week's sessions</button>
-        </div>
+        <ChalkboardMenu
+          tasks={tasks}
+          progress={progress}
+          activeTaskId={activeTaskId}
+          locked={inFocus}
+          onPick={setSelectedId}
+          onEdit={setEditing}
+          onAdd={() => setEditing("new")}
+          onSessions={() => setShowSessions(true)}
+        />
       </div>
 
       {editing && (

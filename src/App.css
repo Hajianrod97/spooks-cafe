@@ -65,8 +65,6 @@ button {
   outline: none;
 }
 
-.tasks { list-style: none; padding: 0; text-align: left; max-width: 360px; margin: 0 auto; }
-.tasks li { padding: 0.35rem 0; }
 .swatch { width: 0.8rem; height: 0.8rem; border-radius: 50%; }
 .error { color: #e5484d; }
 
@@ -74,8 +72,6 @@ button {
 .phase { opacity: 0.7; }
 .clock { font-size: 4rem; font-variant-numeric: tabular-nums; margin: 0.25rem 0 1rem; }
 .timer .row { gap: 0.5rem; }
-.tasks label { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; }
-.tasks label.locked { cursor: not-allowed; opacity: 0.6; }
 
 button:disabled {
   opacity: 0.45;
@@ -85,20 +81,23 @@ button:disabled {
 }
 .hint { opacity: 0.6; font-size: 0.9em; }
 
-.tasks .name { flex: 1; }
-.tasks .stats { opacity: 0.7; font-size: 0.9em; font-variant-numeric: tabular-nums; }
-.bar { height: 4px; margin: 0.3rem 0 0 1.9rem; border-radius: 2px; background: rgba(128, 128, 128, 0.2); overflow: hidden; }
-.bar > div { height: 100%; transition: width 0.4s; }
 
-.task-row { display: flex; align-items: center; gap: 0.25rem; }
-.task-row label { flex: 1; }
 button.icon { padding: 0.1rem 0.45rem; box-shadow: none; background: transparent; opacity: 0.5; }
 button.icon:hover { opacity: 1; }
-button.add { margin: 0.75rem auto 0; box-shadow: none; background: transparent; opacity: 0.7; }
 
-.editor { border: none; border-radius: 12px; padding: 1.25rem 1.5rem; width: min(340px, 90vw); color: inherit; background: #2f2f2f; text-align: left; }
-.editor::backdrop { background: rgba(0, 0, 0, 0.35); }
-.editor h2 { margin: 0 0 0.75rem; font-size: 1.1rem; }
+/* Dialogs are cream menu cards with the same ink outline as the scene's stickers. */
+.editor {
+  --ink: #3e3a6e;
+  border: 4px solid var(--ink);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  width: min(340px, 90vw);
+  color: var(--ink);
+  background: #fff8ec;
+  text-align: left;
+}
+.editor::backdrop { background: rgba(30, 27, 60, 0.55); }
+.editor h2 { margin: 0 0 0.75rem; font-size: 1.25rem; font-weight: 600; }
 .editor form { display: flex; flex-direction: column; gap: 0.75rem; }
 .editor label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.85em; flex: 1; min-width: 0; }
 /* Inputs have an intrinsic width; without this they overflow narrow columns instead of shrinking. */
@@ -113,9 +112,25 @@ button.add { margin: 0.75rem auto 0; box-shadow: none; background: transparent; 
 .editor .actions button { padding: 0.45em 0.9em; }
 .editor .spacer { flex: 1; }
 .palette { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.swatch-pick { width: 1.4rem; height: 1.4rem; padding: 0; border-radius: 50%; box-shadow: none; border: 2px solid transparent; }
-.swatch-pick[aria-checked="true"] { border-color: currentColor; }
+.editor input,
+.editor select,
+.note-prompt input { color: var(--ink); background: #fff; border: 2px solid #cfc9e6; box-shadow: none; }
+.editor input:focus,
+.editor select:focus,
+.note-prompt input:focus { border-color: var(--ink); }
+.editor button { color: var(--ink); background: #fff8ec; border: 2px solid var(--ink); border-radius: 999px; box-shadow: none; }
+.editor button:hover { background: #fff; border-color: var(--ink); }
+.editor button:active { background: #f2ecdf; }
+.editor button[type="submit"] { background: #f2c46d; }
+.editor button[type="submit"]:hover { background: #ffd878; }
+.editor button.icon { border: 0; border-radius: 6px; background: transparent; }
+.editor .swatch-pick { width: 1.4rem; height: 1.4rem; padding: 0; border-radius: 50%; border: 2px solid transparent; }
+.editor .swatch-pick[aria-checked="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 2px #fff; }
 button.danger { color: #e5484d; }
+/* The lighter red is for the dark background; on cream it needs to be darker to stay readable. */
+.editor button.danger,
+.editor .error,
+.note-prompt .error { color: #b8323a; }
 
 .editor fieldset { border: none; padding: 0; margin: 0; }
 .editor legend { font-size: 0.9em; padding: 0; margin-bottom: 0.4rem; }
@@ -124,8 +139,22 @@ button.danger { color: #e5484d; }
 .editor label.toggle input { box-shadow: none; padding: 0; width: auto; }
 .editor .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 
-.list-actions { gap: 0.5rem; }
-.note-prompt { max-width: 360px; margin: 1.25rem auto 0; display: flex; flex-direction: column; gap: 0.35rem; }
+/* A note pinned to the counter during a break. */
+.note-prompt {
+  --ink: #3e3a6e;
+  max-width: 420px;
+  margin: 0 auto 1rem;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  color: var(--ink);
+  background: #fff8ec;
+  text-align: left;
+  transform: rotate(-0.6deg);
+}
 .note-prompt .swatch, .session .swatch { display: inline-block; vertical-align: middle; }
 .note-prompt input { padding: 0.45em 0.7em; }
 
