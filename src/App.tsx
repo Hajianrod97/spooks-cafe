@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Phase, Task } from "./types";
 import { useTimer } from "./useTimer";
+import { useWeeklyProgress } from "./useWeeklyProgress";
 import "./App.css";
 
 const hours = (minutes: number) => +(minutes / 60).toFixed(1);
@@ -21,6 +22,7 @@ function App() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [error, setError] = useState("");
   const { timer, tickError } = useTimer();
+  const progress = useWeeklyProgress(timer?.phase);
 
   useEffect(() => {
     invoke<Task[]>("list_tasks").then(setTasks, (e) => setError(String(e)));
@@ -61,21 +63,34 @@ function App() {
       {(error || tickError) && <p className="error">{error || tickError}</p>}
 
       <ul className="tasks">
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <label className={inFocus ? "locked" : undefined}>
-              <input
-                type="radio"
-                name="task"
-                checked={activeTaskId === task.id}
-                disabled={inFocus}
-                onChange={() => setSelectedId(task.id)}
-              />
-              <span className="swatch" style={{ background: task.color }} />
-              {task.name} — 0 / {hours(task.weeklyTargetMinutes)} h
-            </label>
-          </li>
-        ))}
+        {tasks.map((task) => {
+          const done = progress.get(task.id);
+          const minutes = done?.minutes ?? 0;
+          const target = task.weeklyTargetMinutes;
+          return (
+            <li key={task.id}>
+              <label className={inFocus ? "locked" : undefined}>
+                <input
+                  type="radio"
+                  name="task"
+                  checked={activeTaskId === task.id}
+                  disabled={inFocus}
+                  onChange={() => setSelectedId(task.id)}
+                />
+                <span className="swatch" style={{ background: task.color }} />
+                <span className="name">{task.name}</span>
+                <span className="stats">
+                  {hours(minutes)}{target > 0 && ` / ${hours(target)}`} h · {done?.pomodoros ?? 0} 🍅
+                </span>
+              </label>
+              {target > 0 && (
+                <div className="bar">
+                  <div style={{ width: `${Math.min(minutes / target, 1) * 100}%`, background: task.color }} />
+                </div>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </main>
   );

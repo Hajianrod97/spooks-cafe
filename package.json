@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "db:clear-sessions": "sqlite3 \"$HOME/Library/Application Support/Lofi Focus/lofi-focus.db\" \"DELETE FROM sessions; SELECT changes() || ' sessions deleted';\""
+    "db:clear-sessions": "sqlite3 \"$HOME/Library/Application Support/Lofi Focus/lofi-focus-dev.db\" \"DELETE FROM sessions; SELECT changes() || ' sessions deleted';\""
   },
   "dependencies": {
     "react": "^19.1.0",

@@ -2,6 +2,7 @@ mod alerts;
 mod app_nap;
 mod db;
 mod error;
+mod progress;
 mod tasks;
 mod timer;
 mod tray;
@@ -60,6 +61,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             tasks::list_tasks,
+            progress::weekly_progress,
             timer::get_timer,
             timer::start_focus,
             timer::pause,

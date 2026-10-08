@@ -7,6 +7,9 @@ use crate::error::Result;
 
 pub struct Db(pub Mutex<Connection>);
 
+/// Dev builds get their own file, so test runs (and `npm run db:clear-sessions`) never touch real history.
+const FILE_NAME: &str = if cfg!(debug_assertions) { "lofi-focus-dev.db" } else { "lofi-focus.db" };
+
 // Append-only: never edit a migration that has shipped; add a new one.
 const MIGRATIONS: &[&str] = &[
     include_str!("../migrations/001_init.sql"),
@@ -17,7 +20,7 @@ pub fn open(app: &AppHandle) -> Result<Db> {
     let dir = app.path().data_dir()?.join("Lofi Focus");
     std::fs::create_dir_all(&dir)?;
 
-    let mut conn = Connection::open(dir.join("lofi-focus.db"))?;
+    let mut conn = Connection::open(dir.join(FILE_NAME))?;
     conn.pragma_update(None, "foreign_keys", true)?;
     conn.pragma_update(None, "journal_mode", "WAL")?;
     migrate(&mut conn)?;

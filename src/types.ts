@@ -21,3 +21,9 @@ export interface TimerSnapshot {
   lengthSecs: number;
   focusStreak: number;
 }
+
+export interface TaskProgress {
+  taskId: number;
+  minutes: number;
+  pomodoros: number;
+}
