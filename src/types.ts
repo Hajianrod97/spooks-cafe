@@ -11,6 +11,9 @@ export interface Task {
   archived: boolean;
 }
 
+/** The editable fields of a task, as sent to `create_task` / `update_task`. */
+export type TaskInput = Omit<Task, "id" | "archived">;
+
 export type Phase = "idle" | "focus" | "shortBreak" | "longBreak";
 
 export interface TimerSnapshot {

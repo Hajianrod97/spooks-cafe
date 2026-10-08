@@ -61,6 +61,9 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             tasks::list_tasks,
+            tasks::create_task,
+            tasks::update_task,
+            tasks::archive_task,
             progress::weekly_progress,
             timer::get_timer,
             timer::start_focus,

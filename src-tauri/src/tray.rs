@@ -44,8 +44,17 @@ pub fn create(app: &AppHandle) -> tauri::Result<()> {
 /// Refreshes the menu bar from a snapshot. Safe to call from any thread: the work is
 /// queued onto the main thread, which macOS requires for menu bar changes.
 pub fn update(app: &AppHandle, snapshot: &Snapshot) {
+    schedule(app, snapshot.clone(), false);
+}
+
+/// Rebuilds the menu even though the timer hasn't changed, after tasks are added, renamed or
+/// archived. Don't hold the db lock when calling this: building the menu reads the task list.
+pub fn refresh_tasks(app: &AppHandle) {
+    schedule(app, timer::current(app), true);
+}
+
+fn schedule(app: &AppHandle, snapshot: Snapshot, force: bool) {
     let handle = app.clone();
-    let snapshot = snapshot.clone();
     let _ = app.run_on_main_thread(move || {
         let Some(tray) = handle.tray_by_id(TRAY_ID) else {
             return;
@@ -55,7 +64,7 @@ pub fn update(app: &AppHandle, snapshot: &Snapshot) {
         let shape = MenuShape::from(&snapshot);
         let state = handle.state::<TrayState>();
         let mut current = state.0.lock().unwrap();
-        if *current != Some(shape) {
+        if force || *current != Some(shape) {
             if let Ok(menu) = build_menu(&handle, &snapshot) {
                 let _ = tray.set_menu(Some(menu));
                 *current = Some(shape);

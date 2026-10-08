@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Phase, Task } from "./types";
+import { TaskEditor } from "./TaskEditor";
 import { useTimer } from "./useTimer";
 import { useWeeklyProgress } from "./useWeeklyProgress";
 import "./App.css";
@@ -21,12 +22,14 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const [editing, setEditing] = useState<Task | "new" | null>(null);
   const { timer, tickError } = useTimer();
   const progress = useWeeklyProgress(timer?.phase);
 
-  useEffect(() => {
+  const loadTasks = useCallback(() => {
     invoke<Task[]>("list_tasks").then(setTasks, (e) => setError(String(e)));
   }, []);
+  useEffect(loadTasks, [loadTasks]);
 
   const call = (cmd: string, args?: Record<string, unknown>) =>
     invoke(cmd, args).then(() => setError(""), (e) => setError(String(e)));
@@ -34,8 +37,10 @@ function App() {
   if (!timer) return null;
   const inFocus = timer.phase === "focus";
   const onBreak = timer.phase === "shortBreak" || timer.phase === "longBreak";
-  // Defaults to the last task used, matching the menu bar's "Start focus".
-  const activeTaskId = inFocus ? timer.taskId : (selectedId ?? timer.taskId);
+  // Defaults to the last task used, matching the menu bar's "Start focus". Either may since
+  // have been archived, so only ids still in the list count.
+  const isListed = (id: number | null) => tasks.some((t) => t.id === id);
+  const activeTaskId = inFocus ? timer.taskId : ([selectedId, timer.taskId].find(isListed) ?? null);
 
   return (
     <main className="container">
@@ -69,20 +74,23 @@ function App() {
           const target = task.weeklyTargetMinutes;
           return (
             <li key={task.id}>
-              <label className={inFocus ? "locked" : undefined}>
-                <input
-                  type="radio"
-                  name="task"
-                  checked={activeTaskId === task.id}
-                  disabled={inFocus}
-                  onChange={() => setSelectedId(task.id)}
-                />
-                <span className="swatch" style={{ background: task.color }} />
-                <span className="name">{task.name}</span>
-                <span className="stats">
-                  {hours(minutes)}{target > 0 && ` / ${hours(target)}`} h · {done?.pomodoros ?? 0} 🍅
-                </span>
-              </label>
+              <div className="task-row">
+                <label className={inFocus ? "locked" : undefined}>
+                  <input
+                    type="radio"
+                    name="task"
+                    checked={activeTaskId === task.id}
+                    disabled={inFocus}
+                    onChange={() => setSelectedId(task.id)}
+                  />
+                  <span className="swatch" style={{ background: task.color }} />
+                  <span className="name">{task.name}</span>
+                  <span className="stats">
+                    {hours(minutes)}{target > 0 && ` / ${hours(target)}`} h · {done?.pomodoros ?? 0} 🍅
+                  </span>
+                </label>
+                <button className="icon" aria-label={`Edit ${task.name}`} onClick={() => setEditing(task)}>✎</button>
+              </div>
               {target > 0 && (
                 <div className="bar">
                   <div style={{ width: `${Math.min(minutes / target, 1) * 100}%`, background: task.color }} />
@@ -92,6 +100,19 @@ function App() {
           );
         })}
       </ul>
+      <button className="add" onClick={() => setEditing("new")}>+ Add task</button>
+
+      {editing && (
+        <TaskEditor
+          task={editing === "new" ? null : editing}
+          canArchive={!(inFocus && editing !== "new" && editing.id === timer.taskId)}
+          onClose={() => setEditing(null)}
+          onSaved={() => {
+            setEditing(null);
+            loadTasks();
+          }}
+        />
+      )}
     </main>
   );
 }

@@ -11,6 +11,9 @@ pub enum Error {
     /// The requested action doesn't apply to the timer's current phase.
     #[error("{0}")]
     InvalidState(&'static str),
+    /// A value sent from the UI failed validation.
+    #[error("{0}")]
+    InvalidInput(&'static str),
 }
 
 // Commands return errors to the frontend, so they must be serializable; send the message.
