@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Phase, Task } from "./types";
+import { NotePrompt } from "./NotePrompt";
+import { SessionsDialog } from "./SessionsDialog";
 import { SettingsDialog } from "./SettingsDialog";
 import { TaskEditor } from "./TaskEditor";
 import { useTimer } from "./useTimer";
@@ -25,8 +27,9 @@ function App() {
   const [error, setError] = useState("");
   const [editing, setEditing] = useState<Task | "new" | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showSessions, setShowSessions] = useState(false);
   const { timer, tickError } = useTimer();
-  const progress = useWeeklyProgress(timer?.phase);
+  const { progress, reload: reloadProgress } = useWeeklyProgress(timer?.phase);
 
   const loadTasks = useCallback(() => {
     invoke<Task[]>("list_tasks").then(setTasks, (e) => setError(String(e)));
@@ -66,6 +69,7 @@ function App() {
           {onBreak && <button onClick={() => call("skip_break")}>End break</button>}
         </div>
         {!inFocus && activeTaskId === null && <p className="hint">Pick a task below to start.</p>}
+        {onBreak && <NotePrompt />}
       </section>
 
       {(error || tickError) && <p className="error">{error || tickError}</p>}
@@ -103,7 +107,10 @@ function App() {
           );
         })}
       </ul>
-      <button className="add" onClick={() => setEditing("new")}>+ Add task</button>
+      <div className="row list-actions">
+        <button className="add" onClick={() => setEditing("new")}>+ Add task</button>
+        <button className="add" onClick={() => setShowSessions(true)}>This week's sessions</button>
+      </div>
 
       {editing && (
         <TaskEditor
@@ -117,6 +124,9 @@ function App() {
         />
       )}
       {showSettings && <SettingsDialog onClose={() => setShowSettings(false)} />}
+      {showSessions && (
+        <SessionsDialog tasks={tasks} onClose={() => setShowSessions(false)} onChanged={reloadProgress} />
+      )}
     </main>
   );
 }

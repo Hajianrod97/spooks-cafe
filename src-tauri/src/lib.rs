@@ -3,6 +3,7 @@ mod app_nap;
 mod db;
 mod error;
 mod progress;
+mod sessions;
 mod settings;
 mod tasks;
 mod timer;
@@ -77,6 +78,10 @@ pub fn run() {
             tasks::update_task,
             tasks::archive_task,
             progress::weekly_progress,
+            sessions::week_sessions,
+            sessions::latest_session,
+            sessions::update_session,
+            sessions::delete_session,
             settings::get_settings,
             settings::update_settings,
             timer::get_timer,

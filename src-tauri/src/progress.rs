@@ -39,7 +39,7 @@ fn progress_between(conn: &Connection, start: i64, end: i64) -> Result<Vec<TaskP
 }
 
 /// Local Monday 00:00 of `now`'s week, and the following Monday 00:00.
-fn week_bounds(now: DateTime<Local>) -> (DateTime<Local>, DateTime<Local>) {
+pub(crate) fn week_bounds(now: DateTime<Local>) -> (DateTime<Local>, DateTime<Local>) {
     let monday = now.date_naive() - Days::new(now.weekday().num_days_from_monday().into());
     (local_midnight(monday), local_midnight(monday + Days::new(7)))
 }

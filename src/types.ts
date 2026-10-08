@@ -40,3 +40,18 @@ export interface TaskProgress {
   minutes: number;
   pomodoros: number;
 }
+
+export interface Session {
+  id: number;
+  taskId: number;
+  taskName: string;
+  taskColor: string;
+  taskArchived: boolean;
+  /** Unix seconds. */
+  startedAt: number;
+  durationMinutes: number;
+  completed: boolean;
+  note: string | null;
+}
+
+export type SessionEdit = Pick<Session, "taskId" | "durationMinutes" | "note">;

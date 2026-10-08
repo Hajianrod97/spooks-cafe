@@ -175,3 +175,22 @@ button.settings { position: fixed; top: 0.75rem; right: 0.75rem; font-size: 1.2r
 .editor label.toggle { flex-direction: row; align-items: center; gap: 0.5rem; font-size: 0.9em; }
 .editor label.toggle input { box-shadow: none; padding: 0; width: auto; }
 .editor .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+.list-actions { gap: 0.5rem; }
+.note-prompt { max-width: 360px; margin: 1.25rem auto 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.note-prompt .swatch, .session .swatch { display: inline-block; vertical-align: middle; }
+.note-prompt input { padding: 0.45em 0.7em; }
+
+.editor.sessions { width: min(440px, 92vw); max-height: 80vh; }
+.sessions h3 { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.6; margin: 0.9rem 0 0.3rem; }
+.session { padding: 0.3rem 0; border-bottom: 1px solid rgba(128, 128, 128, 0.15); }
+.session-line { display: flex; align-items: center; gap: 0.45rem; }
+.session .time { font-variant-numeric: tabular-nums; opacity: 0.7; font-size: 0.9em; width: 3.2rem; }
+.session .name { flex: 1; }
+.session .stats { opacity: 0.7; font-size: 0.85em; }
+.session .note { font-size: 0.85em; opacity: 0.75; margin-left: 3.65rem; }
+.session button.danger { padding: 0.15rem 0.6rem; }
+.session-form { display: flex; flex-direction: column; gap: 0.4rem; }
+.session-form select { flex: 1; padding: 0.35em; border-radius: 8px; }
+.session-form input.minutes { width: 4.5rem; }
+.session .tag { font-size: 0.75em; opacity: 0.6; margin-left: 0.4rem; padding: 0 0.35rem; border: 1px solid currentColor; border-radius: 4px; }
