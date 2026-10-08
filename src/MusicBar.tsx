@@ -21,14 +21,17 @@ export function MusicBar() {
   // and for Spotify an osascript process.
   const [volume, setVolume] = useState<number | null>(null);
   const pending = useRef<number | undefined>(undefined);
+  const moves = useRef(0);
   useEffect(() => () => clearTimeout(pending.current), []);
 
   if (!music) return null;
   const changeVolume = (value: number) => {
     setVolume(value);
+    const move = ++moves.current;
     clearTimeout(pending.current);
     pending.current = window.setTimeout(() => {
-      call("set_music_volume", { volume: value }).then(() => setVolume(null));
+      // Hand the slider back to the backend's value only if the user hasn't moved it since.
+      call("set_music_volume", { volume: value }).then(() => moves.current === move && setVolume(null));
     }, 150);
   };
   const spotify = music.service === "spotify";

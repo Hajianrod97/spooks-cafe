@@ -56,7 +56,7 @@ pub fn run() {
             app.manage(tray::TrayState::default());
             tray::create(app.handle())?;
             timer::spawn_ticker(app.handle().clone());
-            music::spawn_spotify_watcher(app.handle().clone());
+            music::spawn_watcher(app.handle().clone());
             settings::apply_saved(app.handle())?;
             // The window starts hidden (tauri.conf.json), so a login launch never flashes it.
             if std::env::args().any(|a| a == settings::HIDDEN_ARG) {

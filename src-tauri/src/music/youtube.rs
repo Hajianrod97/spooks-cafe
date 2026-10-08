@@ -2,8 +2,8 @@
 //! scripts into it with `eval`, never read back, so control is desired-state: we store what
 //! we want in the page's sessionStorage, and an injected loop keeps the `<video>` matching it.
 
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::time::Duration;
+use std::sync::Mutex;
+use std::time::{Duration, Instant};
 
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, Url, WebviewUrl, WebviewWindowBuilder};
@@ -18,8 +18,9 @@ const SIGN_IN: &str = "yt-sign-in";
 /// so after this long paused it's closed. Live streams rejoin at the live edge anyway.
 const IDLE_CLOSE: Duration = Duration::from_secs(10 * 60);
 
-/// Bumped on every sync; a pending idle close only fires if nothing changed since it was set.
-static GENERATION: AtomicU64 = AtomicU64::new(0);
+/// When a paused player should close. Every sync resets it, so any change while paused restarts
+/// the countdown; the music watcher calls `close_if_idle` every few seconds.
+static IDLE_DEADLINE: Mutex<Option<Instant>> = Mutex::new(None);
 
 // Google rejects sign-in from user agents that look like an embedded webview.
 // WKWebView's default UA omits the "Version/x Safari/x" tokens, so we claim to be Safari.
@@ -71,7 +72,7 @@ fn desired_literal(m: &MusicSnapshot) -> String {
 /// paused (so a playlist resumes where it was) until `IDLE_CLOSE`, or until another service
 /// takes over, which closes it at once.
 pub(super) fn sync(app: &AppHandle, prev: &MusicSnapshot, next: &MusicSnapshot) -> Result<()> {
-    let generation = GENERATION.fetch_add(1, Ordering::SeqCst) + 1;
+    *IDLE_DEADLINE.lock().unwrap() = None;
     let window = app.get_webview_window(PLAYER);
     if next.service != Service::YouTube {
         if let Some(window) = window {
@@ -100,20 +101,19 @@ pub(super) fn sync(app: &AppHandle, prev: &MusicSnapshot, next: &MusicSnapshot) 
         "sessionStorage.setItem('lofi-focus', {desired}); window.__lofiApply && window.__lofiApply();"
     ))?;
     if !next.playing {
-        close_if_idle(app.clone(), generation);
+        *IDLE_DEADLINE.lock().unwrap() = Some(Instant::now() + IDLE_CLOSE);
     }
     Ok(())
 }
 
-fn close_if_idle(app: AppHandle, generation: u64) {
-    std::thread::spawn(move || {
-        std::thread::sleep(IDLE_CLOSE);
-        if GENERATION.load(Ordering::SeqCst) == generation {
-            if let Some(window) = app.get_webview_window(PLAYER) {
-                let _ = window.destroy();
-            }
+pub(super) fn close_if_idle(app: &AppHandle) {
+    let mut deadline = IDLE_DEADLINE.lock().unwrap();
+    if deadline.is_some_and(|d| Instant::now() >= d) {
+        *deadline = None;
+        if let Some(window) = app.get_webview_window(PLAYER) {
+            let _ = window.destroy();
         }
-    });
+    }
 }
 
 /// Accepts YouTube video, playlist and short links, rewritten to a page that starts playing.
@@ -148,6 +148,11 @@ pub(super) fn normalize_url(input: &str) -> Result<String> {
             }
             // Channel live pages, e.g. youtube.com/@LofiGirl/live.
             path if path.starts_with("/@") => format!("https://www.youtube.com{path}"),
+            // Share links for live streams (/live/<id>) and Shorts (/shorts/<id>).
+            path if path.starts_with("/live/") || path.starts_with("/shorts/") => {
+                let id = path.split('/').nth(2).filter(|id| !id.is_empty()).ok_or(INVALID)?;
+                format!("https://www.youtube.com/watch?v={id}")
+            }
             _ => return Err(INVALID),
         },
         _ => return Err(INVALID),
@@ -206,7 +211,9 @@ mod tests {
         assert_eq!(n(" https://www.youtube.com/watch?v=abc&t=42s&list=PL1 "), "https://www.youtube.com/watch?v=abc&list=PL1");
         assert_eq!(n("https://youtube.com/playlist?list=PL1"), "https://www.youtube.com/watch?list=PL1");
         assert_eq!(n("https://m.youtube.com/@LofiGirl/live"), "https://www.youtube.com/@LofiGirl/live");
-        for bad in ["not a url", "https://vimeo.com/1", "https://www.youtube.com/", "javascript:alert(1)", "https://youtu.be/"] {
+        assert_eq!(n("https://www.youtube.com/live/jfKfPfyJRdk?si=x"), "https://www.youtube.com/watch?v=jfKfPfyJRdk");
+        assert_eq!(n("https://youtube.com/shorts/abc123"), "https://www.youtube.com/watch?v=abc123");
+        for bad in ["not a url", "https://vimeo.com/1", "https://www.youtube.com/", "javascript:alert(1)", "https://youtu.be/", "https://www.youtube.com/live/"] {
             assert!(normalize_url(bad).is_err(), "{bad}");
         }
     }

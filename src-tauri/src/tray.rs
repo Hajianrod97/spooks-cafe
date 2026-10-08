@@ -154,11 +154,16 @@ fn on_menu(app: &AppHandle, id: &str) {
         "discard" => Action::Discard,
         "skip" => Action::SkipBreak,
         "open" => return crate::show_main_window(app),
+        // Off the main thread (menu handlers run on it): these can wait seconds on osascript
+        // while Spotify launches or macOS shows its permission prompt.
         "music" | "next-track" => {
-            let result = if id == "music" { crate::music::toggle(app).map(|_| ()) } else { crate::music::skip(app, true) };
-            if let Err(e) = result {
-                let _ = app.emit("music-error", e.to_string());
-            }
+            let (app, toggle) = (app.clone(), id == "music");
+            std::thread::spawn(move || {
+                let result = if toggle { crate::music::toggle(&app).map(|_| ()) } else { crate::music::skip(&app, true) };
+                if let Err(e) = result {
+                    let _ = app.emit("music-error", e.to_string());
+                }
+            });
             return;
         }
         _ => return,

@@ -118,11 +118,15 @@ fn change(app: &AppHandle, f: impl FnOnce(&mut MusicSnapshot) -> Result<()>) -> 
     if before == after {
         return Ok(after);
     }
-    youtube::sync(app, &before, &after)?;
-    if let Err(e) = spotify::sync(&before, &after) {
-        // Spotify refused (not installed, permission denied): don't claim it's playing.
-        if after.playing && after.service == Service::Spotify {
-            after = observe(app, |m| m.playing = false).unwrap_or(after);
+    let synced = youtube::sync(app, &before, &after).and_then(|()| spotify::sync(&before, &after));
+    // Restart the settle window now the services have caught up: launching Spotify alone can
+    // take longer than `COMMAND_SETTLE`.
+    app.state::<MusicState>().0.lock().unwrap().last_command = Instant::now();
+    if let Err(e) = synced {
+        // The player window failed to open, or Spotify is missing or not permitted: whatever
+        // happened, the UI must hear about it, and it mustn't claim music is playing.
+        if after.playing {
+            after = observe(app, |music| music.snapshot.playing = false).unwrap_or(after);
         }
         publish(app, &before, &after);
         return Err(e);
@@ -133,12 +137,12 @@ fn change(app: &AppHandle, f: impl FnOnce(&mut MusicSnapshot) -> Result<()>) -> 
 
 /// Records state read back from a service (Spotify paused in its own window, a new track)
 /// without sending anything to it. Returns the new snapshot if it changed.
-fn observe(app: &AppHandle, f: impl FnOnce(&mut MusicSnapshot)) -> Option<MusicSnapshot> {
+fn observe(app: &AppHandle, f: impl FnOnce(&mut Music)) -> Option<MusicSnapshot> {
     let (before, after) = {
         let state = app.state::<MusicState>();
         let mut music = state.0.lock().unwrap();
         let before = music.snapshot.clone();
-        f(&mut music.snapshot);
+        f(&mut music);
         (before, music.snapshot.clone())
     };
     (before != after).then(|| {
@@ -147,18 +151,22 @@ fn observe(app: &AppHandle, f: impl FnOnce(&mut MusicSnapshot)) -> Option<MusicS
     })
 }
 
-/// Background loop: while Spotify is the service, keeps our state in step with the app, since
-/// you can pause, skip or change volume in Spotify itself.
-pub fn spawn_spotify_watcher(app: AppHandle) {
+/// Background loop: closes an idle YouTube player, and while Spotify is the service keeps our
+/// state in step with the app, since you can pause, skip or change volume in Spotify itself.
+pub fn spawn_watcher(app: AppHandle) {
     std::thread::spawn(move || loop {
         std::thread::sleep(spotify::POLL);
+        youtube::close_if_idle(&app);
         if current(&app).service != Service::Spotify {
             continue;
         }
         // Read without holding our lock: osascript takes tens of milliseconds.
         let Some(status) = spotify::status() else { continue };
-        let settled = app.state::<MusicState>().0.lock().unwrap().last_command.elapsed() >= COMMAND_SETTLE;
-        observe(&app, |m| {
+        observe(&app, |music| {
+            // Checked under the same lock as the write, so a command that lands while we were
+            // reading Spotify can't be overwritten by the older reading.
+            let settled = music.last_command.elapsed() >= COMMAND_SETTLE;
+            let m = &mut music.snapshot;
             if m.service != Service::Spotify {
                 return;
             }
