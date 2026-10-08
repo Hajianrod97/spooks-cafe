@@ -1,0 +1,29 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Cafe preview</title>
+<!-- Mirrors src/cafe/cafe.css: a 960-wide stage centred in a scene that crops it. -->
+<style>
+  body { margin: 0; padding: 16px; background: #1d1b36; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .scene { position: relative; height: 340px; overflow: hidden; border-radius: 12px; }
+  .stage { position: absolute; left: 50%; top: 0; width: 960px; height: 340px; margin-left: -480px; }
+  .stage img, .tint { position: absolute; left: 0; top: 0; width: 960px; height: 340px; }
+  .stage img.spook { left: 405px; top: 98px; width: 150px; height: 157px; }
+  .tint { -webkit-mask-size: 960px 340px; mask-size: 960px 340px; }
+  .tint.back { -webkit-mask-image: url(../../src/assets/cafe/room-back.svg); mask-image: url(../../src/assets/cafe/room-back.svg); }
+  .tint.front { -webkit-mask-image: url(../../src/assets/cafe/room-front.svg); mask-image: url(../../src/assets/cafe/room-front.svg); }
+  .morning .tint { background: rgba(255, 200, 140, .14); mix-blend-mode: soft-light; }
+  .evening .tint { background: rgba(240, 110, 100, .22); mix-blend-mode: multiply; }
+  .night .tint { background: rgba(52, 46, 120, .5); mix-blend-mode: multiply; }
+</style>
+<div class="scene night" style="width: 960px">
+  <div class="stage">
+    <img src="../../src/assets/cafe/sky-night.svg"><img src="../../src/assets/cafe/room-back.svg"><div class="tint back"></div>
+    <img class="spook" src="../../src/assets/spook/spook-focus.svg"><img src="../../src/assets/cafe/room-front.svg"><div class="tint front"></div>
+  </div>
+</div>
+<div class="scene morning" style="width: 480px">
+  <div class="stage">
+    <img src="../../src/assets/cafe/sky-morning.svg"><img src="../../src/assets/cafe/room-back.svg"><div class="tint back"></div>
+    <img class="spook" src="../../src/assets/spook/spook-idle.svg"><img src="../../src/assets/cafe/room-front.svg"><div class="tint front"></div>
+  </div>
+</div>

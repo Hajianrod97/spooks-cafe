@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="32 24 136 170" width="54" height="68">
+  <mask id="eyes-cut"><rect x="0" y="0" width="200" height="210" fill="#fff"/>
+    <ellipse cx="80" cy="98" rx="12" ry="17" fill="#000"/><ellipse cx="120" cy="98" rx="12" ry="17" fill="#000"/></mask>
+  <path mask="url(#eyes-cut)" d="M100 30 C142 30 158 62 158 104 L159 160 Q165 184 148 182 Q138 174 127 186
+           Q114 197 101 185 Q89 174 76 186 Q62 197 52 182 Q35 184 41 160 L42 104 C42 62 58 30 100 30 Z"
+        fill="#000" stroke="#000" stroke-width="8" stroke-linejoin="round"/>
+</svg>

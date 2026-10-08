@@ -1,5 +1,6 @@
 use std::sync::Mutex;
 
+use tauri::image::Image;
 use tauri::menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem, Submenu};
 use tauri::tray::TrayIconBuilder;
 use tauri::{AppHandle, Emitter, Manager, Wry};
@@ -31,8 +32,14 @@ pub struct TrayState(Mutex<Option<MenuShape>>);
 
 pub fn create(app: &AppHandle) -> tauri::Result<()> {
     let snapshot = timer::current(app);
-    TrayIconBuilder::with_id(TRAY_ID)
-        .title(title(&snapshot))
+    let mut builder = TrayIconBuilder::with_id(TRAY_ID)
+        .icon(Image::from_bytes(include_bytes!("../icons/tray.png"))?)
+        // A template image is recoloured by macOS to match a light or dark menu bar.
+        .icon_as_template(true);
+    if let Some(title) = title(&snapshot) {
+        builder = builder.title(title);
+    }
+    builder
         .menu(&build_menu(app, &snapshot)?)
         .show_menu_on_left_click(true)
         .on_menu_event(|app, event| on_menu(app, event.id().as_ref()))
@@ -60,7 +67,7 @@ fn schedule(app: &AppHandle, snapshot: Snapshot, force: bool) {
         let Some(tray) = handle.tray_by_id(TRAY_ID) else {
             return;
         };
-        let _ = tray.set_title(Some(title(&snapshot)));
+        let _ = tray.set_title(title(&snapshot));
 
         let shape = MenuShape::from(&snapshot);
         let state = handle.state::<TrayState>();
@@ -74,13 +81,14 @@ fn schedule(app: &AppHandle, snapshot: Snapshot, force: bool) {
     });
 }
 
-fn title(s: &Snapshot) -> String {
+/// Text beside the Spook icon. Idle shows the icon alone.
+fn title(s: &Snapshot) -> Option<String> {
     let clock = format!("{:02}:{:02}", s.remaining_secs / 60, s.remaining_secs % 60);
     let paused = if s.running { "" } else { " ⏸" };
     match s.phase {
-        Phase::Idle => "🍅".into(),
-        Phase::Focus => format!("🍅 {clock}{paused}"),
-        Phase::ShortBreak | Phase::LongBreak => format!("☕ {clock}{paused}"),
+        Phase::Idle => None,
+        Phase::Focus => Some(format!("{clock}{paused}")),
+        Phase::ShortBreak | Phase::LongBreak => Some(format!("☕ {clock}{paused}")),
     }
 }
 

@@ -40,7 +40,7 @@ Seed tasks (mid-level target roles, 30 h/week total):
 | Debugging (exercises + tools) | 1 |
 
 ## Views
-- Weekly progress bars per task: `LeetCode — 6.5 / 8 h · 14 🍅`
+- Weekly progress bars per task: `LeetCode — 6.5 / 8 h · 14 👻` (the unit icon is Spook's face, drawn as SVG, not an emoji)
 - One-click export to JSON/CSV.
 
 ## Music (independent of the timer)
@@ -53,9 +53,13 @@ Seed tasks (mid-level target roles, 30 h/week total):
 - Fallback: shuffle a local folder (`~/Music/Lofi`) — optional, decide after Spotify.
 
 ## Look & shell
-- Cozy palette that shifts with time of day: four fixed phases, adjustable in settings — morning 6–12, afternoon 12–17, evening 17–20, night 20–6.
-- Small animated scene element: corner window — sun + dust (morning), bright daylight (afternoon), sunset (evening), rain (night); optional steaming mug.
-- Menu bar countdown (`🍅 18:42`) with quick controls + full main window.
+- Theme: a cafe run by **Spook**, a lofi sheet-ghost (flat sticker style: indigo outline, cream body, blush, purple headphones over the ears). Art lives in `design/` as SVG built by `node design/spook/build.mjs` and `node design/cafe/build.mjs`.
+- Spook's pose follows the timer: idle → waving, focus → headphones + typing on a laptop, break → sipping coffee, paused → dozing.
+- Main window layout (480–960 wide, height free; the art is 960 wide and a wider window reveals more of the cafe): cafe scene on top (window, shelf TV, string lights, counter; Spook floats behind the counter), timer on a hanging chalk sign, controls on the counter, music bar, then the task list as a chalkboard "This week's menu".
+- Palette shifts with time of day: four fixed phases, adjustable in settings — morning 6–12, afternoon 12–17, evening 17–20, night 20–6. The room is drawn once and tinted per phase (tint masked to the room, so the sky and Spook keep their colours; Spook glows at night).
+- The cafe window shows a **pixel-art sky** (decided over flat): sunrise, daylight, pixel sunset, night with moon and rain; a pixel city skyline with lit windows in the evening and at night.
+- Menu bar countdown (`👻 18:42`, Spook as a template-image tray icon, not an emoji) with quick controls + full main window.
+- Clickable mockup: https://claude.ai/artifact/XJ1C9sQtjFkmYFaXPz4b2X (private).
 - Closing the main window keeps the app running in the menu bar. Optional always-on-top toggle (default off).
 - Launch at login, menu bar only (main window closed); toggle in settings.
 
@@ -65,7 +69,7 @@ Seed tasks (mid-level target roles, 30 h/week total):
 3. Timer engine, menu bar, notifications
 4. Task list, progress bars, settings (incl. chime on/off)
 5. Music player
-6. Lofi visuals
+6. Lofi visuals — the Spook cafe (6a scene, time-of-day sky and tint, tray icon → 6b time-of-day hours in settings, animations paused while hidden → 6c chalkboard menu + dialogs → 6d music bar)
 
 ## Later (practice tickets for the user)
 - History view: past weeks, daily heatmap, per-task trends

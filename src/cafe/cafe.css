@@ -1,0 +1,187 @@
+/* The art is drawn on a fixed 960×340 canvas (see design/cafe/build.mjs). The stage holds it
+   centred, and the scene crops it to the window's width, so a wider window shows more cafe. */
+.scene {
+  --ink: #3e3a6e;
+  --cream: #fff8ec;
+  position: relative;
+  height: 340px;
+  overflow: hidden;
+  font-family: Fredoka, system-ui, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 960px;
+  height: 340px;
+  margin-left: -480px;
+}
+
+.scene .layer,
+.scene .tint,
+.scene .ghost-glow,
+.scene .rain,
+.scene .spook {
+  position: absolute;
+  pointer-events: none;
+}
+.scene .layer,
+.scene .tint {
+  left: 0;
+  top: 0;
+  width: 960px;
+  height: 340px;
+}
+
+/* Time-of-day lighting. Each tint is masked to its own room layer, so the sky and Spook
+   (who sit between the layers) keep their colours. */
+.tint {
+  -webkit-mask-size: 960px 340px;
+  mask-size: 960px 340px;
+}
+.tint-back {
+  -webkit-mask-image: url("../assets/cafe/room-back.svg");
+  mask-image: url("../assets/cafe/room-back.svg");
+}
+.tint-front {
+  -webkit-mask-image: url("../assets/cafe/room-front.svg");
+  mask-image: url("../assets/cafe/room-front.svg");
+}
+.t-morning .tint { background: rgba(255, 200, 140, 0.14); mix-blend-mode: soft-light; }
+.t-evening .tint { background: rgba(240, 110, 100, 0.22); mix-blend-mode: multiply; }
+.t-night .tint { background: rgba(52, 46, 120, 0.5); mix-blend-mode: multiply; }
+
+/* Positions below are in stage coordinates: the original 480 scene starts at x = 240. */
+.ghost-glow {
+  left: 390px;
+  top: 90px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+.t-night .ghost-glow {
+  opacity: 1;
+  background: radial-gradient(circle, rgba(255, 248, 236, 0.32), rgba(255, 248, 236, 0) 68%);
+}
+
+.spook {
+  left: 405px;
+  top: 98px;
+  width: 150px;
+  height: 157px;
+  animation: bob 3.4s ease-in-out infinite;
+}
+.spook.sleep { animation-duration: 6s; }
+@keyframes bob {
+  50% { transform: translateY(-6px); }
+}
+
+/* The window opening. */
+.rain {
+  left: 274px;
+  top: 44px;
+  width: 132px;
+  height: 122px;
+  overflow: hidden;
+}
+.rain i {
+  position: absolute;
+  top: -12px;
+  width: 2px;
+  height: 8px;
+  background: #a9c8f0;
+  opacity: 0.75;
+  animation: fall 0.9s linear infinite;
+}
+@keyframes fall {
+  to { transform: translateY(140px); }
+}
+
+.sign {
+  position: absolute;
+  left: 412px;
+  top: 26px;
+  width: 136px;
+  height: 70px;
+  box-sizing: border-box;
+  border: 4px solid var(--ink);
+  border-radius: 12px;
+  background: #2e3b37;
+  box-shadow: inset 0 0 0 4px #a8714a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+}
+.sign-label {
+  font: 500 12px/1 Fredoka, system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f2c46d;
+}
+.sign-clock {
+  font: 600 32px/1 Fredoka, system-ui, sans-serif;
+  color: var(--cream);
+  font-variant-numeric: tabular-nums;
+}
+
+.scene .counter {
+  position: absolute;
+  left: 0;
+  top: 264px;
+  width: 960px;
+  height: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.scene .caption {
+  font: 500 14px/1 Fredoka, system-ui, sans-serif;
+  color: var(--cream);
+  pointer-events: none;
+}
+.scene .controls { display: flex; gap: 10px; }
+
+/* Sticker-style buttons: cream fill, thick ink outline. Reset the app-wide button look. */
+.scene button {
+  box-shadow: none;
+  font-family: Fredoka, system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+  border: 3px solid var(--ink);
+  cursor: pointer;
+}
+.scene button:hover { background: #fff; border-color: var(--ink); }
+.scene button:disabled { opacity: 0.55; border-color: var(--ink); }
+.chip {
+  font-weight: 500;
+  font-size: 15px;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+}
+.chip.primary { background: #f2c46d; }
+.chip.primary:hover { background: #ffd878; }
+.round {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.scene .settings {
+  position: absolute;
+  right: 10px;
+  top: 24px;
+}

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" width="200" height="210">
+  <title>Spook — focus</title>
+  <g id="spook">
+  <g id="body">
+    <path d="M100 30 C142 30 158 62 158 104 L159 160 Q165 184 148 182 Q138 174 127 186
+             Q114 197 101 185 Q89 174 76 186 Q62 197 52 182 Q35 184 41 160 L42 104
+             C42 62 58 30 100 30 Z" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M48 166 Q60 176 72 168 Q86 158 100 170 Q114 158 128 168 Q140 176 152 166 L153 174
+             Q140 168 127 180 Q114 190 101 179 Q89 168 76 180 Q62 190 49 174 Z"
+          fill="#E4DEF4" opacity="0.9"/>
+    <path d="M128 60 Q140 72 142 92" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+  </g>
+  <g id="headphones">
+    <path d="M46 92 C40 22 160 22 154 92" fill="none" stroke="#3E3A6E" stroke-width="18" stroke-linecap="round"/>
+    <path d="M46 92 C40 22 160 22 154 92" fill="none" stroke="#7B6CC0" stroke-width="10" stroke-linecap="round"/>
+    <g transform="rotate(0 44 100)">
+      <rect x="30" y="79" width="28" height="42" rx="13" fill="#7B6CC0" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+      <rect x="46" y="87" width="8" height="26" rx="4" fill="#5A4C9E"/>
+      <path d="M38 87 v10" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    </g>
+    <g transform="rotate(0 156 100)">
+      <rect x="142" y="79" width="28" height="42" rx="13" fill="#7B6CC0" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+      <rect x="146" y="87" width="8" height="26" rx="4" fill="#5A4C9E"/>
+      <path d="M150 87 v10" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    </g>
+  </g>
+  <g id="eyes" fill="#3E3A6E">
+    <path d="M73 92 L91 92 L91 99 A9 9 0 0 1 73 99 Z"/><path d="M109 92 L127 92 L127 99 A9 9 0 0 1 109 99 Z"/>
+  </g>
+  <g id="blush" fill="#F5B3C6" opacity="0.75">
+    <ellipse cx="68" cy="114" rx="8" ry="4.5"/><ellipse cx="132" cy="114" rx="8" ry="4.5"/>
+  </g><path id="mouth" d="M96 119 Q100 122 104 119" fill="none" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><g id="hand-left" transform="rotate(-70 50 172)">
+    <ellipse cx="50" cy="172" rx="11" ry="8" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M43 175 q7 4 14 0" fill="none" stroke="#E4DEF4" stroke-width="3" stroke-linecap="round"/>
+  </g><g id="hand-right" transform="rotate(70 150 172)">
+    <ellipse cx="150" cy="172" rx="11" ry="8" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M143 175 q7 4 14 0" fill="none" stroke="#E4DEF4" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g id="laptop">
+    <rect x="56" y="136" width="88" height="60" rx="7" fill="#CDD1E2" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <rect x="46" y="194" width="108" height="9" rx="4.5" fill="#A9AEC6" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <g id="sticker" transform="translate(100 166)">
+      <path d="M0 -12 C9 -12 12 -5 12 2 L12 11 Q8 8 4 11 Q0 14 -4 11 Q-8 8 -12 11 L-12 2 C-12 -5 -9 -12 0 -12 Z"
+            fill="#FFF8EC" stroke="#3E3A6E" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <ellipse cx="-4" cy="-1" rx="2" ry="3" fill="#3E3A6E"/><ellipse cx="4" cy="-1" rx="2" ry="3" fill="#3E3A6E"/>
+    </g>
+  </g>
+  <g id="notes" fill="#7B6CC0" opacity="0.8">
+    <path d="M18 60 v-22 l14 -4 v20" fill="none" stroke="#7B6CC0" stroke-width="3.5" stroke-linejoin="round"/>
+    <ellipse cx="15" cy="60" rx="5" ry="4"/><ellipse cx="29" cy="54" rx="5" ry="4"/>
+    <path d="M182 74 v-20" stroke="#7B6CC0" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M182 54 q8 4 6 12" fill="none" stroke="#7B6CC0" stroke-width="3.5" stroke-linecap="round"/>
+    <ellipse cx="178" cy="75" rx="5" ry="4"/>
+  </g>
+  </g>
+</svg>
