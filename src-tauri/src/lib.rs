@@ -5,11 +5,13 @@ mod error;
 mod export;
 mod music;
 mod progress;
+mod report;
 mod scene;
 mod sessions;
 mod settings;
 mod tasks;
 mod timer;
+mod todos;
 mod tray;
 
 use tauri::{AppHandle, Emitter, Manager, RunEvent, WindowEvent};
@@ -91,6 +93,8 @@ pub fn run() {
             tasks::update_task,
             tasks::archive_task,
             progress::weekly_progress,
+            report::report_week,
+            report::trends::report_trends,
             export::export_data,
             music::get_music,
             music::set_music_playing,
@@ -116,6 +120,10 @@ pub fn run() {
             timer::resume,
             timer::discard,
             timer::skip_break,
+            todos::list_todos,
+            todos::add_todo,
+            todos::set_todo_done,
+            todos::delete_todo,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

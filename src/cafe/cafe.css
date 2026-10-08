@@ -13,16 +13,16 @@
 
 .scene.paused,
 .scene.paused *,
-.panel:not(.active) * {
+.strip > .panel:not(.active) * {
   animation-play-state: paused;
 }
 
 /* One panel per scene, stacked; the active one fades in. The fade is switched on only once
    you've changed scene (see useScene), so launching on a saved scene doesn't fade to it. */
 .strip { position: absolute; inset: 0; }
-.panel { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
-.panel.active { opacity: 1; }
-.strip.animated .panel { transition: opacity 0.6s ease; }
+.strip > .panel { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+.strip > .panel.active { opacity: 1; }
+.strip.animated > .panel { transition: opacity 0.6s ease; }
 
 .overlay { position: absolute; inset: 0; }
 

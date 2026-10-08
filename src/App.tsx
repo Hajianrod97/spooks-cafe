@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Task } from "./types";
-import { ChalkboardMenu } from "./cafe/ChalkboardMenu";
+import { Chalkboard } from "./cafe/Chalkboard";
 import { Scene } from "./cafe/Scene";
 import { MusicBar } from "./MusicBar";
 import { NotePrompt } from "./NotePrompt";
@@ -58,7 +58,8 @@ function App() {
 
         {(error || tickError) && <p className="error">{error || tickError}</p>}
 
-        <ChalkboardMenu
+        <Chalkboard
+          phase={timer.phase}
           tasks={tasks}
           progress={progress}
           activeTaskId={activeTaskId}

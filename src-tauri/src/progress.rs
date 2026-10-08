@@ -21,7 +21,10 @@ pub struct TaskProgress {
 #[tauri::command]
 pub fn weekly_progress(db: State<Db>) -> Result<Vec<TaskProgress>> {
     let (start, end) = week_bounds(Local::now());
-    progress_between(&db.0.lock().unwrap(), start.timestamp(), end.timestamp())
+    let conn = db.0.lock().unwrap();
+    // The window loads this at launch and after every block, so every week in use gets its targets recorded.
+    crate::report::record_week_targets(&conn, start.timestamp())?;
+    progress_between(&conn, start.timestamp(), end.timestamp())
 }
 
 /// Sessions count toward the week they started in, so checking `started_at` alone is enough.
@@ -56,7 +59,7 @@ pub(crate) fn week_bounds(now: DateTime<Local>) -> (DateTime<Local>, DateTime<Lo
 
 /// Computed per date rather than as start + 7 days, so a DST change mid-week doesn't shift the
 /// boundary by an hour.
-fn local_midnight(date: NaiveDate) -> DateTime<Local> {
+pub(crate) fn local_midnight(date: NaiveDate) -> DateTime<Local> {
     let midnight = date.and_time(NaiveTime::MIN);
     midnight
         .and_local_timezone(Local)

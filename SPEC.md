@@ -39,6 +39,22 @@ Seed tasks (mid-level target roles, 30 h/week total):
 | CS Fundamentals | 2 |
 | Debugging (exercises + tools) | 1 |
 
+## To-do list
+- A plain checklist in the chalkboard's To-do section, written in chalk. Separate from the timer; each item can optionally be tagged with an active task (the tag keeps showing after that task is archived).
+- Added from a "New to-do" dialog (the "+ Add to-do" button at the bottom of the To-do section): text, Repeats (One-time / Daily) and an optional tag; the last kind and tag are offered again next time. Two kinds:
+  - **Daily**: repeats every day; comes back unticked at local midnight. Every day's tick is kept.
+  - **One-time**: stays until ticked, carrying over day to day; once ticked it stays (struck through) until midnight, then drops off the list. Its tick is kept.
+- Shown in two groups: Daily, then Today (one-time). In each, open items in the order added, then ticked ones in the order ticked.
+- Every tick lives in one `todo_ticks` table (one per one-time to-do, at most one per day per daily), so reporting and the shop read history from one place. Ticking something already done keeps the first tick.
+- Delete hides a to-do for good but keeps its ticks. One-time items go straight away; a daily asks first, inline in its row ("Stop repeating “…”?" Stop / Keep, Keep focused, Esc cancels), since it stops every future day.
+- Text is one trimmed line, 200 characters max.
+
+## Reporting
+- The chalkboard's Report section, read-only (editing stays in the Sessions dialog). Two sub-views behind chalk pills: **Week** (default) and **Trends**; the last one is remembered in localStorage. Charts are hand-drawn SVG in chalk, no chart library. Data comes from `report_week` and `report_trends`; Report refetches when the timer phase changes and when a to-do changes. Archived tasks appear wherever they have time, marked "(archived)".
+- **Week** (7b-1): one week at a time; ◀ ▶ around the week's dates step back to the week of the first session and forward to this week; on a past week a "This week" link jumps back. Report always opens on this week. Top to bottom: a headline (`12.5 h focused · 4 of 7 targets hit · 9 to-dos done`); a donut of the week's minutes per task (discarded partial minutes included, like the progress bars) with the total in the middle and a legend (name, hours, %); hours vs target per task with ✓ on targets hit; to-dos: one-time to-dos done that week and 7 habit dots (Mon–Sun) per daily; "See sessions" (opens the Sessions dialog; this week only). A week with no sessions shows Spook's face and "Nothing brewed this week". A task shows in a week if it existed then (created before the week ended) and is active, or has time that week.
+- **Targets per week**: a `week_targets` table records each task's weekly target per week, filled the first time the week is loaded (the main window's progress query) and updated when a task is edited that week. Weeks with no record use the task's current target.
+- **Trends** (7b-2): a heatmap of focused minutes per day over the last 16 weeks (five levels, weekday letters, month names; a line under it shows the picked day's total, today by default; click/hover, one Tab stop with arrow keys); per-task trends as small multiples (one row per task, 8 weekly bars, a dashed tick at each week's recorded target, the current week faded; each row has its own scale, since the question is how a task did against its target; the right column is the average over finished weeks the task existed in; hovering a bar reads out its week); streaks (current and longest run of days with a completed block, today doesn't break it until midnight; each daily to-do's own streak); insights (best weekday, most focused hour, completion rate = completed ÷ started blocks, average focus per active day).
+
 ## Views
 - Weekly progress bars per task: `LeetCode — 6.5 / 8 h · 14 👻` (the unit icon is Spook's face, drawn as SVG, not an emoji)
 - One-click export to JSON/CSV.
@@ -55,7 +71,8 @@ Seed tasks (mid-level target roles, 30 h/week total):
 ## Look & shell
 - Theme: a cafe run by **Spook**, a lofi sheet-ghost (flat sticker style: indigo outline, cream body, blush, purple headphones over the ears). Art lives in `design/` as SVG built by `node design/spook/build.mjs` and `node design/cafe/build.mjs`.
 - Spook's pose follows the timer: idle → waving, focus → headphones + typing on a laptop, break → sipping coffee, paused → dozing.
-- Main window layout (480–960 wide, height free; the art is 960 wide and a wider window reveals more of the cafe): cafe scene on top (window, shelf TV, string lights, counter; Spook floats behind the counter), timer on a hanging chalk sign, controls on the counter, music bar, then the task list as a chalkboard "This week's menu".
+- Main window layout (480–960 wide, height free; the art is 960 wide and a wider window reveals more of the cafe): cafe scene on top (window, shelf TV, string lights, counter; Spook floats behind the counter), timer on a hanging chalk sign, controls on the counter, music bar, then the chalkboard.
+- **Chalkboard sections**: Menu (home: this week's tasks, progress, Add item / Sessions) | To-do | Report, one at a time. Chalk tabs across the top are the board's title (current one underlined); each section has one small status line under them (Menu: week dates and hours; To-do: "2 left"; Report: "Coming soon"). Tabs show no counts; the open count is only in To-do's status line. Click a tab, or ← / → on the tabs (wrapping; Home/End). Only the user switches: the timer never does, and the tabs work during focus (only task picking is locked). The last section is remembered in the window's localStorage, not the db. The board's height follows the section; switching fades the content in about 150 ms (none with Reduce motion). The shop is not a board section. Report is a placeholder (Spook face, "Reports are still brewing…", the list of planned views) until 7b; whether Report absorbs the Sessions dialog is decided in 7b.
 - Palette shifts with time of day: four phases whose start hours are adjustable in settings (defaults: morning 6, afternoon 12, evening 17, night 20; each lasts until the next, night wraps past midnight). Settings can also pin the scene to one time of day instead of following the clock. Scene animations pause while the window is hidden. The room is drawn once and tinted per phase (tint masked to the room, so the sky and Spook keep their colours; Spook glows at night).
 - Cafe details: a neon "Spook's Cafe" across the top of the hanging timer sign (glows and flickers in the evening and at night); coffee always dripping from the espresso machine into its cup; while YouTube is the service, the shelf TV shows the station's real artwork (the page's `og:image` thumbnail, dimmed when paused). Lofi Girl's character is trademarked, so the app never draws or bundles her art.
 - The cafe window shows a **pixel-art sky** (decided over flat): sunrise, daylight, pixel sunset, night with moon and rain; a pixel city skyline with lit windows in the evening and at night.
@@ -75,12 +92,12 @@ Seed tasks (mid-level target roles, 30 h/week total):
 4. Task list, progress bars, settings (incl. chime on/off)
 5. Music player
 6. Lofi visuals — the Spook cafe (6a scene, time-of-day sky and tint, tray icon → 6b time-of-day hours in settings, animations paused while hidden → 6c chalkboard menu + dialogs → 6d music bar)
+7. More functionality, asked for by the user (so built by Claude, not practice tickets): 7a to-do list → 7b reporting → 7c cafe shop.
+   - 7b reporting, in the chalkboard's Report section; split 7b-1 Week → 7b-2 Trends (see Reporting).
+   - 7c cafe shop: earn coins from completed focus blocks **and** ticked to-dos, spend them on scene decorations and outfits for Spook. Decorations are extra layers in a scene's panel, outfits are overlays in Spook's box (like the music notes). Still to design: prices, coin amounts, and how to stop to-do farming (e.g. a to-do pays once, only if it existed for a while, or a daily cap); discarded blocks earn nothing.
 
 ## Later (practice tickets for the user)
 - Outside scene: the shop front, to the left of the counter. Follow the table scene's pattern (art in `design/cafe/build.mjs`, an entry in the scene list, its sky window, the ◀ arrow on the counter appears once it exists); follow the layout contract under Scenes.
 - Ghost customers at the empty tables
-- Cafe shop (gamification): earn currency from completed focus blocks and spend it on scene decorations and outfits for Spook. Fits the layered art: decorations are extra layers in a scene's panel, outfits are overlays in Spook's box (like the music notes). Needs a currency/inventory design first (what earns, prices, whether discarded blocks count).
-- History view: past weeks, daily heatmap, per-task trends
 - Internet radio streams
 - Automatic iCloud backup
-- Streaks and insights

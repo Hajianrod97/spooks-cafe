@@ -95,6 +95,8 @@ button.icon:hover { opacity: 1; }
   color: var(--ink);
   background: #fff8ec;
   text-align: left;
+  /* Radios and checkboxes in ink rather than the system blue. */
+  accent-color: var(--ink);
 }
 .editor::backdrop { background: rgba(30, 27, 60, 0.55); }
 .editor h2 { margin: 0 0 0.75rem; font-size: 1.25rem; font-weight: 600; }

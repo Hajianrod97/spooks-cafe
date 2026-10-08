@@ -85,3 +85,85 @@ export interface MusicSnapshot {
   /** "Track — Artist", Spotify only. */
   nowPlaying: string | null;
 }
+
+export interface Todo {
+  id: number;
+  text: string;
+  taskId: number | null;
+  /** The tag's name and colour; still set after the task is archived. */
+  taskName: string | null;
+  taskColor: string | null;
+  /** Comes back unticked every day. */
+  daily: boolean;
+  /** Unix seconds of the tick that makes it done (for a daily, today's); null while open. */
+  doneAt: number | null;
+}
+
+/** One task's week in the report. Mirrors `report::TaskWeek`. */
+export interface TaskWeek {
+  taskId: number;
+  name: string;
+  color: string;
+  archived: boolean;
+  minutes: number;
+  /** The target it had that week. */
+  targetMinutes: number;
+}
+
+export interface DailyWeek {
+  id: number;
+  text: string;
+  /** Mon..Sun: ticked that day. */
+  days: boolean[];
+}
+
+export interface WeekReport {
+  /** Local Monday 00:00, Unix seconds. */
+  weekStart: number;
+  /** Whether there are sessions before this week. */
+  hasEarlier: boolean;
+  tasks: TaskWeek[];
+  /** One-time to-dos ticked this week. */
+  todosDone: number;
+  dailies: DailyWeek[];
+}
+
+export interface TrendWeek {
+  minutes: number;
+  /** null for weeks before the task existed. */
+  targetMinutes: number | null;
+}
+
+export interface TaskTrend {
+  taskId: number;
+  name: string;
+  color: string;
+  archived: boolean;
+  /** Eight weeks, oldest first; the last is this week so far. */
+  weeks: TrendWeek[];
+}
+
+export interface Streak {
+  current: number;
+  longest: number;
+}
+
+export interface TrendsReport {
+  /** Local midnight of the heatmap's first day (a Monday), Unix seconds. */
+  firstDay: number;
+  /** Minutes per day from firstDay through today. */
+  days: number[];
+  tasks: TaskTrend[];
+  /** Days with at least one completed block. */
+  focusStreak: Streak;
+  dailies: { id: number; text: string; streak: Streak }[];
+  insights: {
+    /** 0 = Monday. */
+    bestWeekday: number | null;
+    /** 0–23. */
+    bestHour: number | null;
+    completionRate: number | null;
+    /** Minutes. */
+    averageActiveDay: number | null;
+  };
+}

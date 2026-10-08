@@ -19,6 +19,9 @@ const MIGRATIONS: &[&str] = &[
     include_str!("../migrations/005_spotify.sql"),
     include_str!("../migrations/006_scene.sql"),
     include_str!("../migrations/007_scene_place.sql"),
+    include_str!("../migrations/008_todos.sql"),
+    include_str!("../migrations/009_todo_ticks.sql"),
+    include_str!("../migrations/010_week_targets.sql"),
 ];
 
 pub fn open(app: &AppHandle) -> Result<Db> {
@@ -35,8 +38,13 @@ pub fn open(app: &AppHandle) -> Result<Db> {
 }
 
 pub(crate) fn migrate(conn: &mut Connection) -> Result<()> {
+    migrate_to(conn, MIGRATIONS.len())
+}
+
+/// Runs the migrations up to and including number `target`; tests use it to stop part-way.
+pub(crate) fn migrate_to(conn: &mut Connection, target: usize) -> Result<()> {
     let applied: i64 = conn.pragma_query_value(None, "user_version", |row| row.get(0))?;
-    for (i, sql) in MIGRATIONS.iter().enumerate().skip(applied as usize) {
+    for (i, sql) in MIGRATIONS.iter().enumerate().take(target).skip(applied as usize) {
         let tx = conn.transaction()?;
         tx.execute_batch(sql)?;
         tx.pragma_update(None, "user_version", i as i64 + 1)?;
