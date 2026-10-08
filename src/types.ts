@@ -37,8 +37,11 @@ export interface TimerSnapshot {
 
 export interface TaskProgress {
   taskId: number;
+  /** This week. */
   minutes: number;
+  /** This week. */
   pomodoros: number;
+  allTimeMinutes: number;
 }
 
 export interface Session {

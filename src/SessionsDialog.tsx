@@ -29,6 +29,7 @@ export function SessionsDialog({ tasks, onClose, onChanged }: Props) {
   const [sessions, setSessions] = useState<Session[] | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const [exported, setExported] = useState("");
 
   const load = useCallback(() => {
     invoke<Session[]>("week_sessions").then(setSessions, (e) => setError(String(e)));
@@ -75,7 +76,18 @@ export function SessionsDialog({ tasks, onClose, onChanged }: Props) {
           </section>
         ))}
       {error && <p className="error">{error}</p>}
+      {exported && <p className="hint">Saved to {exported}</p>}
       <div className="actions">
+        {(["csv", "json"] as const).map((format) => (
+          <button
+            key={format}
+            type="button"
+            title="All sessions, every week, saved to Downloads"
+            onClick={() => invoke<string>("export_data", { format }).then(setExported, (e) => setError(String(e)))}
+          >
+            Export {format.toUpperCase()}
+          </button>
+        ))}
         <span className="spacer" />
         <button type="button" onClick={() => dialog.current?.close()}>Close</button>
       </div>

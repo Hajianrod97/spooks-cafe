@@ -23,7 +23,7 @@ A macOS Pomodoro tracker for a full-time job search / engineering study routine,
 
 ## Tasks & targets
 - All time stored in minutes; targets set in hours/week; weeks start Monday.
-- Optional long-term total per task (e.g. "40 h to finish DDIA").
+- Optional long-term total per task (e.g. "40 h to finish DDIA"). Where its progress is displayed is decided with the UI design (step 6); the main task list shows this week only.
 - Tasks editable in-app: add, rename, recolor, archive (never delete), weekly target, Pomodoro override.
 - Logged sessions can be edited or deleted.
 

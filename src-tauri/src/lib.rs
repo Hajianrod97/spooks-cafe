@@ -2,6 +2,7 @@ mod alerts;
 mod app_nap;
 mod db;
 mod error;
+mod export;
 mod progress;
 mod sessions;
 mod settings;
@@ -78,6 +79,7 @@ pub fn run() {
             tasks::update_task,
             tasks::archive_task,
             progress::weekly_progress,
+            export::export_data,
             sessions::week_sessions,
             sessions::latest_session,
             sessions::update_session,
