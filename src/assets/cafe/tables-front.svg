@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" width="960" height="340">
+  <title>Cafe — window seat, front</title><g transform="translate(240 0)">
+  <g id="spooks-table">
+    
+  <g class="chair">
+    <path d="M372 196 V292 M406 196 V292" stroke="#3E3A6E" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M368 198 Q389 184 410 198" fill="none" stroke="#3E3A6E" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M375 214 H403 M375 232 H403" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="389" cy="292" rx="30" ry="9" fill="#A8714A" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M368 298 V336 M410 298 V336" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+    <path d="M232 254 H248 V322 H232 Z" fill="#7E5136" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="240" cy="326" rx="36" ry="8" fill="#7E5136" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- The top hides Spook below y ≈ 258, the way the counter does. -->
+    <ellipse cx="240" cy="246" rx="106" ry="18" fill="#A8714A" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="240" cy="240" rx="106" ry="18" fill="#C98F62" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <g id="bud-vase">
+      <path d="M160 240 q-6 -10 0 -18 h8 q6 8 0 18 Z" fill="#B8B1DC" stroke="#3E3A6E" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M164 222 q-2 -12 4 -20" fill="none" stroke="#7DB37C" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="169" cy="200" r="5" fill="#F28DA8" stroke="#3E3A6E" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
+  </g></g>
+</svg>

@@ -59,6 +59,10 @@ Seed tasks (mid-level target roles, 30 h/week total):
 - Palette shifts with time of day: four phases whose start hours are adjustable in settings (defaults: morning 6, afternoon 12, evening 17, night 20; each lasts until the next, night wraps past midnight). Settings can also pin the scene to one time of day instead of following the clock. Scene animations pause while the window is hidden. The room is drawn once and tinted per phase (tint masked to the room, so the sky and Spook keep their colours; Spook glows at night).
 - Cafe details: a neon "Spook's Cafe" across the top of the hanging timer sign (glows and flickers in the evening and at night); coffee always dripping from the espresso machine into its cup; while YouTube is the service, the shelf TV shows the station's real artwork (the page's `og:image` thumbnail, dimmed when paused). Lofi Girl's character is trademarked, so the app never draws or bundles her art.
 - The cafe window shows a **pixel-art sky** (decided over flat): sunrise, daylight, pixel sunset, night with moon and rain; a pixel city skyline with lit windows in the evening and at night.
+- **Scenes**, left to right: Outside | Counter | Tables (counter is home, in the middle; no wrap-around). Switched only by the user, with faint ◀ ▶ arrows on the scene's edges (no menu bar control; the timer never changes the scene). The current scene is remembered across launches. All scenes share the 960×340 canvas, the stage crop and the time-of-day system. Scenes crossfade (about 0.6 s); a camera pan was tried in the app and dropped.
+  - The timer sign and the controls are one fixed overlay, in the same place in every scene. **Layout contract for scene art:** keep the top centre (stage x 402–558, y 0–114) plain so the sign hangs over wall, not over a window or picture; put Spook's spot under it (stage x 405–555, y 98–255) with something in front that hides him from about y 250 down (counter, table top); keep the bottom band (y 264–340) a calm foreground surface the buttons can sit on.
+  - Tables: Spook's round table under the sign. The back wall reads, left to right: hanging plant, big window (above a two-seat table), pendant lamp, framed snapshot of Spook, [sign], moon painting, potted plant, booth with a bookshelf above. At the narrowest width the window is off-screen; it shows from about 600 px wide. Tables are empty for now.
+  - Still to decide: Spook's poses per scene. Until then the table scene borrows the counter's poses.
 - Menu bar countdown (`👻 18:42`, Spook as a template-image tray icon, not an emoji) with quick controls + full main window.
 - Clickable mockup: https://claude.ai/artifact/XJ1C9sQtjFkmYFaXPz4b2X (private).
 - Closing the main window keeps the app running in the menu bar. Optional always-on-top toggle (default off).
@@ -73,6 +77,9 @@ Seed tasks (mid-level target roles, 30 h/week total):
 6. Lofi visuals — the Spook cafe (6a scene, time-of-day sky and tint, tray icon → 6b time-of-day hours in settings, animations paused while hidden → 6c chalkboard menu + dialogs → 6d music bar)
 
 ## Later (practice tickets for the user)
+- Outside scene: the shop front, to the left of the counter. Follow the table scene's pattern (art in `design/cafe/build.mjs`, an entry in the scene list, its sky window, the ◀ arrow on the counter appears once it exists); follow the layout contract under Scenes.
+- Ghost customers at the empty tables
+- Cafe shop (gamification): earn currency from completed focus blocks and spend it on scene decorations and outfits for Spook. Fits the layered art: decorations are extra layers in a scene's panel, outfits are overlays in Spook's box (like the music notes). Needs a currency/inventory design first (what earns, prices, whether discarded blocks count).
 - History view: past weeks, daily heatmap, per-task trends
 - Internet radio streams
 - Automatic iCloud backup

@@ -5,6 +5,7 @@ mod error;
 mod export;
 mod music;
 mod progress;
+mod scene;
 mod sessions;
 mod settings;
 mod tasks;
@@ -101,6 +102,8 @@ pub fn run() {
             music::youtube_sign_in,
             music::youtube_signed_in,
             music::youtube_thumbnail,
+            scene::get_scene,
+            scene::set_scene,
             sessions::week_sessions,
             sessions::latest_session,
             sessions::update_session,

@@ -9,21 +9,22 @@
   .stage img, .tint { position: absolute; left: 0; top: 0; width: 960px; height: 340px; }
   .stage img.spook { left: 405px; top: 98px; width: 150px; height: 157px; }
   .tint { -webkit-mask-size: 960px 340px; mask-size: 960px 340px; }
-  .tint.back { -webkit-mask-image: url(../../src/assets/cafe/room-back.svg); mask-image: url(../../src/assets/cafe/room-back.svg); }
-  .tint.front { -webkit-mask-image: url(../../src/assets/cafe/room-front.svg); mask-image: url(../../src/assets/cafe/room-front.svg); }
   .morning .tint { background: rgba(255, 200, 140, .14); mix-blend-mode: soft-light; }
   .evening .tint { background: rgba(240, 110, 100, .22); mix-blend-mode: multiply; }
   .night .tint { background: rgba(52, 46, 120, .5); mix-blend-mode: multiply; }
 </style>
-<div class="scene night" style="width: 960px">
-  <div class="stage">
-    <img src="../../src/assets/cafe/sky-night.svg"><img src="../../src/assets/cafe/room-back.svg"><div class="tint back"></div>
-    <img class="spook" src="../../src/assets/spook/spook-focus.svg"><img src="../../src/assets/cafe/room-front.svg"><div class="tint front"></div>
-  </div>
-</div>
-<div class="scene morning" style="width: 480px">
-  <div class="stage">
-    <img src="../../src/assets/cafe/sky-morning.svg"><img src="../../src/assets/cafe/room-back.svg"><div class="tint back"></div>
-    <img class="spook" src="../../src/assets/spook/spook-idle.svg"><img src="../../src/assets/cafe/room-front.svg"><div class="tint front"></div>
-  </div>
-</div>
+<script>
+  // scene: "room" (the counter) or "tables"; sky files are sky-<time> / tables-sky-<time>.
+  const A = "../../src/assets";
+  function scene(place, time, pose, width) {
+    const sky = place === "room" ? `sky-${time}` : `tables-sky-${time}`;
+    const mask = (layer) => `-webkit-mask-image:url(${A}/cafe/${place}-${layer}.svg);mask-image:url(${A}/cafe/${place}-${layer}.svg)`;
+    document.write(`<div class="scene ${time}" style="width:${width}px"><div class="stage">
+      <img src="${A}/cafe/${sky}.svg"><img src="${A}/cafe/${place}-back.svg"><div class="tint" style="${mask("back")}"></div>
+      <img class="spook" src="${A}/spook/spook-${pose}.svg"><img src="${A}/cafe/${place}-front.svg"><div class="tint" style="${mask("front")}"></div>
+    </div></div>`);
+  }
+  scene("room", "night", "focus", 960);
+  scene("tables", "night", "break", 960);
+  scene("tables", "afternoon", "idle", 480);
+</script>
