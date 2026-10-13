@@ -7,13 +7,15 @@ import type { Todos } from "../useTodos";
 interface Props {
   tasks: Task[];
   todos: Todos;
+  /** Today's to-do beans are used up; ticks still count, they just don't pay. */
+  beansMaxed: boolean;
 }
 
 /**
  * The board's to-do section: dailies (back unticked every morning) above one-time to-dos.
  * Tags only offer active tasks.
  */
-export function TodoList({ tasks, todos: { todos, error, add, setDone, remove } }: Props) {
+export function TodoList({ tasks, todos: { todos, error, add, setDone, remove }, beansMaxed }: Props) {
   const [adding, setAdding] = useState(false);
   // The kind and tag used last, offered again next time.
   const [last, setLast] = useState<TodoDraft>({ daily: false, taskId: null });
@@ -77,7 +79,10 @@ export function TodoList({ tasks, todos: { todos, error, add, setDone, remove } 
 
   return (
     <div className="todos">
-      <p className="status">{todos.length === 0 ? "Nothing to do yet" : open === 0 ? "All done!" : `${open} left`}</p>
+      <p className="status">
+        {todos.length === 0 ? "Nothing to do yet" : open === 0 ? "All done!" : `${open} left`}
+        {beansMaxed && " · today's to-do beans maxed"}
+      </p>
 
       {error && <p className="error">{error}</p>}
 

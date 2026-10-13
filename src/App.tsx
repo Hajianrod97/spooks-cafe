@@ -7,8 +7,10 @@ import { MusicBar } from "./MusicBar";
 import { NotePrompt } from "./NotePrompt";
 import { SessionsDialog } from "./SessionsDialog";
 import { SettingsDialog } from "./SettingsDialog";
+import { ShopDialog } from "./cafe/ShopDialog";
 import { TaskEditor } from "./TaskEditor";
 import { useMusic } from "./useMusic";
+import { useShop } from "./useShop";
 import { useTimer } from "./useTimer";
 import { useWeeklyProgress } from "./useWeeklyProgress";
 import "./App.css";
@@ -20,9 +22,12 @@ function App() {
   const [editing, setEditing] = useState<Task | "new" | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
+  const [showShop, setShowShop] = useState(false);
   const { timer, tickError } = useTimer();
   // One subscription shared by the music bar and Spook's notes.
   const music = useMusic();
+  // Shared by the scene (hat, decorations, balance), the shop and the to-do list.
+  const shop = useShop();
   const { progress, reload: reloadProgress } = useWeeklyProgress(timer?.phase);
 
   const loadTasks = useCallback(() => {
@@ -50,6 +55,9 @@ function App() {
         onAction={call}
         onSettings={() => setShowSettings(true)}
         music={music.music}
+        shop={shop}
+        onShop={() => setShowShop(true)}
+        onError={(e) => setError(String(e))}
       />
 
       <div className="below">
@@ -60,6 +68,7 @@ function App() {
 
         <Chalkboard
           phase={timer.phase}
+          todoBeansLeft={shop.shop?.todoBeansLeft}
           tasks={tasks}
           progress={progress}
           activeTaskId={activeTaskId}
@@ -83,6 +92,7 @@ function App() {
         />
       )}
       {showSettings && <SettingsDialog onClose={() => setShowSettings(false)} />}
+      {showShop && shop.shop && <ShopDialog shop={shop} onClose={() => setShowShop(false)} />}
       {showSessions && (
         <SessionsDialog tasks={tasks} onClose={() => setShowSessions(false)} onChanged={reloadProgress} />
       )}

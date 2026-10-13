@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" width="200" height="210">
+  <title>Spook — witch-hat, break-table</title>
+  <g id="spook">
+  <g id="witch-hat" transform="rotate(-4 100 46)">
+    <path d="M70 44 C70 32 80 24 98 21 C118 18 138 22 152 32 C162 40 168 52 170 66 C160 58 150 52 136 50
+             C138 48 132 44 130 44 Z" fill="#4E4384" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M118 24 C134 26 148 34 156 44" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.25"/>
+    <path d="M71 38 Q100 46 129 38 L130 45 Q100 53 70 45 Z" fill="#F2C14E"/>
+    <rect x="93" y="38" width="13" height="11" rx="2" fill="none" stroke="#3A3168" stroke-width="3"/>
+    <ellipse cx="100" cy="48" rx="62" ry="9" fill="#4E4384" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M46 49 Q100 57 154 49" fill="none" stroke="#3A3168" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+  </g>
+  </g>
+</svg>

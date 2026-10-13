@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" width="200" height="210">
+  <title>Spook — beanie, focus</title>
+  <g id="spook">
+  <g id="beanie">
+    <path d="M50 58 C48 30 72 20 100 20 C128 20 152 30 150 58 Z" fill="#E07A5F" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <g fill="none" stroke="#B85A44" stroke-width="3" stroke-linecap="round" opacity="0.55">
+      <path d="M76 28 Q72 42 74 54"/><path d="M100 24 V54"/><path d="M124 28 Q128 42 126 54"/>
+    </g>
+    <rect x="44" y="50" width="112" height="20" rx="10" fill="#B85A44" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <g stroke="#F4A58C" stroke-width="3" stroke-linecap="round" opacity="0.7">
+      <path d="M58 56 v8"/><path d="M68.5 56 v8"/><path d="M79 56 v8"/><path d="M89.5 56 v8"/><path d="M100 56 v8"/><path d="M110.5 56 v8"/><path d="M121 56 v8"/><path d="M131.5 56 v8"/><path d="M142 56 v8"/>
+    </g>
+  </g>
+  <g id="headphones">
+    <path d="M45 94 C33 -8 167 -8 155 94" fill="none" stroke="#3E3A6E" stroke-width="18" stroke-linecap="round"/>
+    <path d="M45 94 C33 -8 167 -8 155 94" fill="none" stroke="#7B6CC0" stroke-width="10" stroke-linecap="round"/>
+    <g transform="rotate(0 44 100)">
+      <rect x="30" y="79" width="28" height="42" rx="13" fill="#7B6CC0" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+      <rect x="46" y="87" width="8" height="26" rx="4" fill="#5A4C9E"/>
+      <path d="M38 87 v10" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    </g>
+    <g transform="rotate(0 156 100)">
+      <rect x="142" y="79" width="28" height="42" rx="13" fill="#7B6CC0" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+      <rect x="146" y="87" width="8" height="26" rx="4" fill="#5A4C9E"/>
+      <path d="M150 87 v10" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    </g>
+  </g>
+  </g>
+</svg>

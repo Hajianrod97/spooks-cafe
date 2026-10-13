@@ -285,3 +285,39 @@ button.danger { color: #e5484d; }
 .music .link-form button { padding: 0 14px; border: 2px solid var(--ink); border-radius: 999px; color: var(--ink); background: var(--cream); }
 .music .link-form button[type="submit"] { background: #f2c46d; }
 .music .error { margin: 0; }
+
+/* The cafe shop. Tabs are underlined like the chalkboard's, but in ink on the cream card. */
+.editor.shop { width: min(380px, 92vw); }
+.editor.shop h2 { margin-bottom: 0.25rem; }
+.shop-balance { display: flex; align-items: center; gap: 0.3rem; margin: 0 0 0.75rem; }
+.shop-balance strong { font-size: 1.15em; font-variant-numeric: tabular-nums; }
+.shop-balance .hint { font-size: 0.85em; }
+.editor .shop-tabs { display: flex; gap: 1rem; border-bottom: 2px solid rgba(62, 58, 110, 0.15); margin-bottom: 0.6rem; }
+.editor .shop-tabs button {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.2rem 0 0.35rem;
+  margin-bottom: -2px;
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+  opacity: 0.6;
+  transition: none;
+}
+.editor .shop-tabs button:hover { background: transparent; opacity: 1; }
+.editor .shop-tabs button[aria-selected="true"] { opacity: 1; border-bottom-color: var(--ink); }
+.shop-tryon { position: relative; width: 120px; height: 126px; margin: 0 auto 0.4rem; }
+.shop-tryon img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.shop-items { list-style: none; margin: 0; padding: 0; }
+.shop-items > li { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid rgba(62, 58, 110, 0.12); }
+.shop-items > li:last-child { border-bottom: 0; }
+.shop-thumb { width: 36px; height: 32px; }
+.shop-name { flex: 1; }
+.shop-name .hint { display: block; font-size: 0.8em; }
+.editor button.shop-try { flex: 1; text-align: left; border: 0; background: transparent; padding: 0.2rem 0.3rem; border-radius: 6px; }
+.editor button.shop-try:hover { background: rgba(62, 58, 110, 0.06); }
+.shop-items > li.shown .shop-try { font-weight: 600; }
+.editor .shop-items button:not(.shop-try) { padding: 0.25em 0.75em; display: inline-flex; align-items: center; gap: 0.25rem; white-space: nowrap; }
+.editor button.shop-buy.asking { background: #f2c46d; }
+.shop-owned { font-size: 0.85em; opacity: 0.6; padding: 0 0.4rem; }
+.shop-how { margin: 0.5rem 0 0; font-size: 0.85em; }

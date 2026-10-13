@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" width="200" height="210">
+  <title>Spook — focus-outside held</title>
+  <g id="spook" transform="rotate(-3 100 150)">
+  <g id="broom">
+    <path d="M156 92 L78 186" stroke="#3E3A6E" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M156 92 L78 186" stroke="#C98F62" stroke-width="4" stroke-linecap="round"/>
+    <path d="M54 184 h46 l16 24 h-78 Z" fill="#F2C46D" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M60 190 l-6 14 M71 190 l-3 15 M82 190 v15 M93 190 l3 15 M102 190 l6 14" stroke="#D9A441" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="58" y="178" width="38" height="9" rx="3" fill="#7B6CC0" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <g id="hand-upper" transform="rotate(40 138 114)">
+    <ellipse cx="138" cy="114" rx="11" ry="8" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M131 117 q7 4 14 0" fill="none" stroke="#E4DEF4" stroke-width="3" stroke-linecap="round"/>
+  </g><g id="hand-lower" transform="rotate(40 106 152)">
+    <ellipse cx="106" cy="152" rx="11" ry="8" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M99 155 q7 4 14 0" fill="none" stroke="#E4DEF4" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  </g>
+</svg>

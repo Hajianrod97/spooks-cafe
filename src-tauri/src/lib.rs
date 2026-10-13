@@ -9,6 +9,7 @@ mod report;
 mod scene;
 mod sessions;
 mod settings;
+mod shop;
 mod tasks;
 mod timer;
 mod todos;
@@ -112,6 +113,10 @@ pub fn run() {
             sessions::latest_session,
             sessions::update_session,
             sessions::delete_session,
+            shop::get_shop,
+            shop::buy_item,
+            shop::wear_hat,
+            shop::place_item,
             settings::get_settings,
             settings::update_settings,
             timer::get_timer,

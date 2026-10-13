@@ -63,10 +63,13 @@
 .t-evening .tint { background: rgba(240, 110, 100, 0.22); mix-blend-mode: multiply; }
 .t-night .tint { background: rgba(52, 46, 120, 0.5); mix-blend-mode: multiply; }
 
-/* Positions below are in stage coordinates: the original 480 scene starts at x = 240. */
+/* Positions below are in stage coordinates: the original 480 scene starts at x = 240.
+   --spook-drop and --spook-shift (set per scene and pose, see SceneArt.spookDrop and
+   PoseArt.offset) move Spook and everything that follows him; they offset `top` and `left`,
+   since his bob animation owns `transform`. */
 .ghost-glow {
-  left: 390px;
-  top: 90px;
+  left: calc(390px + var(--spook-shift, 0px));
+  top: calc(90px + var(--spook-drop, 0px));
   width: 180px;
   height: 180px;
   border-radius: 50%;
@@ -79,26 +82,54 @@
 }
 
 .spook {
-  left: 405px;
-  top: 98px;
+  left: calc(405px + var(--spook-shift, 0px));
+  top: calc(98px + var(--spook-drop, 0px));
   width: 150px;
   height: 157px;
   animation: bob 3.4s ease-in-out infinite;
 }
 .spook.sleep { animation-duration: 6s; }
 
+/* Something Spook holds that also moves by itself: the broom swishes around his upper mitt
+   (138, 128 of his 200×210 drawing) while its wrapper bobs with him. */
+.spook-held {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 69% 61%;
+  animation: swish 1.2s ease-in-out infinite alternate;
+}
+@keyframes swish {
+  from { transform: rotate(-6deg); }
+  to { transform: rotate(6deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spook-held { animation: none; }
+}
+
+/* Mochi the ghost cat floats too, slower and lower than Spook; it glows at night like him. */
+.scene .mochi {
+  position: absolute;
+  pointer-events: none;
+  animation: mochi-float 4.8s ease-in-out infinite;
+}
+@keyframes mochi-float {
+  50% { transform: translateY(-3px); }
+}
+.t-night .mochi { filter: drop-shadow(0 0 5px rgba(255, 248, 236, 0.7)); }
+
 /* Same box as Spook, but still: a laptop on the table shouldn't float with him. */
 .spook-props {
-  left: 405px;
-  top: 98px;
+  left: calc(405px + var(--spook-shift, 0px));
+  top: calc(98px + var(--spook-drop, 0px));
   width: 150px;
   height: 157px;
 }
 
 /* Same box as Spook, so the notes sit where they were drawn; they drift and fade on their own beat. */
 .spook-notes {
-  left: 405px;
-  top: 98px;
+  left: calc(405px + var(--spook-shift, 0px));
+  top: calc(98px + var(--spook-drop, 0px));
   width: 150px;
   height: 157px;
   animation: notes-drift 2.6s ease-in-out infinite;
@@ -176,13 +207,14 @@
   to { transform: translateY(140px); }
 }
 
-/* Ends at y 114, just above Spook's headphones. */
+/* Ends at y 96, leaving room above Spook's head for a hat (his head starts at y 120 and bobs up 6).
+   The layout contract still keeps the wall plain down to y 114. */
 .sign {
   position: absolute;
   left: 402px;
-  top: 16px;
+  top: 10px;
   width: 156px;
-  height: 98px;
+  height: 86px;
   box-sizing: border-box;
   border: 4px solid var(--ink);
   border-radius: 12px;
@@ -195,6 +227,19 @@
   gap: 2px;
   pointer-events: none;
 }
+/* Painted lettering on the outside's name board; the hand font matches the neon sign's. */
+.scene .lettering {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 400 18px/1 "Patrick Hand", cursive;
+  white-space: nowrap;
+  color: #f2c46d;
+  text-shadow: 0 1px 0 rgba(30, 27, 60, 0.6);
+  pointer-events: none;
+}
+
 /* Neon tube lettering: a pale core with a pink halo, stronger after dark with the odd flicker. */
 .sign-neon {
   font: 400 19px/1 "Patrick Hand", cursive;
@@ -228,9 +273,9 @@
 .scene .counter {
   position: absolute;
   left: 0;
-  top: 264px;
+  top: 270px;
   width: 960px;
-  height: 76px;
+  height: 70px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -288,8 +333,133 @@
 .scene .scene-arrow:hover,
 .scene .scene-arrow:focus-visible { opacity: 1; }
 
-.scene .settings {
+/* The bean balance and ⚙ in a row in the window's top-right corner. Decorate hangs under ⚙: a third
+   button in the row would reach the sign at the narrowest width. */
+.scene .corner {
   position: absolute;
   right: 10px;
   top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+.scene .decorate-button {
+  position: absolute;
+  right: 0;
+  top: 48px;
+}
+.scene .decorate-button[aria-pressed="true"] { background: #f2c46d; }
+
+/* Shop decorations: positioned inline from their slot. Each gets its own tint, masked to itself
+   (the room's tints are masked to the room layers, so they'd miss it). */
+.scene .decor {
+  position: absolute;
+  pointer-events: none;
+}
+.scene .tint.decor {
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+/* The bean balance, next to ⚙. A "+N" floats up from it when beans come in. */
+.scene .shop-button {
+  position: relative;
+  height: 40px;
+  padding: 0 14px 0 8px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.shop-earned {
+  position: absolute;
+  right: 6px;
+  top: -4px;
+  font: 600 14px/1 Fredoka, system-ui, sans-serif;
+  color: var(--cream);
+  text-shadow: 0 1px 2px rgba(30, 27, 60, 0.8);
+  pointer-events: none;
+  opacity: 0;
+  animation: bean-float 1.6s ease-out;
+}
+@keyframes bean-float {
+  0% { opacity: 0; transform: translateY(4px); }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-18px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Shown in place for a moment instead of floating. */
+  .shop-earned { animation: bean-blink 1.6s steps(1); }
+}
+@keyframes bean-blink {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Click Spook to change hats: an invisible button over his spot, above the counter or table top. */
+.scene .spook-hit {
+  position: absolute;
+  left: calc(436px + var(--spook-shift, 0px));
+  top: calc(116px + var(--spook-drop, 0px));
+  width: 88px;
+  height: 108px;
+  padding: 0;
+  border: 0;
+  border-radius: 40%;
+  background: transparent;
+}
+.scene .spook-hit:hover { background: transparent; }
+.scene .spook-hit:focus-visible { outline: 2px dashed var(--cream); outline-offset: 2px; }
+
+/* Decorate mode: each spot in the scene, outlined. */
+.scene .spot {
+  position: absolute;
+  box-sizing: border-box;
+  padding: 0;
+  border: 2px dashed var(--cream);
+  border-radius: 10px;
+  background: rgba(255, 248, 236, 0.22);
+  color: var(--cream);
+  font: 600 22px/1 Fredoka, system-ui, sans-serif;
+  text-shadow: 0 1px 2px rgba(30, 27, 60, 0.6);
+  box-shadow: 0 0 0 1px rgba(62, 58, 110, 0.5);
+}
+.scene .spot.filled { background: transparent; }
+.scene .spot:hover,
+.scene .spot[aria-expanded="true"] { background: rgba(255, 248, 236, 0.4); border-style: solid; border-color: var(--cream); }
+.scene .spot:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+
+/* A small menu over the scene: Spook's hats, or what stands in a spot. */
+.scene .pick-menu {
+  position: absolute;
+  z-index: 2;
+  min-width: 150px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: var(--cream);
+  box-shadow: 0 4px 12px rgba(30, 27, 60, 0.35);
+}
+.scene .pick-menu button {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  width: 100%;
+  padding: 6px 10px 6px 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 14px;
+  text-align: left;
+}
+.scene .pick-menu button:hover:not(:disabled),
+.scene .pick-menu button:focus-visible { background: rgba(62, 58, 110, 0.09); outline: none; }
+.scene .pick-menu button:disabled { opacity: 1; cursor: default; }
+.pick-check { width: 16px; text-align: center; flex: none; }
+.pick-hint { display: block; font-size: 12px; opacity: 0.65; }

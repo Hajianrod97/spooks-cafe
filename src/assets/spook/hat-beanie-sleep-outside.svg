@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" width="200" height="210">
+  <title>Spook — beanie, sleep-outside</title>
+  <g id="spook" transform="rotate(-12 100 190)">
+  <g id="beanie">
+    <path d="M50 58 C48 30 72 20 100 20 C128 20 152 30 150 58 Z" fill="#E07A5F" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <g fill="none" stroke="#B85A44" stroke-width="3" stroke-linecap="round" opacity="0.55">
+      <path d="M76 28 Q72 42 74 54"/><path d="M100 24 V54"/><path d="M124 28 Q128 42 126 54"/>
+    </g>
+    <rect x="44" y="50" width="112" height="20" rx="10" fill="#B85A44" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <g stroke="#F4A58C" stroke-width="3" stroke-linecap="round" opacity="0.7">
+      <path d="M58 56 v8"/><path d="M68.5 56 v8"/><path d="M79 56 v8"/><path d="M89.5 56 v8"/><path d="M100 56 v8"/><path d="M110.5 56 v8"/><path d="M121 56 v8"/><path d="M131.5 56 v8"/><path d="M142 56 v8"/>
+    </g>
+  </g>
+  </g>
+</svg>

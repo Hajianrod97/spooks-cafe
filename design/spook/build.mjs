@@ -15,6 +15,11 @@ const C = {
   steam: "#B8B1DC",
   laptop: "#CDD1E2",
   laptopDark: "#A9AEC6",
+  broom: "#C98F62",
+  straw: "#F2C46D",
+  strawDark: "#D9A441",
+  cup: "#FBF3E6",
+  sleeve: "#A8714A",
 };
 const line = (w = 5) => `stroke="${C.ink}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
 
@@ -78,9 +83,14 @@ const band = (d) => `
     <path d="${d}" fill="none" stroke="${C.ink}" stroke-width="18" stroke-linecap="round"/>
     <path d="${d}" fill="none" stroke="${C.phones}" stroke-width="10" stroke-linecap="round"/>`;
 
-const headphones = `
-  <g id="headphones">${band("M46 92 C40 22 160 22 154 92")}${cup(44, 100, 0, "right")}${cup(156, 100, 0, "left")}
+const headset = (bandPath) => `
+  <g id="headphones">${band(bandPath)}${cup(44, 100, 0, "right")}${cup(156, 100, 0, "left")}
   </g>`;
+const headphones = headset("M46 92 C40 22 160 22 154 92");
+// Over a snug hat the band has to clear its crown (top ≈ y 18), so it arcs higher to the same
+// cups. A brimmed hat keeps the usual band, which then reads as crossing in front of the brim.
+const headphonesOverHat = headset("M45 94 C33 -8 167 -8 155 94");
+const RAISED_BAND = new Set(["beanie"]);
 
 const steam = (x, y, scale = 1) => `
   <g id="steam" transform="translate(${x} ${y}) scale(${scale}) translate(${-x} ${-y})" fill="none" stroke="${C.steam}" stroke-width="4" stroke-linecap="round">
@@ -154,6 +164,119 @@ const notes = `
     <ellipse cx="178" cy="75" rx="5" ry="4"/>
   </g>`;
 
+// Hats sit on the dome (its top is y 30). The timer sign hangs just above Spook's head, so they
+// hug the head instead of rising tall. Each is written once per pose, with that pose's transform.
+const H = { knit: "#E07A5F", knitDark: "#B85A44", knitLight: "#F4A58C", witch: "#4E4384", witchDark: "#3A3168", buckle: "#F2C14E" };
+const hats = {
+  beanie: `
+  <g id="beanie">
+    <path d="M50 58 C48 30 72 20 100 20 C128 20 152 30 150 58 Z" fill="${H.knit}" ${line()}/>
+    <g fill="none" stroke="${H.knitDark}" stroke-width="3" stroke-linecap="round" opacity="0.55">
+      <path d="M76 28 Q72 42 74 54"/><path d="M100 24 V54"/><path d="M124 28 Q128 42 126 54"/>
+    </g>
+    <rect x="44" y="50" width="112" height="20" rx="10" fill="${H.knitDark}" ${line()}/>
+    <g stroke="${H.knitLight}" stroke-width="3" stroke-linecap="round" opacity="0.7">
+      ${Array.from({ length: 9 }, (_, i) => `<path d="M${58 + i * 10.5} 56 v8"/>`).join("")}
+    </g>
+  </g>`,
+  // Floppy: a short crown whose point droops down the side, so it all stays below the sign.
+  "witch-hat": `
+  <g id="witch-hat" transform="rotate(-4 100 46)">
+    <path d="M70 44 C70 32 80 24 98 21 C118 18 138 22 152 32 C162 40 168 52 170 66 C160 58 150 52 136 50
+             C138 48 132 44 130 44 Z" fill="${H.witch}" ${line()}/>
+    <path d="M118 24 C134 26 148 34 156 44" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.25"/>
+    <path d="M71 38 Q100 46 129 38 L130 45 Q100 53 70 45 Z" fill="${H.buckle}"/>
+    <rect x="93" y="38" width="13" height="11" rx="2" fill="none" stroke="${H.witchDark}" stroke-width="3"/>
+    <ellipse cx="100" cy="48" rx="62" ry="9" fill="${H.witch}" ${line()}/>
+    <path d="M46 49 Q100 57 154 49" fill="none" stroke="${H.witchDark}" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+  </g>`,
+};
+
+// ---------- outside props ----------
+// Spook's box sits over the doorway: its opening runs from x ≈ 23 to 177 in his coordinates and
+// the cafe floor inside starts at y ≈ 197, so bristles at y ≈ 200–208 touch the floor.
+
+// Held diagonally in both mitts, bristles on the floor to his left. The page swishes this whole
+// overlay around the upper mitt (138, 128), so the mitts are drawn here, not on the body.
+const broom = `
+  <g id="broom">
+    <path d="M156 92 L78 186" ${line(9)}/>
+    <path d="M156 92 L78 186" stroke="${C.broom}" stroke-width="4" stroke-linecap="round"/>
+    <path d="M54 184 h46 l16 24 h-78 Z" fill="${C.straw}" ${line(4)}/>
+    <path d="M60 190 l-6 14 M71 190 l-3 15 M82 190 v15 M93 190 l3 15 M102 190 l6 14" stroke="${C.strawDark}" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="58" y="178" width="38" height="9" rx="3" fill="${C.phones}" ${line(3)}/>
+  </g>
+  ${hand("hand-upper", 138, 114, 40)}${hand("hand-lower", 106, 152, 40)}`;
+
+// Leaning on the inside of the right jamb while he dozes, bristles on the doorway floor (its
+// opening ends at x ≈ 177). It doesn't bob, so it's a still props overlay.
+const proppedBroom = `
+  <g id="propped-broom">
+    <path d="M172 44 L160 186" ${line(9)}/>
+    <path d="M172 44 L160 186" stroke="${C.broom}" stroke-width="4" stroke-linecap="round"/>
+    <path d="M148 184 h24 l4 24 h-32 Z" fill="${C.straw}" ${line(4)}/>
+    <path d="M153 190 l-2 14 M160 190 v15 M167 190 l2 14" stroke="${C.strawDark}" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="148" y="180" width="24" height="8" rx="3" fill="${C.phones}" ${line(3)}/>
+  </g>`;
+
+// ---------- Mochi, the ghost cat ----------
+// Spook's cat: pale, see-through blue with a glowing outline instead of his ink line, so the two
+// never merge; a big round head with tall ears, no legs, the body trailing off into a wispy tail.
+// Drawn at Spook's scale (the page shows both at 0.75), each in its own box with the base on the
+// bottom edge and room around it for the glow, so a scene only needs a position.
+const M = { fill: "#E3EAFF", shade: "#C6D3FF", glow: "#7E9BF0", ear: "#F5C6DA", eye: "#3E3A6E", whisker: "#9DB3F5" };
+const catSvg = (name, w, h, body) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">
+  <title>Mochi — ${name}</title>
+  <defs><filter id="mochi-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs>${body}
+</svg>
+`;
+// The outline twice: blurred and wide for the glow, then crisp on top.
+const glowing = (d, fill = M.fill) => `
+  <path d="${d}" fill="none" stroke="${M.glow}" stroke-width="7" opacity="0.55" filter="url(#mochi-glow)"/>
+  <path d="${d}" fill="${fill}" fill-opacity="0.9" stroke="${M.glow}" stroke-width="3" stroke-linejoin="round"/>`;
+const catHead = (cx, cy) =>
+  `M${cx - 22} ${cy + 4} C${cx - 24} ${cy - 6} ${cx - 22} ${cy - 14} ${cx - 18} ${cy - 26} L${cx - 6} ${cy - 15}
+   C${cx - 2} ${cy - 16} ${cx + 2} ${cy - 16} ${cx + 6} ${cy - 15} L${cx + 18} ${cy - 26}
+   C${cx + 22} ${cy - 14} ${cx + 24} ${cy - 6} ${cx + 22} ${cy + 4} C${cx + 22} ${cy + 14} ${cx + 12} ${cy + 20} ${cx} ${cy + 20}
+   C${cx - 12} ${cy + 20} ${cx - 22} ${cy + 14} ${cx - 22} ${cy + 4} Z`;
+const innerEars = (cx, cy) => `
+  <path d="M${cx - 16} ${cy - 18} l-1 -4 l5 4 Z M${cx + 16} ${cy - 18} l1 -4 l-5 4 Z" fill="${M.ear}" stroke="${M.ear}" stroke-width="3" stroke-linejoin="round"/>`;
+const whiskers = (cx, cy) => `
+  <g stroke="${M.whisker}" stroke-width="1.6" stroke-linecap="round">
+    <path d="M${cx - 14} ${cy + 8} l-11 -2 M${cx - 14} ${cy + 11} l-10 2 M${cx + 14} ${cy + 8} l11 -2 M${cx + 14} ${cy + 11} l10 2"/>
+  </g>`;
+const catMouth = (cx, cy) => `<path d="M${cx - 4} ${cy + 8} q2 3 4 0 q2 3 4 0" fill="none" stroke="${M.eye}" stroke-width="2" stroke-linecap="round"/>`;
+
+// Curled up asleep, head resting on its front, the tail trailing off to the right as a wisp.
+const catCurled = catSvg("curled up asleep", 96, 58, `
+  ${glowing("M22 52 C10 52 8 40 16 32 C26 22 48 22 62 28 C70 31 74 36 76 42 C82 40 88 36 92 30 C92 40 86 48 76 52 Z")}
+  <path d="M40 46 Q54 40 68 46" fill="none" stroke="${M.shade}" stroke-width="3" stroke-linecap="round"/>
+  ${glowing(catHead(28, 34))}${innerEars(28, 34)}
+  <g fill="none" stroke="${M.eye}" stroke-width="2.2" stroke-linecap="round">
+    <path d="M17 34 q4 3 8 0"/><path d="M31 34 q4 3 8 0"/>
+  </g>
+  ${catMouth(28, 33)}${whiskers(28, 33)}
+  <path d="M60 14 q2 -3 4 0 M67 8 q1.5 -2.4 3 0" fill="none" stroke="${M.whisker}" stroke-width="2" stroke-linecap="round"/>`);
+
+// Floating up to Spook's mitt, eyes shut and purring; the body trails down into a wispy tail.
+const catPetted = catSvg("being petted", 84, 88, `
+  ${glowing("M30 50 C24 58 24 68 30 74 C24 78 14 80 6 82 C18 86 34 84 44 76 C54 72 60 64 60 54 C60 50 58 47 56 46 Z")}
+  <path d="M34 60 Q42 66 52 60" fill="none" stroke="${M.shade}" stroke-width="3" stroke-linecap="round"/>
+  ${glowing(catHead(42, 34))}${innerEars(42, 34)}
+  <g fill="none" stroke="${M.eye}" stroke-width="2.4" stroke-linecap="round">
+    <path d="M30 34 q4 -4 8 0"/><path d="M46 34 q4 -4 8 0"/>
+  </g>
+  ${catMouth(42, 34)}${whiskers(42, 34)}`);
+
+const heart = (x, y, s = 1) =>
+  `<path d="M${x} ${y + 4 * s} c${-5 * s} ${-3 * s} ${-6 * s} ${-6 * s} ${-4 * s} ${-8 * s} c${2 * s} ${-2 * s} ${4 * s} ${-1 * s} ${4 * s} ${1 * s} c0 ${-2 * s} ${2 * s} ${-3 * s} ${4 * s} ${-1 * s} c${2 * s} ${2 * s} ${1 * s} ${5 * s} ${-4 * s} ${8 * s} Z" fill="${C.blush}" ${line(1.5)}/>`;
+
+// Reaching down to Mochi on the doorstep, at his lower left; drawn behind the body like the wave.
+const petArm = `
+  <path id="arm-pet" d="M54 112 C42 116 30 126 22 138 C16 148 26 156 36 150 C44 140 50 132 58 128 Z"
+        fill="${C.body}" ${line()}/>`;
+const petHearts = `<g id="hearts">${heart(14, 98, 1.2)}${heart(4, 114, 0.9)}${heart(28, 86, 0.8)}</g>`;
+
 const svg = (name, parts, transform = "") => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" width="200" height="210">
   <title>Spook — ${name}</title>
   <g id="spook"${transform ? ` transform="${transform}"` : ""}>${parts.join("")}
@@ -184,6 +307,24 @@ const poses = {
       transform: "translate(0 16) rotate(-14 100 110)",
     },
   },
+  // Floating in the open doorway, nothing in front of him. `held` is a separate overlay that bobs
+  // with him (the page also swishes the broom); `props` stand still.
+  outside: {
+    idle: {
+      // Leaning on the left doorframe, one mitt on it, a small wave with the other.
+      parts: [waveArm, body, eyes.open, blush, mouth.smile, hand("hand-frame", 34, 124, -80), waveLines],
+      transform: "rotate(-6 100 190)",
+    },
+    // No headphones out here: sweeping the step is focus enough.
+    focus: { parts: [body, eyes.focused, blush, mouth.small], held: [broom], transform: "rotate(-3 100 150)" },
+    // Petting Mochi, who sits on the doorstep at his lower left.
+    break: { parts: [petArm, body, eyes.happy, blush, mouth.smile, hand("hand-pet", 24, 146, -30), petHearts], transform: "rotate(-5 100 190)" },
+    sleep: {
+      parts: [body, eyes.asleep, blush, mouth.o, hand("hand-left", 56, 150, 20), zzz],
+      transform: "rotate(-12 100 190)",
+      props: [proppedBroom],
+    },
+  },
 };
 
 // Menu bar icon: a solid silhouette with the eyes cut out. macOS treats it as a template
@@ -202,13 +343,27 @@ const trayIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="32 24 136 170
 const dir = new URL("../../src/assets/spook/", import.meta.url).pathname;
 let count = 0;
 for (const [scene, set] of Object.entries(poses)) {
-  for (const [pose, { parts, transform, props }] of Object.entries(set)) {
+  for (const [pose, { parts, transform, props, held }] of Object.entries(set)) {
     const name = scene === "counter" ? pose : `${pose}-${scene}`;
     writeFileSync(`${dir}spook-${name}.svg`, svg(name, parts, transform));
     if (props) writeFileSync(`${dir}spook-${name}-props.svg`, svg(`${name} props`, props));
+    if (held) writeFileSync(`${dir}spook-${name}-held.svg`, svg(`${name} held`, held, transform));
     count++;
   }
 }
+// Hats: hat-<hat>-<pose>[-<scene>].svg. While he wears headphones, they go on over the hat.
+for (const [hat, art] of Object.entries(hats)) {
+  for (const [scene, set] of Object.entries(poses)) {
+    for (const [pose, { parts, transform }] of Object.entries(set)) {
+      const name = scene === "counter" ? pose : `${pose}-${scene}`;
+      const over = RAISED_BAND.has(hat) ? headphonesOverHat : headphones;
+      const layers = parts.includes(headphones) ? [art, over] : [art];
+      writeFileSync(`${dir}hat-${hat}-${name}.svg`, svg(`${hat}, ${name}`, layers, transform));
+    }
+  }
+}
+writeFileSync(`${dir}mochi-curled.svg`, catCurled);
+writeFileSync(`${dir}mochi-petted.svg`, catPetted);
 // The notes are their own overlay, shown in any awake pose while music plays.
 writeFileSync(`${dir}spook-notes.svg`, svg("notes", [notes]));
 writeFileSync(new URL("tray-icon.svg", import.meta.url).pathname, trayIcon);

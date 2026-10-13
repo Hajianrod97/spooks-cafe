@@ -1,5 +1,11 @@
 import type { TimeOfDay } from "../types";
-import { COUNTER_POSES, TABLE_POSES, type PoseSet } from "./Spook";
+import { COUNTER_POSES, OUTSIDE_POSES, TABLE_POSES, type PoseSet } from "./Spook";
+import outsideBack from "../assets/cafe/outside-back.svg";
+import outsideGlow from "../assets/cafe/outside-glow.svg";
+import outsideSkyAfternoon from "../assets/cafe/outside-sky-afternoon.svg";
+import outsideSkyEvening from "../assets/cafe/outside-sky-evening.svg";
+import outsideSkyMorning from "../assets/cafe/outside-sky-morning.svg";
+import outsideSkyNight from "../assets/cafe/outside-sky-night.svg";
 import roomBack from "../assets/cafe/room-back.svg";
 import roomFront from "../assets/cafe/room-front.svg";
 import skyAfternoon from "../assets/cafe/sky-afternoon.svg";
@@ -22,19 +28,37 @@ export interface SceneArt {
   label: string;
   /** Walls and floor, with the window as a hole; Spook goes between back and front. */
   back: string;
-  front: string;
+  /** What hides Spook's lower half (counter, table top); none where he floats in full view. */
+  front?: string;
   sky: Record<TimeOfDay, string>;
   /** Spook's art for each pose here: what he does depends on where he is. */
   poses: PoseSet;
   /** The window opening in stage coordinates (960×340), where the rain falls. */
   window: { x: number; y: number; w: number; h: number };
+  /** Lit windows and lamps, shown above the room tint in the evening and at night. */
+  glow?: string;
+  /** How far below his usual spot Spook floats here, in stage px (his hat, notes and glow follow). */
+  spookDrop?: number;
+  /** Text painted on boards drawn in the back layer (stage coordinates of each board's face). */
+  lettering?: { text: string; x: number; y: number; w: number; h: number }[];
 }
 
-/**
- * Left to right, as the camera pans. The outside scene (a practice ticket in SPEC.md) goes
- * first; its art comes from design/cafe/build.mjs like these.
- */
+/** Left to right, as the ◀ ▶ arrows step; all art comes from design/cafe/build.mjs. */
 export const SCENES: SceneArt[] = [
+  {
+    name: "outside",
+    label: "the street",
+    back: outsideBack,
+    sky: { morning: outsideSkyMorning, afternoon: outsideSkyAfternoon, evening: outsideSkyEvening, night: outsideSkyNight },
+    poses: OUTSIDE_POSES,
+    // The sky is the whole background here, so rain falls everywhere it shows.
+    window: { x: 0, y: 0, w: 960, h: 288 },
+    glow: outsideGlow,
+    // Nothing hides him here, so he floats lower in the doorway, nearer its floor.
+    spookDrop: 16,
+    // Over the name board in design/cafe/build.mjs (NAME_BOARDS).
+    lettering: [{ text: "Spook's Cafe", x: 296, y: 74, w: 100, h: 32 }],
+  },
   {
     name: "counter",
     label: "the counter",

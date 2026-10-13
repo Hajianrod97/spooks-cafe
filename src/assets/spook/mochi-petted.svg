@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 88" width="84" height="88">
+  <title>Mochi — being petted</title>
+  <defs><filter id="mochi-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs>
+  
+  <path d="M30 50 C24 58 24 68 30 74 C24 78 14 80 6 82 C18 86 34 84 44 76 C54 72 60 64 60 54 C60 50 58 47 56 46 Z" fill="none" stroke="#7E9BF0" stroke-width="7" opacity="0.55" filter="url(#mochi-glow)"/>
+  <path d="M30 50 C24 58 24 68 30 74 C24 78 14 80 6 82 C18 86 34 84 44 76 C54 72 60 64 60 54 C60 50 58 47 56 46 Z" fill="#E3EAFF" fill-opacity="0.9" stroke="#7E9BF0" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M34 60 Q42 66 52 60" fill="none" stroke="#C6D3FF" stroke-width="3" stroke-linecap="round"/>
+  
+  <path d="M20 38 C18 28 20 20 24 8 L36 19
+   C40 18 44 18 48 19 L60 8
+   C64 20 66 28 64 38 C64 48 54 54 42 54
+   C30 54 20 48 20 38 Z" fill="none" stroke="#7E9BF0" stroke-width="7" opacity="0.55" filter="url(#mochi-glow)"/>
+  <path d="M20 38 C18 28 20 20 24 8 L36 19
+   C40 18 44 18 48 19 L60 8
+   C64 20 66 28 64 38 C64 48 54 54 42 54
+   C30 54 20 48 20 38 Z" fill="#E3EAFF" fill-opacity="0.9" stroke="#7E9BF0" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M26 16 l-1 -4 l5 4 Z M58 16 l1 -4 l-5 4 Z" fill="#F5C6DA" stroke="#F5C6DA" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="none" stroke="#3E3A6E" stroke-width="2.4" stroke-linecap="round">
+    <path d="M30 34 q4 -4 8 0"/><path d="M46 34 q4 -4 8 0"/>
+  </g>
+  <path d="M38 42 q2 3 4 0 q2 3 4 0" fill="none" stroke="#3E3A6E" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="#9DB3F5" stroke-width="1.6" stroke-linecap="round">
+    <path d="M28 42 l-11 -2 M28 45 l-10 2 M56 42 l11 -2 M56 45 l10 2"/>
+  </g>
+</svg>

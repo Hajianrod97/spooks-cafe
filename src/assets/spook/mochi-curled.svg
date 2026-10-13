@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 58" width="96" height="58">
+  <title>Mochi — curled up asleep</title>
+  <defs><filter id="mochi-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs>
+  
+  <path d="M22 52 C10 52 8 40 16 32 C26 22 48 22 62 28 C70 31 74 36 76 42 C82 40 88 36 92 30 C92 40 86 48 76 52 Z" fill="none" stroke="#7E9BF0" stroke-width="7" opacity="0.55" filter="url(#mochi-glow)"/>
+  <path d="M22 52 C10 52 8 40 16 32 C26 22 48 22 62 28 C70 31 74 36 76 42 C82 40 88 36 92 30 C92 40 86 48 76 52 Z" fill="#E3EAFF" fill-opacity="0.9" stroke="#7E9BF0" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M40 46 Q54 40 68 46" fill="none" stroke="#C6D3FF" stroke-width="3" stroke-linecap="round"/>
+  
+  <path d="M6 38 C4 28 6 20 10 8 L22 19
+   C26 18 30 18 34 19 L46 8
+   C50 20 52 28 50 38 C50 48 40 54 28 54
+   C16 54 6 48 6 38 Z" fill="none" stroke="#7E9BF0" stroke-width="7" opacity="0.55" filter="url(#mochi-glow)"/>
+  <path d="M6 38 C4 28 6 20 10 8 L22 19
+   C26 18 30 18 34 19 L46 8
+   C50 20 52 28 50 38 C50 48 40 54 28 54
+   C16 54 6 48 6 38 Z" fill="#E3EAFF" fill-opacity="0.9" stroke="#7E9BF0" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M12 16 l-1 -4 l5 4 Z M44 16 l1 -4 l-5 4 Z" fill="#F5C6DA" stroke="#F5C6DA" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="none" stroke="#3E3A6E" stroke-width="2.2" stroke-linecap="round">
+    <path d="M17 34 q4 3 8 0"/><path d="M31 34 q4 3 8 0"/>
+  </g>
+  <path d="M24 41 q2 3 4 0 q2 3 4 0" fill="none" stroke="#3E3A6E" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="#9DB3F5" stroke-width="1.6" stroke-linecap="round">
+    <path d="M14 41 l-11 -2 M14 44 l-10 2 M42 41 l11 -2 M42 44 l10 2"/>
+  </g>
+  <path d="M60 14 q2 -3 4 0 M67 8 q1.5 -2.4 3 0" fill="none" stroke="#9DB3F5" stroke-width="2" stroke-linecap="round"/>
+</svg>

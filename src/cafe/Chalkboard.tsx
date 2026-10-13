@@ -30,9 +30,11 @@ function savedSection(): Section {
 interface Props extends MenuProps {
   /** Report refetches when it changes, since that's when blocks get logged. */
   phase: Phase;
+  /** For the To-do status line, once today's to-do beans are used up. */
+  todoBeansLeft: number | undefined;
 }
 
-export function Chalkboard({ phase, ...menu }: Props) {
+export function Chalkboard({ phase, todoBeansLeft, ...menu }: Props) {
   const [section, setSection] = useState<Section>(savedSection);
   // Owned here rather than by the section, so switching tabs doesn't refetch or flash an empty list.
   const todos = useTodos();
@@ -89,7 +91,7 @@ export function Chalkboard({ phase, ...menu }: Props) {
           aria-labelledby={`tab-${section}`}
         >
           {section === "menu" && <MenuSection {...menu} />}
-          {section === "todo" && <TodoList tasks={menu.tasks} todos={todos} />}
+          {section === "todo" && <TodoList tasks={menu.tasks} todos={todos} beansMaxed={todoBeansLeft === 0} />}
           {section === "report" && <ReportSection phase={phase} todos={todos.todos} onSessions={menu.onSessions} />}
         </div>
       </div>

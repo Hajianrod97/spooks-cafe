@@ -167,3 +167,14 @@ export interface TrendsReport {
     averageActiveDay: number | null;
   };
 }
+
+/** The cafe shop's state, from `get_shop` and the `shop` event. */
+export interface Shop {
+  balance: number;
+  /** How many more to-do ticks pay beans today. */
+  todoBeansLeft: number;
+  owned: string[];
+  /** Slot id → item id. */
+  placements: Record<string, string>;
+  hat: string | null;
+}

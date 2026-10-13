@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" width="200" height="210">
+  <title>Spook — sleep-outside props</title>
+  <g id="spook">
+  <g id="propped-broom">
+    <path d="M172 44 L160 186" stroke="#3E3A6E" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M172 44 L160 186" stroke="#C98F62" stroke-width="4" stroke-linecap="round"/>
+    <path d="M148 184 h24 l4 24 h-32 Z" fill="#F2C46D" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M153 190 l-2 14 M160 190 v15 M167 190 l2 14" stroke="#D9A441" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="148" y="180" width="24" height="8" rx="3" fill="#7B6CC0" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  </g>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 42" width="48" height="42">
+  <title>Jack-o'-lantern glow</title>
+  <defs><radialGradient id="halo"><stop offset="0" stop-color="#FFD878" stop-opacity="0.45"/><stop offset="1" stop-color="#FFD878" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="24" cy="25" rx="24" ry="17" fill="url(#halo)"/>
+    <path d="M13 21 l5 -5 l3 6 Z M35 21 l-5 -5 l-3 6 Z" fill="#FFD878"/>
+    <path d="M14 28 Q24 34 34 28 L32 32 L28 30 L24 33 L20 30 L16 32 Z" fill="#FFD878"/>
+</svg>

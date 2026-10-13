@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" width="200" height="210">
+  <title>Spook — break-outside</title>
+  <g id="spook" transform="rotate(-5 100 190)">
+  <path id="arm-pet" d="M54 112 C42 116 30 126 22 138 C16 148 26 156 36 150 C44 140 50 132 58 128 Z"
+        fill="#FFF8EC" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+  <g id="body">
+    <path d="M100 30 C142 30 158 62 158 104 L159 160 Q165 184 148 182 Q138 174 127 186
+             Q114 197 101 185 Q89 174 76 186 Q62 197 52 182 Q35 184 41 160 L42 104
+             C42 62 58 30 100 30 Z" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M48 166 Q60 176 72 168 Q86 158 100 170 Q114 158 128 168 Q140 176 152 166 L153 174
+             Q140 168 127 180 Q114 190 101 179 Q89 168 76 180 Q62 190 49 174 Z"
+          fill="#E4DEF4" opacity="0.9"/>
+    <path d="M128 60 Q140 72 142 92" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+  </g>
+  <g id="eyes" fill="none" stroke="#3E3A6E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M74 99 Q82 87 90 99"/><path d="M110 99 Q118 87 126 99"/>
+  </g>
+  <g id="blush" fill="#F5B3C6" opacity="0.75">
+    <ellipse cx="68" cy="114" rx="8" ry="4.5"/><ellipse cx="132" cy="114" rx="8" ry="4.5"/>
+  </g><path id="mouth" d="M93 118 Q100 125 107 118" fill="none" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><g id="hand-pet" transform="rotate(-30 24 146)">
+    <ellipse cx="24" cy="146" rx="11" ry="8" fill="#FFF8EC" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M17 149 q7 4 14 0" fill="none" stroke="#E4DEF4" stroke-width="3" stroke-linecap="round"/>
+  </g><g id="hearts"><path d="M14 102.8 c-6 -3.5999999999999996 -7.199999999999999 -7.199999999999999 -4.8 -9.6 c2.4 -2.4 4.8 -1.2 4.8 1.2 c0 -2.4 2.4 -3.5999999999999996 4.8 -1.2 c2.4 2.4 1.2 6 -4.8 9.6 Z" fill="#F5B3C6" stroke="#3E3A6E" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M4 117.6 c-4.5 -2.7 -5.4 -5.4 -3.6 -7.2 c1.8 -1.8 3.6 -0.9 3.6 0.9 c0 -1.8 1.8 -2.7 3.6 -0.9 c1.8 1.8 0.9 4.5 -3.6 7.2 Z" fill="#F5B3C6" stroke="#3E3A6E" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M28 89.2 c-4 -2.4000000000000004 -4.800000000000001 -4.800000000000001 -3.2 -6.4 c1.6 -1.6 3.2 -0.8 3.2 0.8 c0 -1.6 1.6 -2.4000000000000004 3.2 -0.8 c1.6 1.6 0.8 4 -3.2 6.4 Z" fill="#F5B3C6" stroke="#3E3A6E" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></g>
+  </g>
+</svg>

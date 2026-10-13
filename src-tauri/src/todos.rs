@@ -1,7 +1,7 @@
 use chrono::Local;
 use rusqlite::{params, Connection, OptionalExtension};
 use serde::Serialize;
-use tauri::State;
+use tauri::{AppHandle, Manager, State};
 
 use crate::db::Db;
 use crate::error::{Error, Result};
@@ -38,7 +38,7 @@ fn clean_text(text: &str) -> Result<String> {
 }
 
 /// "Today" starts at local midnight: dailies reset and ticked one-time to-dos drop off.
-fn today_start() -> i64 {
+pub(crate) fn today_start() -> i64 {
     local_midnight(Local::now().date_naive()).timestamp()
 }
 
@@ -59,11 +59,16 @@ pub fn add_todo(db: State<Db>, text: String, task_id: Option<i64>, daily: bool) 
 }
 
 #[tauri::command]
-pub fn set_todo_done(db: State<Db>, id: i64, done: bool) -> Result<Vec<Todo>> {
-    let conn = db.0.lock().unwrap();
-    let today = today_start();
-    set_done(&conn, id, done, Local::now().timestamp(), today)?;
-    visible_todos(&conn, today)
+pub fn set_todo_done(app: AppHandle, id: i64, done: bool) -> Result<Vec<Todo>> {
+    let (todos, earned) = {
+        let db = app.state::<Db>();
+        let conn = db.0.lock().unwrap();
+        let today = today_start();
+        let earned = set_done(&conn, id, done, Local::now().timestamp(), today)?;
+        (visible_todos(&conn, today)?, earned)
+    };
+    crate::shop::publish_earned(&app, earned);
+    Ok(todos)
 }
 
 /// Hides the to-do for good (a daily stops coming back) but keeps its ticks.
@@ -96,24 +101,29 @@ fn insert_todo(conn: &Connection, text: &str, task_id: Option<i64>, daily: bool)
 
 /// Ticks or unticks. A one-time to-do has at most one tick ever; a daily at most one per day.
 /// Ticking something already done keeps the first tick, so it's never counted twice.
-fn set_done(conn: &Connection, id: i64, done: bool, now: i64, today: i64) -> Result<()> {
+/// Returns the beans a new tick earned.
+fn set_done(conn: &Connection, id: i64, done: bool, now: i64, today: i64) -> Result<i64> {
     let daily: bool = conn
         .query_row("SELECT daily FROM todos WHERE id = ?1 AND deleted_at IS NULL", [id], |row| row.get(0))
         .optional()?
         .ok_or(Error::InvalidInput("to-do not found"))?;
     // The ticks that count as "done": all of a one-time to-do's, only today's for a daily.
     let since = if daily { today } else { i64::MIN };
-    if done {
-        conn.execute(
-            "INSERT INTO todo_ticks (todo_id, done_at)
-             SELECT ?1, ?2
-             WHERE NOT EXISTS (SELECT 1 FROM todo_ticks WHERE todo_id = ?1 AND done_at >= ?3)",
-            params![id, now, since],
-        )?;
-    } else {
+    if !done {
         conn.execute("DELETE FROM todo_ticks WHERE todo_id = ?1 AND done_at >= ?2", params![id, since])?;
+        return Ok(0);
     }
-    Ok(())
+    // The tick and its beans land together or not at all.
+    let tx = conn.unchecked_transaction()?;
+    let ticked = tx.execute(
+        "INSERT INTO todo_ticks (todo_id, done_at)
+         SELECT ?1, ?2
+         WHERE NOT EXISTS (SELECT 1 FROM todo_ticks WHERE todo_id = ?1 AND done_at >= ?3)",
+        params![id, now, since],
+    )?;
+    let earned = if ticked == 1 { crate::shop::award_todo(&tx, id, now, today)? } else { 0 };
+    tx.commit()?;
+    Ok(earned)
 }
 
 /// Dailies first, then one-time to-dos; in each, open ones in the order added, then done ones
@@ -242,6 +252,18 @@ mod tests {
         assert!(insert_todo(&conn, "valid parens", Some(1), false).is_err());
         assert!(insert_todo(&conn, "x", Some(999), false).is_err());
         assert_eq!(visible_todos(&conn, TODAY).unwrap()[0].task_name.as_deref(), Some("LeetCode"));
+    }
+
+    #[test]
+    fn a_new_tick_earns_beans_and_unticking_keeps_them() {
+        let conn = conn();
+        insert_todo(&conn, "email recruiter", None, false).unwrap();
+        conn.execute("UPDATE todos SET created_at = ?1", [TODAY - DAY]).unwrap();
+        assert_eq!(set_done(&conn, 1, true, TODAY + 60, TODAY).unwrap(), 2);
+        assert_eq!(set_done(&conn, 1, false, TODAY + 120, TODAY).unwrap(), 0);
+        assert_eq!(set_done(&conn, 1, true, TODAY + 180, TODAY).unwrap(), 0, "a re-tick doesn't pay again");
+        let balance: i64 = conn.query_row("SELECT SUM(amount) FROM bean_ledger", [], |r| r.get(0)).unwrap();
+        assert_eq!(balance, 2);
     }
 
     #[test]

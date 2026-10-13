@@ -179,13 +179,25 @@ fn load_durations(conn: &Connection, task_id: i64) -> Result<Durations> {
     Ok(durations)
 }
 
-fn log_session(conn: &Connection, timer: &Timer, minutes: i64, completed: bool) -> Result<()> {
+/// Returns the new session's id.
+fn log_session(conn: &Connection, timer: &Timer, minutes: i64, completed: bool) -> Result<i64> {
     conn.execute(
         "INSERT INTO sessions (task_id, started_at, duration_minutes, completed)
          VALUES (?1, ?2, ?3, ?4)",
         params![timer.task_id, timer.started_at.timestamp(), minutes, completed],
     )?;
-    Ok(())
+    Ok(conn.last_insert_rowid())
+}
+
+/// Logs a completed focus block and pays its beans in one transaction, so a crash can't leave
+/// one without the other. Returns the beans paid.
+fn complete_focus(conn: &Connection, timer: &Timer) -> Result<i64> {
+    let task_id = timer.task_id.ok_or(Error::InvalidState("focus block without a task"))?;
+    let tx = conn.unchecked_transaction()?;
+    let session = log_session(&tx, timer, timer.durations.focus, true)?;
+    let beans = crate::shop::award_focus(&tx, session, task_id, timer.durations.focus, timer.started_at)?;
+    tx.commit()?;
+    Ok(beans)
 }
 
 // Locking rules, to prevent deadlock:
@@ -331,7 +343,7 @@ pub fn spawn_ticker(app: AppHandle) {
         };
         loop {
             std::thread::sleep(TICK);
-            let TickOutcome { result, alert } = tick(&app, &mut ticker);
+            let TickOutcome { result, alert, beans } = tick(&app, &mut ticker);
             match result {
                 Ok(snapshot) => {
                     ticker.last_error = None;
@@ -352,6 +364,7 @@ pub fn spawn_ticker(app: AppHandle) {
             if let Some(alert) = alert {
                 alerts::fire(&app, alert);
             }
+            crate::shop::publish_earned(&app, beans);
         }
     });
 }
@@ -363,16 +376,24 @@ struct TickOutcome {
     /// Set when a phase ended on its own. Kept separate from `result` so a failure after the
     /// phase changed in memory (e.g. the save) can't swallow the alert.
     alert: Option<Alert>,
+    /// Beans a completed focus block earned, announced after the locks are released.
+    beans: i64,
 }
 
 fn tick(app: &AppHandle, ticker: &mut Ticker) -> TickOutcome {
     let mut alert = None;
-    let result = advance(app, ticker, &mut alert);
-    TickOutcome { result, alert }
+    let mut beans = 0;
+    let result = advance(app, ticker, &mut alert, &mut beans);
+    TickOutcome { result, alert, beans }
 }
 
 /// Advances the timer under its lock. Returns a snapshot when there's something new to publish.
-fn advance(app: &AppHandle, ticker: &mut Ticker, alert: &mut Option<Alert>) -> Result<Option<Snapshot>> {
+fn advance(
+    app: &AppHandle,
+    ticker: &mut Ticker,
+    alert: &mut Option<Alert>,
+    beans: &mut i64,
+) -> Result<Option<Snapshot>> {
     let state = app.state::<TimerState>();
     let mut timer = state.0.lock().unwrap();
     // Checked every tick, even when idle, so the clock baselines stay current.
@@ -403,7 +424,7 @@ fn advance(app: &AppHandle, ticker: &mut Ticker, alert: &mut Option<Alert>) -> R
     *alert = match timer.phase {
         Phase::Focus => {
             let db = app.state::<Db>();
-            log_session(&db.0.lock().unwrap(), &timer, timer.durations.focus, true)?;
+            *beans = complete_focus(&db.0.lock().unwrap(), &timer)?;
             timer.last_focus_end = Some(Local::now());
             let (brk, minutes) = timer.next_break();
             timer.begin(brk, minutes);

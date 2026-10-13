@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" width="960" height="340">
+  <title>Cafe — shop front, lights</title>
+  <defs>
+    <radialGradient id="lamp-glow"><stop offset="0" stop-color="#FFD98A" stop-opacity="0.55"/><stop offset="1" stop-color="#FFD98A" stop-opacity="0"/></radialGradient>
+    <linearGradient id="spill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A" stop-opacity="0.35"/><stop offset="1" stop-color="#FFD98A" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect x="304" y="124" width="96" height="102" fill="#FFD98A" opacity="0.7"/>
+  <circle cx="323.2" cy="146" r="2.6" fill="#FFF4D6"/><circle cx="347.2" cy="148.5" r="2.6" fill="#FFF4D6"/><circle cx="371.2" cy="146" r="2.6" fill="#FFF4D6"/><circle cx="392.32" cy="148.2" r="2.6" fill="#FFF4D6"/><rect x="560" y="124" width="96" height="102" fill="#FFD98A" opacity="0.7"/>
+  <circle cx="579.2" cy="146" r="2.6" fill="#FFF4D6"/><circle cx="603.2" cy="148.5" r="2.6" fill="#FFF4D6"/><circle cx="627.2" cy="146" r="2.6" fill="#FFF4D6"/><circle cx="648.32" cy="148.2" r="2.6" fill="#FFF4D6"/>
+  <rect x="422" y="106" width="116" height="182" fill="#FFD98A" opacity="0.6"/>
+  <path d="M392 288 H568 L598 326 H362 Z" fill="url(#spill)"/>
+  <ellipse cx="262" cy="66" rx="40" ry="34" fill="url(#lamp-glow)"/><path d="M248 70 h28 l-6 -24 h-16 Z" fill="#FFD878"/><ellipse cx="36" cy="66" rx="40" ry="34" fill="url(#lamp-glow)"/><path d="M22 70 h28 l-6 -24 h-16 Z" fill="#FFD878"/>
+</svg>
