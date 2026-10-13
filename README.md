@@ -1,7 +1,19 @@
-# Tauri + React + Typescript
+# Spook's Cafe
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+A macOS Pomodoro tracker with a lofi ghost cafe. Spook brews while you focus, and the cafe follows the time of day.
 
-## Recommended IDE Setup
+Built with Tauri 2, React and TypeScript (Vite), and SQLite.
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## Run it
+
+```sh
+npm install
+npm run tauri dev       # LOFI_FAST=1 makes minutes run as seconds
+```
+
+## Docs
+
+- `SPEC.md`: requirements, design decisions and build order
+- `DEFECTS.md`: known bugs and rough edges
+- `docs/`: research notes, such as the YouTube spike that chose the hidden player window
+- `design/`: scripts that generate the SVG art in `src/assets/` (`node design/<name>/build.mjs`)

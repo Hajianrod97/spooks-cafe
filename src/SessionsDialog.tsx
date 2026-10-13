@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Session, Task } from "./types";
+import { SpookFace } from "./cafe/SpookFace";
 import { useModal } from "./useModal";
 
 const dayLabel = (d: Date) => d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
@@ -120,7 +121,15 @@ function SessionRow({ session: s, onEdit, onDelete }: { session: Session; onEdit
           {s.taskArchived && <span className="tag">archived</span>}
         </span>
         <span className="stats">
-          {s.durationMinutes}m {s.completed ? "🍅" : "· partial"}
+          {s.durationMinutes}m{" "}
+          {s.completed ? (
+            <>
+              <SpookFace size={14} />
+              <span className="visually-hidden">completed</span>
+            </>
+          ) : (
+            "· partial"
+          )}
         </span>
         <button className="icon" aria-label="Edit session" onClick={onEdit}>✎</button>
         {confirming ? (

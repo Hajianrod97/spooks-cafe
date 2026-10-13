@@ -19,70 +19,19 @@ body { margin: 0; }
 
 .below { padding: 1rem 1rem 1.5rem; text-align: center; }
 
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-a {
-  font-weight: 500;
-  color: #f2c46d;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #ffd878;
-}
-
+/* Controls only inherit the app's type here; each component styles its own look. */
 input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #ffffff;
-  background-color: #0f0f0f98;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #b8b1dc;
-}
-button:active {
-  border-color: #b8b1dc;
-  background-color: #0f0f0f69;
-}
-
-input,
-button {
-  outline: none;
-}
+button { font-family: inherit; font-size: 1em; font-weight: 500; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
 
 .swatch { width: 0.8rem; height: 0.8rem; border-radius: 50%; }
 .error { color: #e5484d; }
 
-.timer { margin: 1rem 0 2rem; }
-.phase { opacity: 0.7; }
-.clock { font-size: 4rem; font-variant-numeric: tabular-nums; margin: 0.25rem 0 1rem; }
-.timer .row { gap: 0.5rem; }
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  box-shadow: none;
-  border-color: transparent;
-}
 .hint { opacity: 0.6; font-size: 0.9em; }
 
 
-button.icon { padding: 0.1rem 0.45rem; box-shadow: none; background: transparent; opacity: 0.5; }
+button.icon { padding: 0.1rem 0.45rem; background: transparent; opacity: 0.5; }
 button.icon:hover { opacity: 1; }
 
 /* Dialogs are cream menu cards with the same ink outline as the scene's stickers. */
@@ -116,11 +65,16 @@ button.icon:hover { opacity: 1; }
 .palette { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .editor input,
 .editor select,
-.note-prompt input { color: var(--ink); background: #fff; border: 2px solid #cfc9e6; box-shadow: none; }
+.note-prompt input,
+.music .link-form input { color: var(--ink); background: #fff; border: 2px solid #cfc9e6; border-radius: 8px; }
+/* Text fields show focus with their border, so they don't also need an outline. */
 .editor input:focus,
 .editor select:focus,
-.note-prompt input:focus { border-color: var(--ink); }
-.editor button { color: var(--ink); background: #fff8ec; border: 2px solid var(--ink); border-radius: 999px; box-shadow: none; }
+.note-prompt input:focus,
+.music .link-form input:focus { border-color: var(--ink); outline: none; }
+.editor button { color: var(--ink); background: #fff8ec; border: 2px solid var(--ink); border-radius: 999px; }
+.editor button:disabled { opacity: 0.45; }
+.editor button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .editor button:hover { background: #fff; border-color: var(--ink); }
 .editor button:active { background: #f2ecdf; }
 .editor button[type="submit"] { background: #f2c46d; }
@@ -128,8 +82,7 @@ button.icon:hover { opacity: 1; }
 .editor button.icon { border: 0; border-radius: 6px; background: transparent; }
 .editor .swatch-pick { width: 1.4rem; height: 1.4rem; padding: 0; border-radius: 50%; border: 2px solid transparent; }
 .editor .swatch-pick[aria-checked="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 2px #fff; }
-button.danger { color: #e5484d; }
-/* The lighter red is for the dark background; on cream it needs to be darker to stay readable. */
+/* .error's red is for the dark background; on cream it needs to be darker to stay readable. */
 .editor button.danger,
 .editor .error,
 .note-prompt .error { color: #b8323a; }
@@ -138,7 +91,7 @@ button.danger { color: #e5484d; }
 .editor legend { font-size: 0.9em; padding: 0; margin-bottom: 0.4rem; }
 .editor .pair label { font-size: 0.8em; }
 .editor label.toggle { flex-direction: row; align-items: center; gap: 0.5rem; font-size: 0.9em; }
-.editor label.toggle input { box-shadow: none; padding: 0; width: auto; }
+.editor label.toggle input { padding: 0; width: auto; }
 .editor .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 
 /* A note pinned to the counter during a break. */
@@ -174,10 +127,10 @@ button.danger { color: #e5484d; }
 .session-form input.minutes { width: 4.5rem; }
 .session .tag { font-size: 0.75em; opacity: 0.6; margin-left: 0.4rem; padding: 0 0.35rem; border: 1px solid currentColor; border-radius: 4px; }
 
-.editor .signin { justify-content: space-between; align-items: center; gap: 0.5rem; }
+.editor .signin { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.editor .signin button { padding: 0.6em 1.2em; }
 
-/* The music strip: a dark radio under the scene, same width as the chalkboard. Overrides the
-   app-wide button and input look, which is meant for the old dark controls. */
+/* The music strip: a dark radio under the scene, same width as the chalkboard. */
 .music {
   --ink: #3e3a6e;
   --cream: #fff8ec;
@@ -195,7 +148,6 @@ button.danger { color: #e5484d; }
   background: #211d42;
   text-align: left;
 }
-.music button { box-shadow: none; }
 .music .transport { grid-column: 1; grid-row: 1; display: flex; align-items: center; gap: 4px; }
 .music .track { grid-column: 2; grid-row: 1; min-width: 0; display: flex; align-items: center; gap: 6px; }
 .music .music-settings,
@@ -229,6 +181,8 @@ button.danger { color: #e5484d; }
   background: transparent;
 }
 .music .icon-button:hover { color: var(--cream); background: rgba(255, 255, 255, 0.08); }
+.music button:focus-visible,
+.music .volume input:focus-visible { outline: 2px solid var(--lavender); outline-offset: 2px; }
 
 .music .track-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .music .track-title {
@@ -250,7 +204,6 @@ button.danger { color: #e5484d; }
   padding: 0;
   border: 0;
   background: transparent;
-  box-shadow: none;
   font: inherit;
   color: inherit;
   cursor: pointer;
@@ -270,17 +223,13 @@ button.danger { color: #e5484d; }
 }
 .segmented button[aria-checked="true"] { color: var(--cream); background: #4a4590; }
 .music .volume { flex: 1; max-width: 220px; display: flex; align-items: center; gap: 6px; color: var(--lavender); }
-.music .volume input { flex: 1; min-width: 0; padding: 0; box-shadow: none; background: transparent; accent-color: var(--lavender); }
+.music .volume input { flex: 1; min-width: 0; padding: 0; background: transparent; accent-color: var(--lavender); }
 
 .music .link-form { display: flex; gap: 6px; }
 .music .link-form input {
   flex: 1;
   min-width: 0;
   padding: 0.45em 0.7em;
-  border: 2px solid #cfc9e6;
-  color: var(--ink);
-  background: #fff;
-  box-shadow: none;
 }
 .music .link-form button { padding: 0 14px; border: 2px solid var(--ink); border-radius: 999px; color: var(--ink); background: var(--cream); }
 .music .link-form button[type="submit"] { background: #f2c46d; }
@@ -302,7 +251,6 @@ button.danger { color: #e5484d; }
   border-bottom: 3px solid transparent;
   font-weight: 500;
   opacity: 0.6;
-  transition: none;
 }
 .editor .shop-tabs button:hover { background: transparent; opacity: 1; }
 .editor .shop-tabs button[aria-selected="true"] { opacity: 1; border-bottom-color: var(--ink); }

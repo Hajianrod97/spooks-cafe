@@ -37,7 +37,6 @@
   border: 0;
   border-radius: 6px;
   background: transparent;
-  box-shadow: none;
   color: var(--chalk-dim);
   font: 400 26px/1.1 Kalam, cursive;
   opacity: 0.75;
@@ -55,7 +54,8 @@
   background: var(--chalk);
   transform: rotate(-1deg);
 }
-.chalkboard [role="tab"]:focus-visible { outline: 2px dashed var(--chalk); outline-offset: 2px; }
+/* Every control on the board shows keyboard focus as a chalk dash. */
+.chalkboard button:focus-visible { outline: 2px dashed var(--chalk); outline-offset: 2px; }
 
 /* Remounted on every switch (see Chalkboard.tsx), so the fade replays. */
 .chalkboard .board-section {
@@ -157,7 +157,6 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  box-shadow: none;
   color: var(--chalk);
   opacity: 0.45;
 }
@@ -194,7 +193,6 @@
   border: 2px dashed rgba(244, 241, 232, 0.45);
   border-radius: 10px;
   background: transparent;
-  box-shadow: none;
   font: 20px/1 Kalam, cursive;
   color: var(--chalk);
 }
@@ -260,10 +258,8 @@
   width: 18px;
   height: 18px;
   margin: 0;
-  /* Undo App.css's global input styles (padding, dark fill, shadow). */
   padding: 0;
   background: transparent;
-  box-shadow: none;
   border: 2px solid var(--chalk);
   border-radius: 4px;
   outline: none;
@@ -300,7 +296,6 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  box-shadow: none;
   color: var(--chalk);
   opacity: 0.45;
 }
@@ -321,12 +316,10 @@
   border: 2px dashed rgba(244, 241, 232, 0.45);
   border-radius: 8px;
   background: transparent;
-  box-shadow: none;
   color: var(--chalk);
   font: 18px/1 Kalam, cursive;
 }
 .todos .chalk-small:hover { border-color: var(--chalk); background: rgba(244, 241, 232, 0.05); }
-.todos .chalk-small:focus-visible { outline: 2px dashed var(--chalk); outline-offset: 2px; }
 
 .todos .empty { margin: 0; text-align: center; font-size: 18px; color: var(--chalk-dim); }
 .todos .error { margin: 0; color: #ff9b9b; }
@@ -348,7 +341,6 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  box-shadow: none;
   color: var(--chalk);
 }
 .week-nav .step:hover:not(:disabled) { background: rgba(244, 241, 232, 0.1); }
@@ -359,7 +351,6 @@
   padding: 0 4px;
   border: 0;
   background: transparent;
-  box-shadow: none;
   color: var(--chalk);
   font: 16px/1.2 Kalam, cursive;
   text-decoration: underline dashed rgba(244, 241, 232, 0.5);
@@ -367,8 +358,6 @@
 }
 .chalkboard .chalk-link:hover { text-decoration-color: var(--chalk); }
 .week-view > .chalk-link { align-self: center; font-size: 18px; }
-.chalkboard .chalk-link:focus-visible,
-.week-nav .step:focus-visible { outline: 2px dashed var(--chalk); outline-offset: 2px; }
 
 .week-view { display: flex; flex-direction: column; gap: 10px; }
 .week-view .headline { margin: 0; text-align: center; font-size: 19px; line-height: 1.25; text-wrap: balance; }

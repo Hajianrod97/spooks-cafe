@@ -289,9 +289,8 @@
 }
 .scene .controls { display: flex; gap: 10px; }
 
-/* Sticker-style buttons: cream fill, thick ink outline. Reset the app-wide button look. */
+/* Sticker-style buttons: cream fill, thick ink outline. */
 .scene button {
-  box-shadow: none;
   font-family: Fredoka, system-ui, sans-serif;
   color: var(--ink);
   background: var(--cream);
@@ -300,6 +299,7 @@
 }
 .scene button:hover { background: #fff; border-color: var(--ink); }
 .scene button:disabled { opacity: 0.55; border-color: var(--ink); }
+.scene button:focus-visible { outline: 2px dashed var(--cream); outline-offset: 2px; }
 .chip {
   font-weight: 500;
   font-size: 15px;

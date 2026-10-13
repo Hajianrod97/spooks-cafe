@@ -244,7 +244,7 @@ pub enum Action {
     StartFocus(i64),
     Pause,
     Resume,
-    /// Ends a focus block early: partial minutes are logged, but it doesn't count as a 🍅.
+    /// Ends a focus block early: partial minutes are logged, but it doesn't count as a completed block.
     Discard,
     SkipBreak,
 }

@@ -67,8 +67,6 @@ export interface Session {
   note: string | null;
 }
 
-export type SessionEdit = Pick<Session, "taskId" | "durationMinutes" | "note">;
-
 export type MusicService = "youTube" | "spotify";
 /** The YouTube preset. */
 export type MusicSource = "lofiGirl" | "chillhop" | "custom";

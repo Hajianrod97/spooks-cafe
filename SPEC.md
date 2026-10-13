@@ -78,7 +78,7 @@ Seed tasks (mid-level target roles, 30 h/week total):
 
 ## Music (independent of the timer)
 - Primary: YouTube as a "TV" in the scene (Lofi Girl, Chillhop, custom playlist URL).
-  - Decided (spike, `spikes/youtube/SPIKE.md`): a dedicated, hidden YouTube window controlled from Rust via injected script; the scene draws its own TV. Premium login works and plays ad-free.
+  - Decided (spike, `docs/youtube-spike.md`): a dedicated, hidden YouTube window controlled from Rust via injected script; the scene draws its own TV. Premium login works and plays ad-free.
   - Sign-in and player windows use a Safari user agent (Google blocks the default WKWebView UA).
   - Presets are stored as channel handles and opened at `youtube.com/@<handle>/live`, since live-stream video IDs go stale.
 - Spotify (decided over its web SDK, which needs browser DRM and OAuth): control the Spotify desktop app via AppleScript — play/pause, skip, volume, now playing; optional playlist/album link, otherwise resumes what Spotify last played. Requires Spotify installed; macOS asks once for Automation permission. Lofi Focus is a remote: it never starts music by itself, but quitting it leaves Spotify playing, and on launch it shows whatever Spotify is already doing.

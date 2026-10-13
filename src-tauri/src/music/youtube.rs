@@ -1,4 +1,4 @@
-//! The hidden YouTube window (decided in `spikes/youtube/SPIKE.md`). Rust can only push
+//! The hidden YouTube window (decided in `docs/youtube-spike.md`). Rust can only push
 //! scripts into it with `eval`, never read back, so control is desired-state: we store what
 //! we want in the page's sessionStorage, and an injected loop keeps the `<video>` matching it.
 

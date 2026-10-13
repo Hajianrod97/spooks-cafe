@@ -19,7 +19,7 @@ Each item: what's wrong, where, and how to see it.
 - [ ] **A big empty gap under "Time of day" in Settings.** The label is stretched to 123 px (about 70 px too tall), matching the height of the four-dropdown grid below it. Cause: `.editor label { flex: 1 }` in `src/App.css` is meant for labels side by side in a row, but the Scene section (`.editor fieldset.scene`) is a flex *column*, so `flex: 1` makes the label grow vertically. Fix: `.editor fieldset.scene label { flex: none; }`, or scope the `flex: 1` to row containers such as `.pair` and `.grid`.
 
 ### Leftovers from before the cafe look
-- [ ] **The Sessions dialog still marks completed blocks with 🍅** (`src/SessionsDialog.tsx`, the `stats` line: `{s.durationMinutes}m {s.completed ? "🍅" : "· partial"}`). Since step 6 the unit is Spook's face (`SpookFace.tsx`, as in the menu's block counts in `MenuSection.tsx`). Swap in `<SpookFace />` with an accessible label such as "completed". (A doc comment in `src-tauri/src/timer.rs` on `Action::Discard` also says 🍅; it isn't shown to users, but could say "completed block".)
+- [x] **The Sessions dialog still marks completed blocks with 🍅** (fixed 2026-10-13: `<SpookFace />` with a hidden "completed" label; the timer.rs comment too) (`src/SessionsDialog.tsx`, the `stats` line: `{s.durationMinutes}m {s.completed ? "🍅" : "· partial"}`). Since step 6 the unit is Spook's face (`SpookFace.tsx`, as in the menu's block counts in `MenuSection.tsx`). Swap in `<SpookFace />` with an accessible label such as "completed". (A doc comment in `src-tauri/src/timer.rs` on `Action::Discard` also says 🍅; it isn't shown to users, but could say "completed block".)
 
 ### Music
 - [ ] **YouTube plays very loudly, and the volume sometimes jumps up out of nowhere** (reported 2026-10-08). Player script: `PLAYER_SCRIPT` in `src-tauri/src/music/youtube.rs`. Likely causes, not yet confirmed:
@@ -37,7 +37,7 @@ Each item: what's wrong, where, and how to see it.
   - Check: the narrowest window, a tall narrow window, the widest window, and text at 200%.
 - [ ] **Make everything keyboard accessible.** Not yet audited end to end. Already keyboard-friendly: the chalkboard and shop tabs (arrow keys), the heatmap (one Tab stop and arrows), the to-do rows, `PickMenu` (arrows, Esc, focus returns), the scene arrows (shown on `:focus-visible`), the Spook hat button and the Decorate spots, and native `<dialog>`s (Esc, focus trap). To check:
   - The Tab order through the whole window: scene overlay → note prompt → music bar → chalkboard.
-  - A visible focus style on every control, especially custom ones that reset the global button styles.
+  - A visible focus style on every control. Done for buttons on every surface (2026-10-13, when the global `outline: none` went); still check custom non-button controls.
   - No keyboard traps; focus goes back where it was when dialogs and menus close.
   - Anything that only shows on hover.
   - Whether the main actions want shortcuts (e.g. Space for start/pause), and whether the tray menu covers what the window can't.
@@ -51,4 +51,4 @@ Each item: what's wrong, where, and how to see it.
 - [ ] **A to-do ticked before migration 011 can pay again if it's unticked and re-ticked.** The backfill paid it as one lump row with no `ref`, so the re-tick's `todo:<id>` ref looks new. Worth at most 2 beans per old to-do.
 
 ### Tech debt
-- [ ] **The Tauri template's global `input, button` rules in `App.css`** (including `transition: border-color 0.25s`) leak into every custom control, so each one has to reset padding, background, box-shadow and transitions. Scope them to the old controls or remove them.
+- [x] **The Tauri template's global `input, button` rules in `App.css`** (including `transition: border-color 0.25s`) leak into every custom control, so each one has to reset padding, background, box-shadow and transitions. Scope them to the old controls or remove them. (Fixed 2026-10-13: removed, leaving only font and cursor. Each control now declares what it used, and the `box-shadow: none` resets are gone. Checked by diffing every control's computed style in 20 headless scenarios: no visible change apart from the new focus rings.)

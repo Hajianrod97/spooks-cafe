@@ -152,7 +152,7 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
 
             <fieldset>
               <legend>Music</legend>
-              <div className="row signin">
+              <div className="signin">
                 {signedIn && <span>✓ Signed in to YouTube</span>}
                 <button
                   type="button"
