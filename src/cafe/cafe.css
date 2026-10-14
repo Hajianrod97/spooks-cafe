@@ -4,7 +4,7 @@
   --ink: #3e3a6e;
   --cream: #fff8ec;
   position: relative;
-  height: 340px;
+  height: calc(340px * var(--fit, 1));
   overflow: hidden;
   font-family: Fredoka, system-ui, sans-serif;
   user-select: none;
@@ -25,6 +25,16 @@
 .strip.animated > .panel { transition: opacity 0.6s ease; }
 
 .overlay { position: absolute; inset: 0; }
+/* Narrower than 480 px (zoomed in): the 480-wide view, scaled to fit (see useFit in Scene.tsx). */
+.scene.fitted > .strip,
+.scene.fitted > .overlay {
+  right: auto;
+  bottom: auto;
+  width: 480px;
+  height: 340px;
+  transform: scale(var(--fit));
+  transform-origin: 0 0;
+}
 
 .stage {
   position: absolute;

@@ -357,7 +357,7 @@
   text-underline-offset: 3px;
 }
 .chalkboard .chalk-link:hover { text-decoration-color: var(--chalk); }
-.week-view > .chalk-link { align-self: center; font-size: 18px; }
+.week-view > .chalk-link { align-self: center; min-height: 24px; font-size: 18px; }
 
 .week-view { display: flex; flex-direction: column; gap: 10px; }
 .week-view .headline { margin: 0; text-align: center; font-size: 19px; line-height: 1.25; text-wrap: balance; }
@@ -438,8 +438,14 @@
 .trends-view svg .axis { fill: var(--chalk-dim); font: 13px Kalam, cursive; }
 
 .heatmap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.heatmap-grid { border-radius: 6px; }
-.heatmap-grid:focus-visible { outline: 2px dashed var(--chalk); outline-offset: 4px; }
+.heatmap-grid { max-width: 100%; border-radius: 6px; }
+/* Shrinks with its viewBox when the board is narrow (zoomed in), rather than overflowing. */
+.heatmap-grid svg,
+.trends svg { display: block; max-width: 100%; height: auto; }
+.heatmap-grid:focus-visible,
+.trends:focus-visible { outline: 2px dashed var(--chalk); outline-offset: 4px; }
+/* The week being read out, so keyboard users can see which bar it is. */
+.trends .slot.picked { stroke: var(--chalk); stroke-width: 1.5; stroke-dasharray: 3 2; }
 .heatmap-grid rect.picked { stroke: var(--chalk); stroke-width: 2; }
 .heatmap-foot {
   width: 100%;

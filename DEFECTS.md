@@ -30,17 +30,20 @@ Each item: what's wrong, where, and how to see it.
 ### Accessibility
 - [ ] **Task colours fail colour-blind separation on the dark board**: System Design ↔ Job Search ΔE 1.7 for deuteranopia. Charts never rely on colour alone (legends are always named), but the palette itself is undecided. Seeds: `src-tauri/migrations/001_init.sql`.
 
-- [ ] **Reflow is iffy**: the layout doesn't adapt well when the window size or text size changes. Not yet audited; known starting points:
-  - The scene is a fixed 960×340 canvas, cropped at the sides and never scaled. The window's minimum is 480×600 (`tauri.conf.json`).
-  - Things in the overlay are positioned in stage pixels and can collide at narrow widths (they've already had to be moved apart by hand): the corner buttons vs the sign, the corner buttons vs the outside name board, the hat menu.
-  - Text zoom: Tauri's zoom hotkeys aren't enabled (`zoomHotkeysEnabled`), so check whether the app respects a larger system text size, and that dialogs (`width: min(…, 90vw)`) and the chalkboard hold up when text is bigger.
-  - Check: the narrowest window, a tall narrow window, the widest window, and text at 200%.
-- [ ] **Make everything keyboard accessible.** Not yet audited end to end. Already keyboard-friendly: the chalkboard and shop tabs (arrow keys), the heatmap (one Tab stop and arrows), the to-do rows, `PickMenu` (arrows, Esc, focus returns), the scene arrows (shown on `:focus-visible`), the Spook hat button and the Decorate spots, and native `<dialog>`s (Esc, focus trap). To check:
-  - The Tab order through the whole window: scene overlay → note prompt → music bar → chalkboard.
-  - A visible focus style on every control. Done for buttons on every surface (2026-10-13, when the global `outline: none` went); still check custom non-button controls.
-  - No keyboard traps; focus goes back where it was when dialogs and menus close.
-  - Anything that only shows on hover.
-  - Whether the main actions want shortcuts (e.g. Space for start/pause), and whether the tray menu covers what the window can't.
+- [x] **Reflow is iffy** (fixed 2026-10-14). Audited with the preview harness at CSS widths 960, 720, 480, 320 and 240 (a 480 px window at 200% zoom), checking for sideways scroll, overlapping overlay controls, controls past the edge and clipped text. Every real window size was already fine; the real gap was that zoom was off, so text couldn't be enlarged at all. Now:
+  - ⌘+ / ⌘− / ⌘0 zoom is on (`zoomHotkeysEnabled`, which needs `core:webview:allow-set-webview-zoom` in the capability). It resets to 100% each launch (Tauri's zoom script keeps no state).
+  - Below 480 CSS px the scene scales down to fit (`useFit` in `Scene.tsx`, the `.fitted` class) instead of cropping further, so the overlay keeps its tested 480 px layout; everything under the scene reflows at full size.
+  - Dialog buttons and session rows wrap; the heatmap and Trends charts shrink with their viewBox.
+  - Not checked: the real app at 200% (WebKit), and zoom below 100% (the scene's art is 960 wide, so a very wide CSS viewport shows plain background past the art).
+- [ ] **Make everything keyboard accessible.** Audited 2026-10-13 with the preview harness: every Tab stop in 20 screen states was listed, focused, and checked for a visible change and a 24 px target. Fixed then:
+  - Checkboxes and radios in dialogs had no focus style (the text fields' `outline: none` matched them too); they get an ink outline now.
+  - Targets under 24 px: the session edit/delete icons, the task colour swatches, the YouTube station picker, the volume slider and "See sessions" (the last three grow their hit area without moving anything).
+  - The corner buttons' Tab order now follows the layout: shop → ⚙ → brush.
+  - `useModal` returns focus to the opener when a dialog unmounts (Chrome already did; WebKit isn't guaranteed to).
+  - Report → Trends' per-task bars were mouse-only; they're one Tab stop now, with arrow keys like the heatmap.
+  Still open:
+  - Check focus restoration in the real app (WebKit): open and cancel a dialog from the keyboard, and focus should land back on its button.
+  - Shortcuts: decided against global ones (Space would fight focused buttons and text fields). Instead the timer controls are the first Tab stop (Tab, then Enter), and the menu bar covers the rest.
 
 - [x] (Fixed 2026-10-13: a 65% ink pill behind it, ≥ 4.9:1 even over white.) **The caption under the scene ("Next up · LeetCode", "Brewing · …") is hard to read in some scenes.** It's 14 px cream text (`.scene .caption` in `src/cafe/cafe.css`) with no backing, so its contrast depends on the art behind it. Measured against the scene colours, it never reaches the 4.5:1 that WCAG asks of normal text: counter front 3.9:1, counter top and table top 2.6:1, tables floor and doorway floor 3.1:1, outside doorstep 2.2:1, outside pavement **1.6:1**. Fix options: a translucent dark pill behind it, like a label (works in every scene whatever the art; recommended), or a dark text shadow/outline (lighter touch, but thin text on busy art stays weak). The timer buttons are fine: they have their own cream fill.
 

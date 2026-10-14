@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
 import type { MusicSnapshot, Phase, Task, TimeOfDay, TimerSnapshot } from "../types";
 import type { ShopState } from "../useShop";
 import { BeanIcon } from "./BeanIcon";
@@ -24,6 +24,26 @@ const SIGN_LABEL: Record<Phase, string> = {
 
 const clock = (secs: number) =>
   `${String(Math.floor(secs / 60)).padStart(2, "0")}:${String(secs % 60).padStart(2, "0")}`;
+
+/** The narrowest width the scene's layout is drawn and tested for. */
+const SCENE_MIN = 480;
+
+/**
+ * Below SCENE_MIN (a narrow window zoomed in with ⌘+), the scene scales down to fit instead of
+ * cropping further, so the sign, Spook and the buttons keep the layout they have at 480 px.
+ * Measured in JS because WebKit's CSS can't divide one length by another to get a scale.
+ */
+function useFit(ref: RefObject<HTMLElement | null>) {
+  const [fit, setFit] = useState(1);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => setFit(Math.min(1, entry.contentRect.width / SCENE_MIN)));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ref]);
+  return fit;
+}
 
 function caption(timer: TimerSnapshot, task: Task | undefined) {
   if (!task) return "Pick something from the menu below";
@@ -83,6 +103,8 @@ export function Scene({ timer, task, onAction, onSettings, music, shop: { shop, 
   // Rain and Spook's bobbing would keep the GPU busy in a window nobody can see.
   const visible = useWindowVisible();
   const { scene, goTo, switched } = useScene();
+  const sceneRef = useRef<HTMLElement>(null);
+  const fit = useFit(sceneRef);
   const thumbnail = useTvThumbnail(music);
   // An image that failed to load (e.g. offline) leaves the TV showing its drawn play button.
   const [brokenThumbnail, setBrokenThumbnail] = useState<string | null>(null);
@@ -188,7 +210,11 @@ export function Scene({ timer, task, onAction, onSettings, music, shop: { shop, 
   }
 
   return (
-    <section className={`scene t-${time}${visible ? "" : " paused"}`}>
+    <section
+      ref={sceneRef}
+      className={`scene t-${time}${visible ? "" : " paused"}${fit < 1 ? " fitted" : ""}`}
+      style={{ "--fit": fit } as CSSProperties}
+    >
       <div className={switched ? "strip animated" : "strip"}>
         {SCENES.map(panel)}
       </div>
@@ -202,6 +228,35 @@ export function Scene({ timer, task, onAction, onSettings, music, shop: { shop, 
             <div className="sign-neon">Spook's Cafe</div>
             <div className="sign-label">{paused ? "Paused" : SIGN_LABEL[timer.phase]}</div>
             <div className="sign-clock">{clock(timer.remainingSecs)}</div>
+          </div>
+
+          {/* The timer controls come first in the Tab order: Tab, then Enter starts or pauses. */}
+          <div className="counter" data-tauri-drag-region>
+            {decorating ? (
+              <>
+                <div className="caption">Decorating · click a spot</div>
+                <div className="controls">
+                  <button className="chip primary" onClick={() => setDecorating(false)}>Done</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="caption">{caption(timer, task)}</div>
+                <div className="controls">
+                  {!inFocus && (
+                    <button className="chip primary" disabled={!task} onClick={() => onAction("start_focus", { taskId: task?.id })}>
+                      {onBreak ? "Continue focus" : "Start focus"}
+                    </button>
+                  )}
+                  {timer.phase !== "idle" &&
+                    (timer.running
+                      ? <button className="chip" onClick={() => onAction("pause")}>Pause</button>
+                      : <button className="chip" onClick={() => onAction("resume")}>Resume</button>)}
+                  {inFocus && <button className="chip" onClick={() => onAction("discard")}>Discard</button>}
+                  {onBreak && <button className="chip" onClick={() => onAction("skip_break")}>End break</button>}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Over Spook's spot: click him to change hats. */}
@@ -235,33 +290,6 @@ export function Scene({ timer, task, onAction, onSettings, music, shop: { shop, 
           )}
           {decorating && shop && <DecorateSpots scene={SCENES[index].name} shop={shop} place={place} onError={onError} />}
 
-          <div className="counter" data-tauri-drag-region>
-            {decorating ? (
-              <>
-                <div className="caption">Decorating · click a spot</div>
-                <div className="controls">
-                  <button className="chip primary" onClick={() => setDecorating(false)}>Done</button>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="caption">{caption(timer, task)}</div>
-                <div className="controls">
-                  {!inFocus && (
-                    <button className="chip primary" disabled={!task} onClick={() => onAction("start_focus", { taskId: task?.id })}>
-                      {onBreak ? "Continue focus" : "Start focus"}
-                    </button>
-                  )}
-                  {timer.phase !== "idle" &&
-                    (timer.running
-                      ? <button className="chip" onClick={() => onAction("pause")}>Pause</button>
-                      : <button className="chip" onClick={() => onAction("resume")}>Resume</button>)}
-                  {inFocus && <button className="chip" onClick={() => onAction("discard")}>Discard</button>}
-                  {onBreak && <button className="chip" onClick={() => onAction("skip_break")}>End break</button>}
-                </div>
-              </>
-            )}
-          </div>
         </div>
 
         {prev && (
@@ -281,22 +309,6 @@ export function Scene({ timer, task, onAction, onSettings, music, shop: { shop, 
 
         {/* Outside the stage, so they stay in the window's corner at any width. */}
         <div className="corner">
-          {(ownsDecor || decorating) && (
-            <button
-              className="round decorate-button"
-              aria-label="Decorate the cafe"
-              aria-pressed={decorating}
-              onClick={() => {
-                setHatMenu(false);
-                setDecorating(!decorating);
-              }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M14.5 4.5l5 5-8 8-5-5z" />
-                <path d="M6.5 12.5l-2.5 2.5c-1 1-1 3.5-2 4.5 2 0 4.5-.5 5.5-1.5l2.5-2.5" />
-              </svg>
-            </button>
-          )}
           <button className="shop-button" aria-label={`Shop, ${shop?.balance ?? 0} beans`} onClick={onShop}>
             <BeanIcon />
             <span>{shop?.balance ?? "–"}</span>
@@ -313,6 +325,23 @@ export function Scene({ timer, task, onAction, onSettings, music, shop: { shop, 
               <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" />
             </svg>
           </button>
+          {/* Last in the Tab order: it sits below ⚙. */}
+          {(ownsDecor || decorating) && (
+            <button
+              className="round decorate-button"
+              aria-label="Decorate the cafe"
+              aria-pressed={decorating}
+              onClick={() => {
+                setHatMenu(false);
+                setDecorating(!decorating);
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M14.5 4.5l5 5-8 8-5-5z" />
+                <path d="M6.5 12.5l-2.5 2.5c-1 1-1 3.5-2 4.5 2 0 4.5-.5 5.5-1.5l2.5-2.5" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
     </section>

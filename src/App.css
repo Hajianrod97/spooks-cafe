@@ -41,7 +41,7 @@ button:disabled { cursor: not-allowed; }
 .hint { opacity: 0.6; font-size: 0.9em; }
 
 
-button.icon { padding: 0.1rem 0.45rem; background: transparent; opacity: 0.5; }
+button.icon { min-width: 24px; min-height: 24px; padding: 0.1rem 0.45rem; background: transparent; opacity: 0.5; }
 button.icon:hover { opacity: 1; }
 
 /* Dialogs are cream menu cards with the same ink outline as the scene's stickers. */
@@ -69,7 +69,7 @@ button.icon:hover { opacity: 1; }
 .editor .pair { display: flex; gap: 0.5rem; }
 .editor summary { cursor: pointer; font-size: 0.9em; }
 .editor details .hint { margin: 0.25rem 0 0.5rem; }
-.editor .actions { display: flex; gap: 0.4rem; margin-top: 0.25rem; }
+.editor .actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
 .editor .actions button { padding: 0.45em 0.9em; }
 .editor .spacer { flex: 1; }
 .palette { display: flex; flex-wrap: wrap; gap: 0.4rem; }
@@ -78,19 +78,20 @@ button.icon:hover { opacity: 1; }
 .note-prompt input,
 .music .link-form input { color: var(--ink); background: #fff; border: 2px solid #cfc9e6; border-radius: 8px; }
 /* Text fields show focus with their border, so they don't also need an outline. */
-.editor input:focus,
+.editor input:not([type="checkbox"], [type="radio"]):focus,
 .editor select:focus,
 .note-prompt input:focus,
 .music .link-form input:focus { border-color: var(--ink); outline: none; }
 .editor button { color: var(--ink); background: #fff8ec; border: 2px solid var(--ink); border-radius: 999px; }
 .editor button:disabled { opacity: 0.45; }
-.editor button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.editor button:focus-visible,
+.editor input:is([type="checkbox"], [type="radio"]):focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .editor button:hover { background: #fff; border-color: var(--ink); }
 .editor button:active { background: #f2ecdf; }
 .editor button[type="submit"] { background: #f2c46d; }
 .editor button[type="submit"]:hover { background: #ffd878; }
 .editor button.icon { border: 0; border-radius: 6px; background: transparent; }
-.editor .swatch-pick { width: 1.4rem; height: 1.4rem; padding: 0; border-radius: 50%; border: 2px solid transparent; }
+.editor .swatch-pick { width: 24px; height: 24px; padding: 0; border-radius: 50%; border: 2px solid transparent; }
 .editor .swatch-pick[aria-checked="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 2px #fff; }
 /* .error's red is for the dark background; on cream it needs to be darker to stay readable. */
 .editor button.danger,
@@ -126,7 +127,7 @@ button.icon:hover { opacity: 1; }
 .editor.sessions { width: min(440px, 92vw); max-height: 80vh; }
 .sessions h3 { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.6; margin: 0.9rem 0 0.3rem; }
 .session { padding: 0.3rem 0; border-bottom: 1px solid rgba(128, 128, 128, 0.15); }
-.session-line { display: flex; align-items: center; gap: 0.45rem; }
+.session-line { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
 .session .time { font-variant-numeric: tabular-nums; opacity: 0.7; font-size: 0.9em; width: 3.2rem; }
 .session .name { flex: 1; }
 .session .stats { opacity: 0.7; font-size: 0.85em; }
@@ -208,6 +209,8 @@ button.icon:hover { opacity: 1; }
   white-space: nowrap;
 }
 .music .track-title select {
+  min-height: 24px;
+  margin-block: -3px;
   appearance: none;
   -webkit-appearance: none;
   min-width: 0;
@@ -233,7 +236,8 @@ button.icon:hover { opacity: 1; }
 }
 .segmented button[aria-checked="true"] { color: var(--cream); background: #4a4590; }
 .music .volume { flex: 1; max-width: 220px; display: flex; align-items: center; gap: 6px; color: var(--lavender); }
-.music .volume input { flex: 1; min-width: 0; padding: 0; background: transparent; accent-color: var(--lavender); }
+/* 24 px tall to be easy to hit, with negative margins so the row keeps its height. */
+.music .volume input { flex: 1; min-width: 0; height: 24px; margin-block: -4px; padding: 0; background: transparent; accent-color: var(--lavender); }
 
 .music .link-form { display: flex; gap: 6px; }
 .music .link-form input {

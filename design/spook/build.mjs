@@ -338,6 +338,30 @@ const trayIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="32 24 136 170
 </svg>
 `;
 
+// The app icon, on Apple's macOS grid: a 1024 canvas with an 824 px rounded tile and a soft shadow.
+// Written to design/spook/app-icon.svg. To update the app's icons, rasterise it to app-icon.png
+// (1024 px, transparent background, e.g. headless Chrome with --default-background-color=00000000)
+// and run `npm run tauri icon design/spook/app-icon.png`.
+const TILE = { x: 100, y: 100, size: 824, r: 185 };
+const appIcon = (name, { bg, art, scale, cx = 512, cy = 540, anchorY = 113 }) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Spook's Cafe — app icon (${name})</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">${bg.map((c, i) => `<stop offset="${i / (bg.length - 1)}" stop-color="${c}"/>`).join("")}</linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity="0.28"/></filter>
+    <clipPath id="tile"><rect x="${TILE.x}" y="${TILE.y}" width="${TILE.size}" height="${TILE.size}" rx="${TILE.r}"/></clipPath>
+  </defs>
+  <rect x="${TILE.x}" y="${TILE.y}" width="${TILE.size}" height="${TILE.size}" rx="${TILE.r}" fill="url(#bg)" filter="url(#shadow)"/>
+  <g clip-path="url(#tile)">
+    <g transform="translate(${cx - 100 * scale} ${cy - anchorY * scale}) scale(${scale})">${art.join("")}</g>
+  </g>
+</svg>
+`;
+// The coffee-break pose with headphones on a sunset tile: lofi study break, readable down to 32 px.
+const appIconSvg = appIcon("coffee break", {
+  bg: ["#F6936B", "#DE6A90", "#8D4FA4"], scale: 3, cy: 560,
+  art: [body, headphones, eyes.happy, blush, mouth.smile, steam(122, 140, 0.55), mug(83, 140), hand("hand-left", 82, 160, -20), hand("hand-right", 120, 160, 20)],
+});
+
 // Written straight into the app's assets; design/ keeps only the scripts and previews.
 // The counter's poses keep their original names: spook-<pose>.svg, others are spook-<pose>-<scene>.svg.
 const dir = new URL("../../src/assets/spook/", import.meta.url).pathname;
@@ -367,4 +391,5 @@ writeFileSync(`${dir}mochi-petted.svg`, catPetted);
 // The notes are their own overlay, shown in any awake pose while music plays.
 writeFileSync(`${dir}spook-notes.svg`, svg("notes", [notes]));
 writeFileSync(new URL("tray-icon.svg", import.meta.url).pathname, trayIcon);
+writeFileSync(new URL("app-icon.svg", import.meta.url).pathname, appIconSvg);
 console.log(`wrote ${count} poses to ${dir}`);

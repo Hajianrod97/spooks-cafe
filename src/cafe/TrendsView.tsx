@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 import type { TaskTrend, TrendsReport } from "../types";
 import { Heatmap } from "./Heatmap";
 import { SpookFace } from "./SpookFace";
@@ -24,12 +24,28 @@ function weekOf(back: number) {
  * against its target", not how tasks compare.
  */
 function TaskTrends({ tasks }: { tasks: TaskTrend[] }) {
-  const [hover, setHover] = useState<{ task: TaskTrend; week: number } | null>(null);
+  // The bar being read out: pointed at with the mouse, or picked with the arrow keys.
+  const [picked, setPicked] = useState<{ task: number; week: number } | null>(null);
   const width = 8 * BAR_STEP - (BAR_STEP - BAR);
+  const weeks = tasks[0]?.weeks.length ?? 0;
+
+  // Like the heatmap: the chart is one Tab stop; ← → pick a week, ↑ ↓ a task.
+  function onKeyDown(e: KeyboardEvent) {
+    const move = { ArrowLeft: [0, -1], ArrowRight: [0, 1], ArrowUp: [-1, 0], ArrowDown: [1, 0] }[e.key];
+    if (!move) return;
+    e.preventDefault();
+    setPicked((p) => {
+      // The first press lands on the first task's last finished week.
+      if (!p) return { task: 0, week: Math.max(0, weeks - 2) };
+      const clamp = (n: number, max: number) => Math.min(max, Math.max(0, n));
+      return { task: clamp(p.task + move[0], tasks.length - 1), week: clamp(p.week + move[1], weeks - 1) };
+    });
+  }
 
   function readout() {
-    if (!hover) return "Hover a bar for that week";
-    const { task, week } = hover;
+    if (!picked) return "Point at a bar, or use the arrow keys, for that week";
+    const task = tasks[picked.task];
+    const week = picked.week;
     const w = task.weeks[week];
     const back = task.weeks.length - 1 - week;
     const when = back === 0 ? "this week so far" : `week of ${weekOf(back)}`;
@@ -40,8 +56,15 @@ function TaskTrends({ tasks }: { tasks: TaskTrend[] }) {
   return (
     <section aria-label="Per-task trends">
       <h4>Last 8 weeks</h4>
-      <ul className="trends" onMouseLeave={() => setHover(null)}>
-        {tasks.map((t) => {
+      <ul
+        className="trends"
+        tabIndex={0}
+        aria-label="Hours per week for each task. Arrow keys pick a week; up and down change the task."
+        onMouseLeave={() => setPicked(null)}
+        onKeyDown={onKeyDown}
+        onBlur={() => setPicked(null)}
+      >
+        {tasks.map((t, ti) => {
           const top = Math.max(1, ...t.weeks.map((w) => Math.max(w.minutes, w.targetMinutes ?? 0)));
           const y = (minutes: number) => PLOT - (minutes / top) * PLOT;
           // Average over finished weeks the task existed in.
@@ -59,9 +82,16 @@ function TaskTrends({ tasks }: { tasks: TaskTrend[] }) {
                   // Rounded at the top, square on the baseline.
                   const r = Math.min(4, h);
                   return (
-                    <g key={i} onMouseEnter={() => setHover({ task: t, week: i })}>
+                    <g key={i} onMouseEnter={() => setPicked({ task: ti, week: i })}>
                       {/* The whole slot is the hover target, not just the (maybe tiny) bar. */}
-                      <rect x={x - 2} y={0} width={BAR_STEP} height={PLOT + 2} fill="transparent" />
+                      <rect
+                        x={x - 2}
+                        y={0}
+                        width={BAR_STEP}
+                        height={PLOT + 2}
+                        fill="transparent"
+                        className={picked?.task === ti && picked.week === i ? "slot picked" : "slot"}
+                      />
                       {h > 0 && (
                         <path
                           d={`M${x} ${PLOT} V${PLOT - h + r} q0 -${r} ${r} -${r} H${x + BAR - r} q${r} 0 ${r} ${r} V${PLOT} Z`}
@@ -79,7 +109,7 @@ function TaskTrends({ tasks }: { tasks: TaskTrend[] }) {
           );
         })}
       </ul>
-      <p className={hover ? "readout trend-readout" : "readout trend-readout idle"} aria-live="polite">
+      <p className={picked ? "readout trend-readout" : "readout trend-readout idle"} aria-live="polite">
         {readout()}
       </p>
       <p className="caption">Faded bar: this week so far · line: that week's target</p>
