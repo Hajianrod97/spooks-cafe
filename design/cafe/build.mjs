@@ -212,6 +212,14 @@ const bigWindow = `
     <rect x="${TW.x - 14}" y="${TW.y + TW.h + 6}" width="${TW.w + 28}" height="12" rx="3" fill="${C.woodLight}" ${line()}/>
   </g>`;
 
+// A bud vase on the big window's sill (top at y 158). It stood on Spook's table until Mochi took that end.
+const budVase = `
+  <g id="bud-vase" transform="translate(${TW.x + TW.w - 44 - 164} ${TW.y + TW.h + 6 - 240})">
+    <path d="M160 240 q-6 -10 0 -18 h8 q6 8 0 18 Z" fill="#B8B1DC" ${line(2.5)}/>
+    <path d="M164 222 q-2 -12 4 -20" fill="none" stroke="${C.plant}" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="169" cy="200" r="5" fill="#F28DA8" ${line(2)}/>
+  </g>`;
+
 const pendant = (x) => `
   <g class="pendant">
     <path d="M${x} 0 V42" stroke="${ink}" stroke-width="2.5"/>
@@ -312,7 +320,7 @@ const tablesBack = svg("Cafe — window seat, back", `
   <rect x="0" y="196" width="${WIDTH}" height="34" fill="${C.wainscot}"/>
   <rect x="0" y="192" width="${WIDTH}" height="8" fill="${C.woodLight}" ${line(3)}/>
   ${floorboards}
-  ${centre(bigWindow + snapshot + pendant(18) + signChains)}
+  ${centre(bigWindow + budVase + snapshot + pendant(18) + signChains)}
   ${leftTable}${moonPainting(600)}${bookshelf}${booth}${hangingPlant(30, 60)}${lights}`);
 
 // Spook's round table, with the empty chair turned towards the viewer. Spook floats behind it.
@@ -324,11 +332,6 @@ const spooksTable = `
     <!-- The top hides Spook below y ≈ 258, the way the counter does. -->
     <ellipse cx="240" cy="246" rx="106" ry="18" fill="${C.wood}" ${line()}/>
     <ellipse cx="240" cy="240" rx="106" ry="18" fill="${C.woodLight}" ${line()}/>
-    <g id="bud-vase">
-      <path d="M160 240 q-6 -10 0 -18 h8 q6 8 0 18 Z" fill="#B8B1DC" ${line(2.5)}/>
-      <path d="M164 222 q-2 -12 4 -20" fill="none" stroke="${C.plant}" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="169" cy="200" r="5" fill="#F28DA8" ${line(2)}/>
-    </g>
   </g>`;
 
 const tablesFront = svg("Cafe — window seat, front", centre(spooksTable));
@@ -408,6 +411,9 @@ const pixelSky = (t, win, bodyCol) => {
 const F = { x0: 288, x1: 672, base: 288 }; // facade edges and where it meets the pavement
 const DOOR = { x0: 422, x1: 538, top: 106 }; // the opening
 const DOOR_FLOOR = 270; // front edge of the floor inside; a doorstep runs from here to the pavement
+// The doorstep reaches well past the doorway on both sides, so Mochi (at stage x 368–440, left
+// of Spook so his petting mitt can reach it) sits on stone rather than over the window box.
+const STEP = { x0: DOOR.x0 - 62, x1: DOOR.x1 + 62 };
 const SHOPWIN = [{ x: 304, w: 96 }, { x: 560, w: 96 }]; // front windows (stage x)
 const WIN_TOP = 124, WIN_BOT = 226;
 const O = {
@@ -463,18 +469,6 @@ const awning = (() => {
   </g>`;
 })();
 
-// The cafe's name board, left of the hanging timer sign, below y 64 where the corner buttons end.
-// Styled like the timer sign; the lettering is HTML laid over it by the page (scenes.ts), since an
-// SVG shown as an image can't use the app's fonts. Keep the rect in step with `lettering` there.
-const NAME_BOARDS = [{ x: 292, w: 108 }];
-const nameBoards = NAME_BOARDS.map(({ x, w }) => `
-  <g class="name-board">
-    <rect x="${x}" y="70" width="${w}" height="40" rx="8" fill="#2E3B37" ${line()}/>
-    <rect x="${x + 4}" y="74" width="${w - 8}" height="32" rx="5" fill="none" stroke="${C.wood}" stroke-width="3"/>
-    <circle cx="${x + 9}" cy="79" r="1.8" fill="${C.woodLight}"/><circle cx="${x + w - 9}" cy="79" r="1.8" fill="${C.woodLight}"/>
-    <circle cx="${x + 9}" cy="101" r="1.8" fill="${C.woodLight}"/><circle cx="${x + w - 9}" cy="101" r="1.8" fill="${C.woodLight}"/>
-  </g>`).join("");
-
 const doorway = `
   <g id="doorway">
     <rect x="${DOOR.x0 - 12}" y="${DOOR.top - 12}" width="${DOOR.x1 - DOOR.x0 + 24}" height="${F.base - DOOR.top + 12}" rx="6" fill="${O.trim}" ${line()}/>
@@ -485,7 +479,7 @@ const doorway = `
          broom's bristles land, just above the caption under the doorway. -->
     <rect x="${DOOR.x0}" y="${DOOR_FLOOR - 20}" width="${DOOR.x1 - DOOR.x0}" height="20" fill="${C.floor}"/>
     <path d="M${DOOR.x0} ${DOOR_FLOOR - 20} H${DOOR.x1} M${DOOR.x0 + 40} ${DOOR_FLOOR - 20} v20 M${DOOR.x0 + 84} ${DOOR_FLOOR - 20} v20" stroke="${C.floorDark}" stroke-width="2.5"/>
-    <rect x="${DOOR.x0 - 14}" y="${DOOR_FLOOR}" width="${DOOR.x1 - DOOR.x0 + 28}" height="${F.base - DOOR_FLOOR}" rx="2" fill="${O.pavementDark}" ${line(3)}/>
+    <rect x="${STEP.x0}" y="${DOOR_FLOOR}" width="${STEP.x1 - STEP.x0}" height="${F.base - DOOR_FLOOR}" rx="2" fill="${O.pavementDark}" ${line(3)}/>
   </g>`;
 
 const facade = `
@@ -493,7 +487,7 @@ const facade = `
     <rect x="${F.x0}" y="-4" width="${F.x1 - F.x0}" height="${F.base + 4}" fill="${O.facade}" ${line()}/>
     ${Array.from({ length: 15 }, (_, i) => `<path d="M${F.x0 + 12 + i * 25} 30 V${F.base - 30}" stroke="${O.facadeDark}" stroke-width="2" opacity="0.35"/>`).join("")}
     <rect x="${F.x0 - 6}" y="${F.base - 26}" width="${F.x1 - F.x0 + 12}" height="26" fill="${O.facadeDark}" ${line()}/>
-    ${SHOPWIN.map(shopWindow).join("")}${doorway}${nameBoards}${awning}
+    ${SHOPWIN.map(shopWindow).join("")}${doorway}${awning}
   </g>`;
 
 const streetLamp = (x) => `
@@ -514,16 +508,27 @@ const bench = (x) => `
     <path d="M${x + 8} ${F.base - 7} V${F.base + 14} M${x + 88} ${F.base - 7} V${F.base + 14}" stroke="${O.lamp}" stroke-width="5" stroke-linecap="round"/>
   </g>`;
 
-// A sidewalk chalkboard, chalk lettering drawn as strokes so it never depends on a font.
-const aFrame = (x) => `
+// The sidewalk chalkboard, which carries the cafe's name. The name is HTML laid over the top of the
+// face by the page (`lettering` in scenes.ts), since an SVG shown as an image can't use the app's
+// fonts; keep AFRAME in step with it. The feet stop at y 294, above the timer buttons (y 297), and
+// the whole frame stays left of x 720 so a 480 px window shows all of it.
+const AFRAME = { x: 676, top: 196, w: 64, h: 84 }; // face: centre x, top, size
+// The frame's outline; the glow layer also uses it to keep the window light off the board.
+const aFrameOutline = ({ x, top, w }) =>
+  `M${x - w / 2 - 9} ${F.base + 6} L${x - w / 2 - 3} ${top - 8} H${x + w / 2 + 3} L${x + w / 2 + 9} ${F.base + 6} Z`;
+const aFrame = ({ x, top, w, h }) => {
+  const l = x - w / 2, r = x + w / 2, chalk = top + 50;
+  return `
   <g class="a-frame">
-    <path d="M${x - 24} ${F.base + 18} L${x - 16} ${F.base - 66} H${x + 16} L${x + 24} ${F.base + 18}" fill="${C.wood}" ${line()}/>
-    <rect x="${x - 15}" y="${F.base - 58}" width="30" height="64" rx="2" fill="${O.board}" ${line(2.5)}/>
-    <g fill="none" stroke="#F4F1E8" stroke-width="2" stroke-linecap="round" opacity="0.9">
-      <path d="M${x - 9} ${F.base - 48} h18 M${x - 9} ${F.base - 38} h12 M${x - 9} ${F.base - 28} h16 M${x - 9} ${F.base - 18} h10"/>
-      <path d="M${x - 2} ${F.base - 4} c4 0 6 3 6 7 v-2 q-2 -1 -3 0 q-1 1 -3 0 q-2 -1 -3 0 q-1 1 -3 0 v2 c0 -4 2 -7 6 -7 Z" stroke-width="1.5" transform="translate(0 -10)"/>
+    <path d="${aFrameOutline({ x, top, w })}" fill="${C.wood}" ${line()}/>
+    <rect x="${l}" y="${top}" width="${w}" height="${h}" rx="2" fill="${O.board}" ${line(2.5)}/>
+    <g fill="none" stroke="#F4F1E8" stroke-width="2" stroke-linecap="round" opacity="0.85">
+      <path d="M${l + 10} ${chalk} h${w - 20}" stroke-dasharray="5 4"/>
+      <path d="M${l + 10} ${chalk + 10} h24 M${l + 10} ${chalk + 19} h16"/>
+      <path d="M${r - 18} ${chalk + 8} c4 0 6 3 6 7 v6 q-2 -1 -3 0 q-1 1 -3 0 q-2 -1 -3 0 q-1 1 -3 0 v-6 c0 -4 2 -7 6 -7 Z" stroke-width="1.5"/>
     </g>
   </g>`;
+};
 
 const bush = (x, w) => `
   <path class="bush" d="M${x} ${F.base} q-4 -26 18 -30 q8 -20 30 -12 q20 -10 ${w - 48} 14 q16 8 ${-2} 28 Z" fill="${C.plant}" ${line(3)}/>`;
@@ -538,7 +543,7 @@ const pavement = `
 const outsideBack = svg("Cafe — shop front, back", `
   ${pavement}${facade}
   ${streetLamp(262)}${bush(160, 90)}${streetLamp(36)}
-  ${bench(744)}${aFrame(694)}${bush(862, 96)}`);
+  ${bench(744)}${aFrame(AFRAME)}${bush(862, 96)}`);
 
 // Lit after dark, above the tint: warm light in the windows and doorway, and the street lamps.
 const warm = "#FFD98A";
@@ -547,9 +552,11 @@ const outsideGlow = svg("Cafe — shop front, lights", `
   <defs>
     <radialGradient id="lamp-glow"><stop offset="0" stop-color="${warm}" stop-opacity="0.55"/><stop offset="1" stop-color="${warm}" stop-opacity="0"/></radialGradient>
     <linearGradient id="spill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${warm}" stop-opacity="0.35"/><stop offset="1" stop-color="${warm}" stop-opacity="0"/></linearGradient>
+    <!-- The sidewalk chalkboard stands in front of the right window; its light stays behind the board. -->
+    <mask id="a-frame-cut"><rect width="${WIDTH}" height="340" fill="#fff"/><path d="${aFrameOutline(AFRAME)}" fill="#000" stroke="#000" stroke-width="4"/></mask>
   </defs>
-  ${SHOPWIN.map(({ x, w }) => `<rect x="${x}" y="${WIN_TOP}" width="${w}" height="${WIN_BOT - WIN_TOP}" fill="${warm}" opacity="0.7"/>
-  ${[0.2, 0.45, 0.7, 0.92].map((f) => `<circle cx="${x + w * f}" cy="${WIN_TOP + 20 + (f * 10) % 5}" r="2.6" fill="#FFF4D6"/>`).join("")}`).join("")}
+  <g mask="url(#a-frame-cut)">${SHOPWIN.map(({ x, w }) => `<rect x="${x}" y="${WIN_TOP}" width="${w}" height="${WIN_BOT - WIN_TOP}" fill="${warm}" opacity="0.7"/>
+  ${[0.2, 0.45, 0.7, 0.92].map((f) => `<circle cx="${x + w * f}" cy="${WIN_TOP + 20 + (f * 10) % 5}" r="2.6" fill="#FFF4D6"/>`).join("")}`).join("")}</g>
   <rect x="${DOOR.x0}" y="${DOOR.top}" width="${DOOR.x1 - DOOR.x0}" height="${F.base - DOOR.top}" fill="${warm}" opacity="0.6"/>
   <path d="M${DOOR.x0 - 30} ${F.base} H${DOOR.x1 + 30} L${DOOR.x1 + 60} 326 H${DOOR.x0 - 60} Z" fill="url(#spill)"/>
   ${lampGlow(262)}${lampGlow(36)}`);

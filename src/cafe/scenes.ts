@@ -56,8 +56,8 @@ export const SCENES: SceneArt[] = [
     glow: outsideGlow,
     // Nothing hides him here, so he floats lower in the doorway, nearer its floor.
     spookDrop: 16,
-    // Over the name board in design/cafe/build.mjs (NAME_BOARDS).
-    lettering: [{ text: "Spook's Cafe", x: 296, y: 74, w: 100, h: 32 }],
+    // Over the top of the sidewalk chalkboard's face (AFRAME in design/cafe/build.mjs).
+    lettering: [{ text: "Spook's\nCafe", x: 648, y: 200, w: 56, h: 42 }],
   },
   {
     name: "counter",

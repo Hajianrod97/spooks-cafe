@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "db:clear-sessions": "sqlite3 \"$HOME/Library/Application Support/Lofi Focus/lofi-focus-dev.db\" \"DELETE FROM sessions; SELECT changes() || ' sessions deleted';\"",
-    "db:grant-beans": "sqlite3 \"$HOME/Library/Application Support/Lofi Focus/lofi-focus-dev.db\" \"INSERT INTO bean_ledger (amount, reason) VALUES (1000, 'backfill'); SELECT 'balance: ' || SUM(amount) FROM bean_ledger;\""
+    "db:grant-beans": "sqlite3 \"$HOME/Library/Application Support/Lofi Focus/lofi-focus-dev.db\" \"INSERT INTO bean_ledger (amount, reason) VALUES (1000, 'backfill'); SELECT 'balance: ' || SUM(amount) FROM bean_ledger;\"",
+    "release:install": "bash scripts/install-release.sh"
   },
   "dependencies": {
     "@fontsource/fredoka": "^5.3.0",

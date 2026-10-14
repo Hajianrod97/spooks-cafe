@@ -20,10 +20,18 @@ export function useShop() {
   const [earned, setEarned] = useState<Earned | null>(null);
   const visible = useWindowVisible();
 
-  // Also on showing the window: "to-do beans left today" resets at midnight without an event.
+  // "To-do beans left today" resets at midnight without an event, so also refetch on showing the
+  // window and at local midnight while it's open (re-armed with each change, like useTodos).
   useEffect(() => {
     if (visible) invoke<Shop>("get_shop").then(setShop);
   }, [visible]);
+
+  useEffect(() => {
+    const midnight = new Date();
+    midnight.setHours(24, 0, 1, 0);
+    const timer = setTimeout(() => invoke<Shop>("get_shop").then(setShop), midnight.getTime() - Date.now());
+    return () => clearTimeout(timer);
+  }, [shop]);
 
   useEffect(() => {
     const unlistenShop = listen<Shop>("shop", (e) => setShop(e.payload));

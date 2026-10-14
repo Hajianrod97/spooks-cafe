@@ -74,6 +74,25 @@ npm run tauri build
 
 The app lands in `src-tauri/target/release/bundle/macos/Spook's Cafe.app`, with a `.dmg` next to it under `bundle/dmg/`.
 
+### Install or update the app
+
+```sh
+npm run release:install
+```
+
+One command for the first install and every update (`scripts/install-release.sh`):
+1. Builds the app.
+2. Quits the running copy.
+3. Backs up the database to `~/Library/Application Support/Lofi Focus/backups/` (keeps the last 10).
+4. Replaces `/Applications/Spook's Cafe.app` and relaunches it.
+
+Your data lives outside the app, so updates keep it, and new migrations run on launch. Bump `version` in `src-tauri/tauri.conf.json` to tell builds apart.
+
+To roll back:
+1. Quit the app.
+2. Copy a backup over `lofi-focus.db`, and delete that folder's `lofi-focus.db-wal` and `lofi-focus.db-shm`.
+3. Reinstall the older code. An older build can't open a database that a newer one has migrated.
+
 ### Permissions macOS asks for
 - **Notifications**: on the first phase end. In dev, notifications appear as coming from Terminal; the built app asks under its own name.
 - **Automation → Spotify**: the first time Spotify is used. In dev this is attributed to whichever app launched it (e.g. Visual Studio Code).

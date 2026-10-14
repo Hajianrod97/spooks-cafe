@@ -25,6 +25,16 @@ button { font-family: inherit; font-size: 1em; font-weight: 500; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; }
 
+/* Read by screen readers, not shown. Used across the app (the menu's radios, the sessions list). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .swatch { width: 0.8rem; height: 0.8rem; border-radius: 50%; }
 .error { color: #e5484d; }
 
@@ -54,8 +64,8 @@ button.icon:hover { opacity: 1; }
 /* Inputs have an intrinsic width; without this they overflow narrow columns instead of shrinking. */
 .editor input { padding: 0.4em 0.6em; width: 100%; box-sizing: border-box; }
 .editor select { padding: 0.35em; border-radius: 8px; width: 100%; box-sizing: border-box; }
-.editor fieldset.scene { display: flex; flex-direction: column; gap: 0.5rem; }
-.editor fieldset.scene .hint { margin: 0; }
+.editor fieldset.scene-settings { display: flex; flex-direction: column; gap: 0.5rem; }
+.editor fieldset.scene-settings .hint { margin: 0; }
 .editor .pair { display: flex; gap: 0.5rem; }
 .editor summary { cursor: pointer; font-size: 0.9em; }
 .editor details .hint { margin: 0.25rem 0 0.5rem; }

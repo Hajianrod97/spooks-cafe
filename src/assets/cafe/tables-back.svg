@@ -18,6 +18,11 @@
     <rect x="-156" y="57" width="124" height="6" fill="#A8714A" stroke="#3E3A6E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
     <rect x="-170" y="158" width="152" height="12" rx="3" fill="#C98F62" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
   </g>
+  <g id="bud-vase" transform="translate(-240 -82)">
+    <path d="M160 240 q-6 -10 0 -18 h8 q6 8 0 18 Z" fill="#B8B1DC" stroke="#3E3A6E" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M164 222 q-2 -12 4 -20" fill="none" stroke="#7DB37C" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="169" cy="200" r="5" fill="#F28DA8" stroke="#3E3A6E" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
   <g id="snapshot" transform="translate(-318 0)">
     <rect x="378" y="74" width="74" height="84" rx="3" fill="#FBF3E6" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" transform="rotate(4 415 116)"/>
     <g transform="rotate(4 415 116)">

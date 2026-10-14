@@ -35,17 +35,34 @@ const PLAYER_SCRIPT: &str = r#"
   if (window.top !== window) return;
   const KEY = "lofi-focus";
   if (!sessionStorage.getItem(KEY)) sessionStorage.setItem(KEY, __INITIAL__);
+  const want = () => JSON.parse(sessionStorage.getItem(KEY));
+  // Loudness is heard on a log scale, so a straight 0–1 slider is loud by the middle and all its
+  // useful range is near the bottom. Squaring spreads it out (50% plays at a quarter, about -12 dB).
+  const setVolume = (v, w) => {
+    const level = (w.volume / 100) ** 2;
+    if (Math.abs(v.volume - level) > 0.001) v.volume = level;
+    if (v.muted && w.volume > 0) v.muted = false;
+  };
   const apply = () => {
-    const want = JSON.parse(sessionStorage.getItem(KEY));
-    const v = document.querySelector("video");
+    const w = want();
+    // Every video, not just the first: an ad can play in its own element.
+    const videos = document.querySelectorAll("video");
+    videos.forEach((v) => setVolume(v, w));
+    const v = videos[0];
     if (!v) return;
-    if (Math.abs(v.volume - want.volume / 100) > 0.005) v.volume = want.volume / 100;
-    if (v.muted && want.volume > 0) v.muted = false;
-    if (want.playing && v.paused) v.play().catch(() => {});
-    if (!want.playing && !v.paused) v.pause();
+    if (w.playing && v.paused) v.play().catch(() => {});
+    if (!w.playing && !v.paused) v.pause();
   };
   window.__lofiApply = apply;
-  // Also undoes YouTube's own pauses and volume resets within a second.
+  // YouTube resets the volume on a new video, a stream reconnect or an ad. Media events don't
+  // bubble, but a capturing listener on the document sees them from every <video>, including ones
+  // added later, so the reset is undone straight away instead of playing loud until the next tick.
+  for (const type of ["volumechange", "loadeddata", "play"]) {
+    document.addEventListener(type, (e) => {
+      if (e.target instanceof HTMLMediaElement) setVolume(e.target, want());
+    }, true);
+  }
+  // Also undoes YouTube's own pauses within a second.
   setInterval(apply, 1000);
 })();
 "#;

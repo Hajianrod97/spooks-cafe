@@ -227,16 +227,16 @@
   gap: 2px;
   pointer-events: none;
 }
-/* Painted lettering on the outside's name board; the hand font matches the neon sign's. */
+/* Chalk lettering on the outside's sidewalk chalkboard, in the chalkboard menu's hand. */
 .scene .lettering {
   position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
-  font: 400 18px/1 "Patrick Hand", cursive;
-  white-space: nowrap;
-  color: #f2c46d;
-  text-shadow: 0 1px 0 rgba(30, 27, 60, 0.6);
+  font: 400 17px/1.05 Kalam, cursive;
+  text-align: center;
+  white-space: pre-line;
+  color: #f4f1e8;
   pointer-events: none;
 }
 
@@ -280,9 +280,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 2px;
 }
+/* A dark pill behind the caption: cream text alone was hard to read on light art (1.6:1 on the
+   outside pavement). At 65% ink it stays above 4.5:1 even over white. */
 .scene .caption {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(30, 27, 60, 0.65);
   font: 500 14px/1 Fredoka, system-ui, sans-serif;
   color: var(--cream);
   pointer-events: none;
@@ -438,6 +443,9 @@
   position: absolute;
   z-index: 2;
   min-width: 150px;
+  /* The room beside a counter spot at the narrowest window (stage x 240–720 shows); hints wrap. */
+  max-width: 160px;
+  box-sizing: border-box;
   padding: 4px;
   display: flex;
   flex-direction: column;

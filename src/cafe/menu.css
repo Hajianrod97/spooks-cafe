@@ -487,12 +487,3 @@
 .daily-streaks li { display: flex; gap: 8px; font-size: 16px; line-height: 1.4; }
 .daily-streaks .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .daily-streaks .value { flex-shrink: 0; color: var(--chalk-dim); }
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}

@@ -14,10 +14,5 @@
     <!-- The top hides Spook below y ≈ 258, the way the counter does. -->
     <ellipse cx="240" cy="246" rx="106" ry="18" fill="#A8714A" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
     <ellipse cx="240" cy="240" rx="106" ry="18" fill="#C98F62" stroke="#3E3A6E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-    <g id="bud-vase">
-      <path d="M160 240 q-6 -10 0 -18 h8 q6 8 0 18 Z" fill="#B8B1DC" stroke="#3E3A6E" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-      <path d="M164 222 q-2 -12 4 -20" fill="none" stroke="#7DB37C" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="169" cy="200" r="5" fill="#F28DA8" stroke="#3E3A6E" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-    </g>
   </g></g>
 </svg>

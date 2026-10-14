@@ -44,6 +44,9 @@ export interface Slot {
   x: number;
   y: number;
   scale: number;
+  /** Open its Decorate menu below the spot rather than above: for a spot up in the top-right
+   * corner, where a menu above would cover the ⚙ and brush buttons. */
+  menuBelow?: boolean;
 }
 
 // Placed against the layout contract in SPEC.md: off the sign, Spook's spot and the bottom band.
@@ -51,7 +54,7 @@ export const SLOTS: Slot[] = [
   { id: "counter-left", scene: "counter", label: "Counter · left of Spook", kind: "surface", layer: "front", x: 393, y: 251, scale: 0.9 },
   { id: "counter-right", scene: "counter", label: "Counter · right of Spook", kind: "surface", layer: "front", x: 580, y: 251, scale: 1 },
   { id: "tables-table", scene: "tables", label: "Tables · Spook's table", kind: "surface", layer: "front", x: 556, y: 244, scale: 0.9 },
-  { id: "tables-shelf", scene: "tables", label: "Tables · bookshelf", kind: "surface", layer: "back", x: 789, y: 141, scale: 0.7 },
+  { id: "tables-shelf", scene: "tables", label: "Tables · bookshelf", kind: "surface", layer: "back", x: 789, y: 141, scale: 0.7, menuBelow: true },
 ];
 
 export const itemById = (id: string) => CATALOGUE.find((i) => i.id === id);

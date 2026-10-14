@@ -6,6 +6,8 @@ import type { SceneName } from "./scenes";
 
 // An empty spot is outlined at the size of a typical decoration.
 const EMPTY = { width: 48, height: 42 };
+// Spook floats under the sign, at the middle of the 960-wide stage.
+const SPOOK_X = 480;
 
 interface Props {
   scene: SceneName;
@@ -62,8 +64,16 @@ export function DecorateSpots({ scene, shop, place, onError }: Props) {
           <PickMenu
             label={slot.label}
             items={items}
-            // Opens above the spot: below it is the scene's bottom band and the buttons.
-            style={{ left: slot.x, top: box.top - 6, transform: "translate(-50%, -100%)" }}
+            // Normally above the spot (below is the bottom band and the buttons), growing away from
+            // Spook so it never covers him. `.pick-menu`'s max-width keeps it inside a narrow window.
+            style={
+              slot.menuBelow
+                ? // Grows leftwards, into the room: rightwards it would run off a window under 960 px.
+                  { left: box.left + width, top: slot.y + 6, transform: "translateX(-100%)" }
+                : slot.x < SPOOK_X
+                ? { left: box.left + width, top: box.top - 6, transform: "translate(-100%, -100%)" }
+                : { left: box.left, top: box.top - 6, transform: "translateY(-100%)" }
+            }
             onClose={() => setOpen(null)}
           />
         )}

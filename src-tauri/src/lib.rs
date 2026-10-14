@@ -16,6 +16,7 @@ mod todos;
 mod tray;
 
 use tauri::{AppHandle, Emitter, Manager, RunEvent, WindowEvent};
+use tauri_plugin_window_state::StateFlags;
 
 pub const MAIN_WINDOW: &str = "main";
 
@@ -58,6 +59,14 @@ pub fn run() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec![settings::HIDDEN_ARG]),
         ))
+        // Remembers the main window's size and position across launches. Not its visibility:
+        // `setup` decides whether to show it (hidden when launched at login).
+        .plugin(
+            tauri_plugin_window_state::Builder::new()
+                .with_state_flags(StateFlags::SIZE | StateFlags::POSITION)
+                .with_filter(|label| label == MAIN_WINDOW)
+                .build(),
+        )
         .setup(|app| {
             let db = db::open(app.handle())?;
             let timer = timer::restore(&db)?;

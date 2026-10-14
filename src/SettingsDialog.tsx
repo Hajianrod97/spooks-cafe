@@ -119,7 +119,7 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
                 </span>
               </label>
             ))}
-            <fieldset className="scene">
+            <fieldset className="scene-settings">
               <legend>Scene</legend>
               <label>
                 Time of day
