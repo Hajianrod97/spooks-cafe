@@ -2,7 +2,7 @@
 
 A macOS Pomodoro tracker with a lofi cafe run by Spook, a little sheet ghost. Spook types on his laptop while you focus, sips coffee on your breaks and dozes when you pause. The cafe's light follows the time of day, and music plays from YouTube or Spotify.
 
-I built it to structure a full-time job search (LeetCode, system design, applications) around weekly hour targets. It's become a passion project.
+I built it to structure a full-time job search (LeetCode, system design, applications) around weekly hour targets.
 
 | Counter, focusing | Tables, on a break at night |
 |---|---|
